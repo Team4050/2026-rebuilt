@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "aaron-bond.better-comments",
+    "esbenp.prettier-vscode",
+    "redhat.java",
+    "richardwillis.vscode-spotless-gradle",
+    "vscjava.vscode-java-pack",
+    "bierner.markdown-mermaid",
+    "github.github-vscode-theme"
+  ]
+}

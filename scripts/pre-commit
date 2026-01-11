@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Performing pre-commit actions"
+
+echo "Formatting code with spotless"
+./gradlew spotlessApply
+
+echo "Adding any changes from reformat"
+git update-index --again
+
+status=$?
+
+echo "Done with pre-commit"
+
+exit $status

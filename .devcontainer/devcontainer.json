@@ -1,0 +1,34 @@
+{
+  "name": "Biohazard Dev Container",
+
+  "init": true,
+  "remoteUser": "vscode",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "workspaceFolder": "/workspace",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "WPI_VERSION": "2025.3.2"
+    }
+  },
+
+  "onCreateCommand": ".devcontainer/scripts/on-create.sh",
+  "postCreateCommand": "./gradlew install",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.jdt.ls.java.home": "${env:JAVA_HOME}"
+      },
+      "extensions": [
+        "aaron-bond.better-comments",
+        "esbenp.prettier-vscode",
+        "mutantdino.resourcemonitor",
+        "redhat.java",
+        "richardwillis.vscode-spotless-gradle",
+        "vscjava.vscode-gradle",
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  }
+}
