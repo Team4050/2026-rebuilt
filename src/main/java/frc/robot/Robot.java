@@ -4,21 +4,30 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.MatchData;
 
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
+    private Command autonomousCommand;
 
-    private final RobotContainer m_robotContainer;
+    private final RobotContainer robotContainer;
+    private final MatchData matchData = new MatchData();
 
     public Robot() {
-        m_robotContainer = new RobotContainer();
+        // Silence joystick warnings in development (overridden when connected to FMS)
+        DriverStation.silenceJoystickConnectionWarning(true);
+
+        robotContainer = new RobotContainer();
+
+        matchData.init();
     }
 
     @Override
     public void robotPeriodic() {
+        matchData.periodic();
         CommandScheduler.getInstance().run();
     }
 
@@ -33,10 +42,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(autonomousCommand);
         }
     }
 
@@ -48,8 +57,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
     }
 
