@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.MatchData;
 import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
     private Command autonomousCommand;
@@ -22,6 +24,12 @@ public class Robot extends LoggedRobot {
     public Robot() {
         // Silence joystick warnings in development (overridden when connected to FMS)
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        // TODO - configure receivers based on mode (real, sim, etc.)
+        Logger.addDataReceiver(new WPILOGWriter());
+
+        // Start AdvantageKit logger
+        Logger.start();
 
         // Serve Elastic dashboard config file
         // https://frc-elastic.gitbook.io/docs/additional-features-and-references/remote-layout-downloading#on-robot-configuration
