@@ -18,7 +18,7 @@ public class TunerConstants {
 
     // Note: canBus parameter is significant. CANivore devices are named in Phoenix Tuner, so this must match the name
     // of our CANivore.
-    public static final CANBus kCANBus = new CANBus();
+    public static final CANBus kCANBus = new CANBus("Drivetrain");
 
     // =========================================================================================================================
     // CAN device IDs - Schema is <module number: 1-4><device: drive = 1, steer = 2, encoder = 3>
