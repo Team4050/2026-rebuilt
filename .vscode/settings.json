@@ -18,22 +18,19 @@
   // Formatting
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "editor.tabSize": 4,
   "java.format.enabled": false,
+  "java.help.showReleaseNotes": false,
   "files.trimTrailingWhitespace": false,
   "spotlessGradle.diagnostics.enable": false,
   "spotlessGradle.format.enable": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.spotlessGradle": "explicit"
   },
-  "[java]": {
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
-  },
-  "[groovy]": {
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
-  },
-  "[gradle]": {
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
+  "[java][groovy][gradle]": {
+    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
   },
 
   // Themeing
@@ -47,5 +44,10 @@
     "button.foreground": "#171717",
     "focusBorder": "#16A34A",
     "textLink.activeForeground": "#16A34A"
-  }
+  },
+
+  // Misc
+  "git.blame.editorDecoration.enabled": true,
+  "git.autofetch": true,
+  "git.branchProtection": ["main"]
 }
