@@ -8,17 +8,22 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotState;
+import frc.robot.RobotState.VisionMeasurement;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -28,6 +33,22 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private final RobotState robotState = RobotState.getInstance();
+
+    // Vision measurement standard deviations
+    // Lower values = more trust in vision
+    // These are base values that get scaled by distance and tag count
+    private static final double XY_STD_DEV_BASE = 0.5; // meters
+    private static final double ROT_STD_DEV_BASE = Math.toRadians(8); // radians
+
+    // Additional filtering thresholds for vision
+    private static final double MAX_POSE_JUMP_SINGLE_TAG = 0.5; // meters
+    private static final double MAX_POSE_JUMP_MULTI_TAG = 1.0; // meters
+
+    // Telemetry tracking
+    private long visionMeasurementsApplied = 0;
+    private long visionMeasurementsRejected = 0;
+
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -215,6 +236,103 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        publishDrivetrainState();
+
+        consumeVisionMeasurements();
+
+        updateDashboard();
+    }
+
+    private void publishDrivetrainState() {
+        SwerveDriveState state = getState();
+
+        robotState.setCurrentPose(state.Pose);
+
+        robotState.setGyroHeading(state.Pose.getRotation());
+
+        ChassisSpeeds robotSpeeds = state.Speeds;
+        robotState.setRobotRelativeSpeeds(robotSpeeds);
+        robotState.setFieldRelativeSpeeds(ChassisSpeeds.fromRobotRelativeSpeeds(robotSpeeds, state.Pose.getRotation()));
+    }
+
+    private void consumeVisionMeasurements() {
+        robotState.consumeVisionMeasurement().ifPresent(this::applyVisionMeasurement);
+    }
+
+    /**
+     * Apply a single vision measurement with dynamic standard deviations.
+     */
+    private void applyVisionMeasurement(VisionMeasurement measurement) {
+        if (!isValidPoseJump(measurement)) {
+            visionMeasurementsRejected++;
+            robotState.recordVisionRejected();
+            return;
+        }
+
+        // Calculate dynamic standard deviations
+        double[] stdDevs = calculateStdDevs(measurement);
+
+        // Apply to pose estimator
+        addVisionMeasurement(
+                measurement.pose(),
+                measurement.timestampSeconds(),
+                VecBuilder.fill(stdDevs[0], stdDevs[1], stdDevs[2]));
+
+        visionMeasurementsApplied++;
+        robotState.recordVisionAccepted();
+    }
+
+    /**
+     * Check if the vision pose represents a reasonable change from current pose.
+     */
+    private boolean isValidPoseJump(VisionMeasurement measurement) {
+        Pose2d currentPose = getState().Pose;
+        double distance =
+                currentPose.getTranslation().getDistance(measurement.pose().getTranslation());
+
+        double maxJump = measurement.tagCount() >= 2 ? MAX_POSE_JUMP_MULTI_TAG : MAX_POSE_JUMP_SINGLE_TAG;
+
+        return distance <= maxJump;
+    }
+
+    /**
+     * Calculate standard deviations based on measurement quality.
+     * Lower values = more trust in the measurement.
+     */
+    private double[] calculateStdDevs(VisionMeasurement measurement) {
+        double xyStdDev = XY_STD_DEV_BASE;
+        double rotStdDev = ROT_STD_DEV_BASE;
+
+        // Scale by distance - trust less when tags are far
+        double distanceMultiplier = 1.0 + (measurement.avgTagDistance() * 0.5);
+        xyStdDev *= distanceMultiplier;
+        rotStdDev *= distanceMultiplier;
+
+        // Trust more with multiple tags
+        if (measurement.tagCount() >= 2) {
+            xyStdDev *= 0.5;
+            rotStdDev *= 0.5;
+        }
+
+        // Trust less when robot is moving (optional - already filtered in VisionSubsystem)
+        if (robotState.isMoving()) {
+            xyStdDev *= 1.5;
+            rotStdDev *= 1.5;
+        }
+
+        return new double[] {xyStdDev, xyStdDev, rotStdDev};
+    }
+
+    /**
+     * Update SmartDashboard with drivetrain telemetry.
+     */
+    private void updateDashboard() {
+        String prefix = "Drivetrain/";
+        SmartDashboard.putNumber(prefix + "VisionApplied", visionMeasurementsApplied);
+        SmartDashboard.putNumber(prefix + "VisionRejected", visionMeasurementsRejected);
+        SmartDashboard.putNumber(prefix + "LinearVelocity", robotState.getLinearVelocity());
+        SmartDashboard.putNumber(prefix + "AngularVelocity", robotState.getAngularVelocityDegreesPerSec());
     }
 
     private void startSimThread() {
