@@ -4,30 +4,34 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import com.ctre.phoenix6.HootAutoReplay;
+import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.MatchData;
 
 public class Robot extends TimedRobot {
-    private Command autonomousCommand;
+    private Command m_autonomousCommand;
 
-    private final RobotContainer robotContainer;
-    private final MatchData matchData = new MatchData();
+    private final RobotContainer m_robotContainer;
+
+    private final SparkMax intake = new SparkMax(5, SparkMax.MotorType.kBrushless);
+
+    private final Joystick intakeJoystick = new Joystick(1);
+
+    /* log and replay timestamp and joystick data */
+    private final HootAutoReplay m_timeAndJoystickReplay =
+            new HootAutoReplay().withTimestampReplay().withJoystickReplay();
 
     public Robot() {
-        // Silence joystick warnings in development (overridden when connected to FMS)
-        DriverStation.silenceJoystickConnectionWarning(true);
-
-        robotContainer = new RobotContainer();
-
-        matchData.init();
+        m_robotContainer = new RobotContainer();
     }
 
     @Override
     public void robotPeriodic() {
-        matchData.periodic();
+        m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
     }
 
@@ -42,10 +46,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        autonomousCommand = robotContainer.getAutonomousCommand();
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-        if (autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(autonomousCommand);
+        if (m_autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
     }
 
@@ -57,13 +61,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (autonomousCommand != null) {
-            autonomousCommand.cancel();
+        if (m_autonomousCommand != null) {
+            CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+
+        // intake test
+        if (intakeJoystick.getRawButton(4)) {
+            intake.set(1);
+            System.out.println("intake forward");
+        } else if (intakeJoystick.getRawButton(1)) {
+            intake.set(-1);
+            System.out.println("intake reverse");
+        } else {
+            intake.set(0.0);
+        }
+    }
 
     @Override
     public void teleopExit() {}
@@ -78,4 +94,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testExit() {}
+
+    @Override
+    public void simulationPeriodic() {}
 }
