@@ -100,7 +100,8 @@ test {
 }
 
 // Simulation configuration (e.g. environment variables).
-wpi.sim.addGui().defaultEnabled = false
+// Note: GUI must be disabled when replaying logs
+wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -134,7 +135,7 @@ gversion {
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/New_York"
-    indent       = "  "
+    indent       = "    "
 }
 project.compileJava.dependsOn(createVersionFile)
 
