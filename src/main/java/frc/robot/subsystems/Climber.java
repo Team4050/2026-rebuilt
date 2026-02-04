@@ -38,12 +38,17 @@ public class Climber extends SubsystemBase {
         ;
     }
 
-    /** Run climber (-1.0 to 1.0) */
+    /**
+     * Run the climber with a fixed speed.
+     * @param speed The speed to set. Value should be between -1.0 and 1.0
+     */
     public void setSpeed(double speed) {
         leaderMotor.set(speed);
     }
 
-    /** Stop climber */
+    /**
+     * Stop the climber.
+     */
     public void stop() {
         leaderMotor.stopMotor();
     }
