@@ -19,18 +19,18 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "java.format.enabled": false,
-  "java.help.showReleaseNotes": false,
-  "files.trimTrailingWhitespace": false,
+  "files.trimTrailingWhitespace": true,
   "spotlessGradle.diagnostics.enable": false,
   "spotlessGradle.format.enable": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.spotlessGradle": "explicit"
-  },
+
   "[java][groovy][gradle]": {
     "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.spotlessGradle": "explicit"
+    }
   },
 
   // Themeing
@@ -45,6 +45,22 @@
     "focusBorder": "#16A34A",
     "textLink.activeForeground": "#16A34A"
   },
+
+  // Java/Gradle Performance Tweaks
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/build": true,
+    "bin": true
+  },
+  "search.exclude": {
+    "**/.gradle": true,
+    "**/build": true,
+    "bin": true
+  },
+  "java.autobuild.enabled": false,
+  "java.gradle.buildServer.enabled": "off",
+  "java.import.gradle.annotationProcessing.enabled": false,
+  "java.help.showReleaseNotes": false,
 
   // Misc
   "git.blame.editorDecoration.enabled": true,
