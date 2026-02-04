@@ -21,9 +21,6 @@ public class Robot extends TimedRobot {
 
     private final MatchData matchData = new MatchData();
 
-    private final SparkMax intake = new SparkMax(5, SparkMax.MotorType.kBrushless);
-
-    private final Joystick intakeJoystick = new Joystick(1);
 
     public Robot() {
         // Silence joystick warnings in development (overridden when connected to FMS)
@@ -77,18 +74,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        // intake test
-        if (intakeJoystick.getRawButton(4)) {
-            intake.set(1);
-            System.out.println("intake forward");
-        } else if (intakeJoystick.getRawButton(1)) {
-            intake.set(-1);
-            System.out.println("intake reverse");
-        } else {
-            intake.set(0.0);
-        }
     }
-
     @Override
     public void teleopExit() {}
 
