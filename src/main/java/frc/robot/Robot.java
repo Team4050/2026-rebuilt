@@ -17,9 +17,6 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
-    private final SparkMax intake = new SparkMax(5, SparkMax.MotorType.kBrushless);
-
-    private final Joystick intakeJoystick = new Joystick(1);
 
     /* log and replay timestamp and joystick data */
     private final HootAutoReplay m_timeAndJoystickReplay =
@@ -69,18 +66,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        // intake test
-        if (intakeJoystick.getRawButton(4)) {
-            intake.set(1);
-            System.out.println("intake forward");
-        } else if (intakeJoystick.getRawButton(1)) {
-            intake.set(-1);
-            System.out.println("intake reverse");
-        } else {
-            intake.set(0.0);
-        }
     }
-
     @Override
     public void teleopExit() {}
 
