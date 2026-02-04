@@ -38,7 +38,7 @@ public class Climber extends SubsystemBase {
         if (leaderMotor.configure(leaderConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters) != REVLibError.kOk) {
             System.err.println("Error configuring Climber Leader Motor");
         }
-        if (followerMotor.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters) != REVLibError.kOK) {
+        if (followerMotor.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters) != REVLibError.kOk) {
             System.err.println("Error configuring Climber Follower Motor");
         };
     }
