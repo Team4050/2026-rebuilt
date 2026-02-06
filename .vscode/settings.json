@@ -61,6 +61,7 @@
   "java.gradle.buildServer.enabled": "off",
   "java.import.gradle.annotationProcessing.enabled": false,
   "java.help.showReleaseNotes": false,
+  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
 
   // Misc
   "git.blame.editorDecoration.enabled": true,
