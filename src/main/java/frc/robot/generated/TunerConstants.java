@@ -12,7 +12,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.*;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TunerConstants {
 
@@ -224,14 +223,6 @@ public class TunerConstants {
     // =========================================================================================================================
     // Constructor methods - Do not edit
     // =========================================================================================================================
-
-    /**
-     * Creates a CommandSwerveDrivetrain instance.
-     * This should only be called once in your robot program,.
-     */
-    public static CommandSwerveDrivetrain createDrivetrain() {
-        return new CommandSwerveDrivetrain(DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight);
-    }
 
     /**
      * Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types.
