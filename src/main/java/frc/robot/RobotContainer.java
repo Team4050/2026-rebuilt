@@ -82,7 +82,6 @@ public class RobotContainer {
 
         joystick.povUp().whileTrue(new RunCommand(() -> climber.setSpeed(1.0), climber));
         joystick.povDown().whileTrue(new RunCommand(() -> climber.setSpeed(-1.0), climber));
-
     }
 
     public Command getAutonomousCommand() {
