@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 
@@ -41,6 +42,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Intake intakeSub = new Intake();
 
+    public final Climber climber = new Climber();
 
     public RobotContainer() {
         configureBindings();
@@ -61,6 +63,8 @@ public class RobotContainer {
                                         -joystickPrimary.getRightX() * MaxAngularRate) // Drive counterclockwise
                         // with negative X (left)
                         ));
+
+        climber.setDefaultCommand(new RunCommand(climber::stop, climber));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -83,12 +87,17 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
         // RUN INTAKE COMMANDS
         // TODO: RUMBLE WHEN INTAKE swithcing directions
         joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::runIntake));
         joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::reverseIntake));
 
         intakeSub.setDefaultCommand(new RunCommand(intakeSub::stopIntake, intakeSub));
+        joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+        joystickPrimary.povUp().whileTrue(new RunCommand(() -> climber.setSpeed(1.0), climber));
+        joystickPrimary.povDown().whileTrue(new RunCommand(() -> climber.setSpeed(-1.0), climber));
     }
 
     public Command getAutonomousCommand() {
