@@ -24,7 +24,7 @@ public class TunerConstants {
     // CAN device IDs - Schema is <module number: 1-4><device: drive = 1, steer = 2, encoder = 3>
     // =========================================================================================================================
 
-    private static final int kPigeonId = 1;
+    private static final int kPigeonId = 10;
 
     // Front left - Module 1
     private static final int kFrontLeftDriveMotorId = 11;
