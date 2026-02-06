@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -18,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CammandIntake;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
     // TODO: Relocate constants to dedicated constants file
@@ -39,13 +38,13 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final  CammandIntake intakecmand = new CammandIntake();
+    public final Intake intakesub = new Intake();
 
+    public boolean intake_on = false;
 
     public RobotContainer() {
         configureBindings();
     }
-
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -81,37 +80,21 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        intakecmand.setDefaultCommand(
-                new RunCommand(()->{
-                      if (joystick.a().getAsBoolean()) {
-                            intakecmand.runIntake();
-                            System.out.println("intake forward");
-                      } else if (joystick.x().getAsBoolean()) {
-                            intakecmand.stopIntake();
-                            System.out.println("intake reverse");
-                      }
 
-        // } else {
-        //     intake.set(0.0);
-        // }                   
-                })
-        );
+        intakesub.setDefaultCommand(new RunCommand(
+                () -> {
+                    if (joystick.a().getAsBoolean() && intake_on == false) {
+                        intakesub.runIntake();
+                        intake_on = true;
+                        System.out.println("intake forward");
+                    } else if (joystick.a().getAsBoolean() && intake_on == true) {
+                        intakesub.stopIntake();
+                        intake_on = false;
+                        System.out.println("intake reverse");
+                    }
 
-//         private void intakeTest() {
-//     // intake test
-//         if (joystick.a().getAsBoolean()) {
-//             intakecmand.runIntake();
-//             System.out.println("intake forward");
-            
-//         } else if (joystick.x().getAsBoolean()) {
-//                 intakecmand.stopIntake();
-//                 System.out.println("intake reverse");
-//         }
-
-//         // } else {
-//         //     intake.set(0.0);
-//         // }
-//     }
+                },
+                intakesub));
     }
 
     public Command getAutonomousCommand() {
