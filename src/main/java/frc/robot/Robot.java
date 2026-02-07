@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,6 +21,10 @@ public class Robot extends TimedRobot {
     public Robot() {
         // Silence joystick warnings in development (overridden when connected to FMS)
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        // Serve Elastic dashboard config file
+        // https://frc-elastic.gitbook.io/docs/additional-features-and-references/remote-layout-downloading#on-robot-configuration
+        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
         robotContainer = new RobotContainer();
 
