@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
@@ -19,8 +20,11 @@ public class Climber extends SubsystemBase {
     @AutoLogOutput
     private double encoderPosition;
 
+@AutoLogOutput
+private double maxSpeed = 1.0;
+
     @AutoLogOutput
-    private double speed;
+    private double speed = 0.0;
 
     private final SparkMax leaderMotor = new SparkMax(kLeaderID, MotorType.kBrushless);
 
@@ -50,6 +54,15 @@ public class Climber extends SubsystemBase {
         encoder.setPosition(0.0);
     }
 
+    public void setMaxSpeed(double speed) {
+        if (speed > 1.0 || speed < 0.0) {
+            Logger.recordMetadata("Climber/errorString", "Max speed set out of bounds.");
+            maxSpeed = 1.0;
+        } else {
+            maxSpeed = speed;
+        }
+    }
+
     /**
      * Move the climber up at full speed
      */
@@ -66,7 +79,7 @@ public class Climber extends SubsystemBase {
 
     private void setSpeed(double speed) {
         this.speed = speed;
-        leaderMotor.set(speed);
+        leaderMotor.set(speed * maxSpeed);
     }
 
     /**
