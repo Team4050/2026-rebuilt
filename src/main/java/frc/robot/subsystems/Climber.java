@@ -20,8 +20,15 @@ public class Climber extends SubsystemBase {
     @AutoLogOutput
     private double encoderPosition;
 
-@AutoLogOutput
-private double maxSpeed = 1.0;
+    // default units are rotations
+    private double encoderPositionMin = 0.0;
+    private double encoderPositionMax = 100.0; // TODO at least max position must be calibrated manually and refactored here
+
+    private boolean positionLowerLimit = false;
+    private boolean positionUpperLimit = false;
+
+    @AutoLogOutput
+    private double maxSpeed = 1.0;
 
     @AutoLogOutput
     private double speed = 0.0;
@@ -67,14 +74,18 @@ private double maxSpeed = 1.0;
      * Move the climber up at full speed
      */
     public void up() {
-        setSpeed(1.0);
+        if (!positionUpperLimit) {
+            setSpeed(1.0);
+        }
     }
 
     /**
      * Move the climber down at full speed
      */
     public void down() {
-        setSpeed(-1.0);
+        if (!positionLowerLimit) {
+            setSpeed(-1.0);
+        }
     }
 
     private void setSpeed(double speed) {
@@ -86,6 +97,7 @@ private double maxSpeed = 1.0;
      * Stop the climber.
      */
     public void stop() {
+        this.speed = 0.0;
         leaderMotor.stopMotor();
     }
 
@@ -94,5 +106,8 @@ private double maxSpeed = 1.0;
         super.periodic();
         encoderPosition = encoder.getPosition();
         // Logger.recordOutput("Climber/encoderPosition", encoder.getPosition());
+
+            positionUpperLimit = encoderPosition >= encoderPositionMax;
+            positionLowerLimit = encoderPosition <= encoderPositionMin;
     }
 }
