@@ -81,7 +81,7 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         // Control the climber with up and down on D-pad
-        joystick.povUp().onTrue(climber.runOnce(climber::up));
+        joystick.povUp().whileTrue(climber.runOnce(climber::up));
         joystick.povDown().whileTrue(climber.runOnce(climber::down));
     }
 
