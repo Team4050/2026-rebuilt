@@ -10,10 +10,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class RobotContainer {
@@ -35,6 +37,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final Climber climber = new Climber();
+
     public RobotContainer() {
         configureBindings();
     }
@@ -52,6 +56,8 @@ public class RobotContainer {
                                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise
                         // with negative X (left)
                         ));
+
+        climber.setDefaultCommand(new RunCommand(climber::stop, climber));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -73,6 +79,10 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+        // Control the climber with up and down on D-pad
+        joystick.povUp().whileTrue(climber.runOnce(climber::up));
+        joystick.povDown().whileTrue(climber.runOnce(climber::down));
     }
 
     public Command getAutonomousCommand() {
