@@ -32,13 +32,6 @@ import java.util.function.Supplier;
 
 public class DriveCommands {
     private static final double DEADBAND = 0.1;
-
-    // Input curve exponent: 1.0 = linear, 2.0 = squared, 3.0 = cubed (more precise at low speeds)
-    private static final double INPUT_CURVE_EXPONENT = 2.5;
-
-    // Max speed multiplier: 0.0-1.0, scales both linear and angular max speed
-    private static final double MAX_SPEED_MULTIPLIER = 0.5;
-
     private static final double ANGLE_KP = 5.0;
     private static final double ANGLE_KD = 0.4;
     private static final double ANGLE_MAX_VELOCITY = 8.0;
@@ -55,8 +48,8 @@ public class DriveCommands {
         double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
         Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
-        // Apply input curve for more precise control at low speeds
-        linearMagnitude = Math.pow(linearMagnitude, INPUT_CURVE_EXPONENT);
+        // Square magnitude for more precise control
+        linearMagnitude = linearMagnitude * linearMagnitude;
 
         // Return new linear velocity
         return new Pose2d(Translation2d.kZero, linearDirection)
@@ -75,16 +68,17 @@ public class DriveCommands {
                     Translation2d linearVelocity =
                             getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-                    // Apply rotation deadband and input curve
+                    // Apply rotation deadband
                     double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
-                    omega = Math.copySign(Math.pow(Math.abs(omega), INPUT_CURVE_EXPONENT), omega);
 
-                    // Apply max speed multiplier and convert to field relative speeds
-                    double speedScalar = MathUtil.clamp(MAX_SPEED_MULTIPLIER, 0.0, 1.0);
+                    // Square rotation value for more precise control
+                    omega = Math.copySign(omega * omega, omega);
+
+                    // Convert to field relative speeds & send command
                     ChassisSpeeds speeds = new ChassisSpeeds(
-                            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * speedScalar,
-                            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * speedScalar,
-                            omega * drive.getMaxAngularSpeedRadPerSec() * speedScalar);
+                            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                            omega * drive.getMaxAngularSpeedRadPerSec());
                     boolean isFlipped = DriverStation.getAlliance().isPresent()
                             && DriverStation.getAlliance().get() == Alliance.Red;
                     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -119,11 +113,10 @@ public class DriveCommands {
                                     drive.getRotation().getRadians(),
                                     rotationSupplier.get().getRadians());
 
-                            // Apply max speed multiplier and convert to field relative speeds
-                            double speedScalar = MathUtil.clamp(MAX_SPEED_MULTIPLIER, 0.0, 1.0);
+                            // Convert to field relative speeds & send command
                             ChassisSpeeds speeds = new ChassisSpeeds(
-                                    linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * speedScalar,
-                                    linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * speedScalar,
+                                    linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                                    linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                                     omega);
                             boolean isFlipped = DriverStation.getAlliance().isPresent()
                                     && DriverStation.getAlliance().get() == Alliance.Red;
