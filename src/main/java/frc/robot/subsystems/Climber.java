@@ -19,6 +19,9 @@ public class Climber extends SubsystemBase {
     @AutoLogOutput
     private double encoderPosition;
 
+    @AutoLogOutput
+    private double speed;
+
     private final SparkMax leaderMotor = new SparkMax(kLeaderID, MotorType.kBrushless);
 
     private final SparkMax followerMotor = new SparkMax(kFollowerID, MotorType.kBrushless);
@@ -48,11 +51,21 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     * Run the climber with a fixed speed.
-     * @param speed The speed to set. Value should be between -1.0 and 1.0
+     * Move the climber up at full speed
      */
-    public void setSpeed(double speed) {
-        System.out.println("Climber - speed set to " + speed);
+    public void up() {
+        setSpeed(1.0);
+    }
+
+    /**
+     * Move the climber down at full speed
+     */
+    public void down() {
+        setSpeed(-1.0);
+    }
+
+    private void setSpeed(double speed) {
+        this.speed = speed;
         leaderMotor.set(speed);
     }
 

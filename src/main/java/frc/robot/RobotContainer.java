@@ -80,8 +80,9 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        joystick.povUp().whileTrue(new RunCommand(() -> climber.setSpeed(1.0), climber));
-        joystick.povDown().whileTrue(new RunCommand(() -> climber.setSpeed(-1.0), climber));
+        // Control the climber with up and down on D-pad
+        joystick.povUp().onTrue(climber.runOnce(climber::up));
+        joystick.povDown().whileTrue(climber.runOnce(climber::down));
     }
 
     public Command getAutonomousCommand() {
