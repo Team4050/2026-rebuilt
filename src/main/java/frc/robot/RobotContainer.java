@@ -4,17 +4,21 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
     // TODO: Relocate constants to dedicated constants file
@@ -32,8 +36,12 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick2 = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Intake IntakeSub = new Intake();
+
+    // public boolean intakeOn = false;
 
     public RobotContainer() {
         configureBindings();
@@ -73,6 +81,16 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // RUN INTAKE COMMANDS
+        // TODO: RUMBLE WHEN INTAKE swithcing directions
+        joystick2.leftBumper().toggleOnTrue(IntakeSub.run(IntakeSub::runIntake));
+        joystick2.rightBumper().toggleOnTrue(IntakeSub.run(IntakeSub::reverseIntake));
+
+        IntakeSub.setDefaultCommand(new RunCommand(
+                () -> {
+                    IntakeSub.stopIntake();
+                },
+                IntakeSub));
     }
 
     public Command getAutonomousCommand() {
