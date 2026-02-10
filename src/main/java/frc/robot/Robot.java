@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.MatchData;
 
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
+    private Command autonomousCommand;
 
     private final RobotContainer robotContainer;
 
@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        matchData.periodic();
         CommandScheduler.getInstance().run();
     }
 
@@ -48,10 +49,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = robotContainer.getAutonomousCommand();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(autonomousCommand);
         }
     }
 
@@ -63,8 +64,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            CommandScheduler.getInstance().cancel(autonomousCommand);
         }
     }
 

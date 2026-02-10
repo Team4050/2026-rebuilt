@@ -9,13 +9,17 @@ public class Intake extends SubsystemBase {
     // private final SparkMax intakdeply = new SparkMax(5, SparkMax.MotorType.kBrushless);
     // rem to add deploy motor later
 
+
     public void runIntake() {
         intake.set(1);
-        System.out.println("intake forward sub");
     }
 
     public void stopIntake() {
         intake.set(0);
-        System.out.println("intake stopped sub");
+        // System.out.println("intake stopped sub");
+    }
+
+    public void reverseIntake() {
+        intake.set(-1);
     }
 }

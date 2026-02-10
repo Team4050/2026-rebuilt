@@ -36,11 +36,12 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick2 = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Intake intakesub = new Intake();
+    public final Intake IntakeSub = new Intake();
 
-    public boolean intake_on = false;
+    // public boolean intakeOn = false;
 
     public RobotContainer() {
         configureBindings();
@@ -80,21 +81,16 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // RUN INTAKE COMMANDS
+        // TODO: RUMBLE WHEN INTAKE swithcing directions
+        joystick2.leftBumper().toggleOnTrue(IntakeSub.run(IntakeSub::runIntake));
+        joystick2.rightBumper().toggleOnTrue(IntakeSub.run(IntakeSub::reverseIntake));
 
-        intakesub.setDefaultCommand(new RunCommand(
+        IntakeSub.setDefaultCommand(new RunCommand(
                 () -> {
-                    if (joystick.a().getAsBoolean() && intake_on == false) {
-                        intakesub.runIntake();
-                        intake_on = true;
-                        System.out.println("intake forward");
-                    } else if (joystick.a().getAsBoolean() && intake_on == true) {
-                        intakesub.stopIntake();
-                        intake_on = false;
-                        System.out.println("intake reverse");
-                    }
-
+                    IntakeSub.stopIntake();
                 },
-                intakesub));
+                IntakeSub));
     }
 
     public Command getAutonomousCommand() {
