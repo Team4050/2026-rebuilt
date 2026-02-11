@@ -41,7 +41,6 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Intake intakeSub = new Intake();
 
-    // public boolean intakeOn = false;
 
     public RobotContainer() {
         configureBindings();
