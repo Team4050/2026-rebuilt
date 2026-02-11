@@ -90,15 +90,15 @@ public class RobotContainer {
 
         // Control the climber with up and down on D-pad
         // RUN INTAKE COMMANDS
-        // TODO: RUMBLE WHEN INTAKE swithcing directions
+        // TODO: RUMBLE WHEN INTAKE switching directions
         joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::runIntake));
         joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::reverseIntake));
 
         intakeSub.setDefaultCommand(new RunCommand(intakeSub::stopIntake, intakeSub));
         joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        joystickPrimary.povUp().onTrue(climber.runOnce(climber::up));
-        joystickPrimary.povDown().whileTrue(climber.runOnce(climber::down));
+        joystickSecondary.povUp().onTrue(climber.runOnce(climber::up));
+        joystickSecondary.povDown().whileTrue(climber.runOnce(climber::down));
     }
 
     public Command getAutonomousCommand() {
