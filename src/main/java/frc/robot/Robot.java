@@ -34,12 +34,6 @@ public class Robot extends LoggedRobot {
 
         loggerInit();
 
-        // TODO - configure receivers based on mode (real, sim, etc.)
-        Logger.addDataReceiver(new WPILOGWriter());
-
-        // Start AdvantageKit logger
-        Logger.start();
-
         robotContainer = new RobotContainer();
         matchData.init();
     }
