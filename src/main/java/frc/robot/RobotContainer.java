@@ -35,11 +35,11 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController joystick2 = new CommandXboxController(1);
+    private final CommandXboxController joystickPrimary = new CommandXboxController(0);
+    private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Intake IntakeSub = new Intake();
+    public final Intake intakeSub = new Intake();
 
     // public boolean intakeOn = false;
 
@@ -53,11 +53,13 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(
-                        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y
+                        () -> drive.withVelocityX(
+                                        -joystickPrimary.getLeftY() * MaxSpeed) // Drive forward with negative Y
                                 // (forward)
-                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X
+                                .withVelocityY(-joystickPrimary.getLeftX() * MaxSpeed) // Drive left with negative X
                                 // (left)
-                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                .withRotationalRate(
+                                        -joystickPrimary.getRightX() * MaxAngularRate) // Drive counterclockwise
                         // with negative X (left)
                         ));
 
@@ -67,30 +69,27 @@ public class RobotContainer {
         RobotModeTriggers.disabled()
                 .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b()
-                .whileTrue(drivetrain.applyRequest(
-                        () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+        joystickPrimary.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystickPrimary
+                .b()
+                .whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(
+                        new Rotation2d(-joystickPrimary.getLeftY(), -joystickPrimary.getLeftX()))));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystickPrimary.back().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystickPrimary.back().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystickPrimary.start().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystickPrimary.start().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         // RUN INTAKE COMMANDS
         // TODO: RUMBLE WHEN INTAKE swithcing directions
-        joystick2.leftBumper().toggleOnTrue(IntakeSub.run(IntakeSub::runIntake));
-        joystick2.rightBumper().toggleOnTrue(IntakeSub.run(IntakeSub::reverseIntake));
+        joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::runIntake));
+        joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::reverseIntake));
 
-        IntakeSub.setDefaultCommand(new RunCommand(
-                () -> {
-                    IntakeSub.stopIntake();
-                },
-                IntakeSub));
+        intakeSub.setDefaultCommand(new RunCommand(intakeSub::stopIntake, intakeSub));
     }
 
     public Command getAutonomousCommand() {
