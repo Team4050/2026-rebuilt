@@ -4,17 +4,21 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
     // TODO: Relocate constants to dedicated constants file
@@ -31,9 +35,12 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystickPrimary = new CommandXboxController(0);
+    private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Intake intakeSub = new Intake();
+
 
     public RobotContainer() {
         configureBindings();
@@ -45,11 +52,13 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(
-                        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y
+                        () -> drive.withVelocityX(
+                                        -joystickPrimary.getLeftY() * MaxSpeed) // Drive forward with negative Y
                                 // (forward)
-                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X
+                                .withVelocityY(-joystickPrimary.getLeftX() * MaxSpeed) // Drive left with negative X
                                 // (left)
-                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                .withRotationalRate(
+                                        -joystickPrimary.getRightX() * MaxAngularRate) // Drive counterclockwise
                         // with negative X (left)
                         ));
 
@@ -59,20 +68,27 @@ public class RobotContainer {
         RobotModeTriggers.disabled()
                 .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b()
-                .whileTrue(drivetrain.applyRequest(
-                        () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+        joystickPrimary.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystickPrimary
+                .b()
+                .whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(
+                        new Rotation2d(-joystickPrimary.getLeftY(), -joystickPrimary.getLeftX()))));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystickPrimary.back().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystickPrimary.back().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystickPrimary.start().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystickPrimary.start().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // RUN INTAKE COMMANDS
+        // TODO: RUMBLE WHEN INTAKE swithcing directions
+        joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::runIntake));
+        joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::reverseIntake));
+
+        intakeSub.setDefaultCommand(new RunCommand(intakeSub::stopIntake, intakeSub));
     }
 
     public Command getAutonomousCommand() {

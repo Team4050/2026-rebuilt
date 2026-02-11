@@ -16,6 +16,7 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
 
     private final RobotContainer robotContainer;
+
     private final MatchData matchData = new MatchData();
 
     public Robot() {
@@ -64,7 +65,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         if (autonomousCommand != null) {
-            autonomousCommand.cancel();
+            CommandScheduler.getInstance().cancel(autonomousCommand);
         }
     }
 
@@ -84,4 +85,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testExit() {}
+
+    @Override
+    public void simulationPeriodic() {}
 }
