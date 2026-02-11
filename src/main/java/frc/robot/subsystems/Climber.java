@@ -9,20 +9,16 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Climber extends SubsystemBase {
 
     private static final int leaderMotorID = 6;
     private static final int followerMotorID = 7;
 
-    @AutoLogOutput
-    private double encoderPosition;
-
     // default units are rotations
     private double encoderPositionMin = 0.0;
-    private double encoderPositionMax =
-            5.0; // TODO at least max position must be calibrated manually and refactored here
+    // TODO at least max position must be calibrated manually and refactored here
+    private double encoderPositionMax = 5.0;
 
     private double maxSpeed = 1.0;
 
@@ -55,11 +51,11 @@ public class Climber extends SubsystemBase {
     }
 
     private boolean isAtUpperLimit() {
-        return encoderPosition >= encoderPositionMax;
+        return encoder.getPosition() >= encoderPositionMax;
     }
 
     private boolean isAtLowerLimit() {
-        return encoderPosition <= encoderPositionMin;
+        return encoder.getPosition() <= encoderPositionMin;
     }
 
     private void setSpeed(double speed) {
@@ -105,6 +101,6 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        encoderPosition = encoder.getPosition();
+        /* not yet used */
     }
 }
