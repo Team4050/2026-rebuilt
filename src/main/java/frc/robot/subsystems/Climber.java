@@ -10,32 +10,25 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-    private static final int kLeaderID = 6;
-    private static final int kFollowerID = 7;
+    private static final int leaderMotorID = 6;
+    private static final int followerMotorID = 7;
 
     @AutoLogOutput
     private double encoderPosition;
 
     // default units are rotations
     private double encoderPositionMin = 0.0;
-    private double encoderPositionMax = 100.0; // TODO at least max position must be calibrated manually and refactored here
+    private double encoderPositionMax =
+            5.0; // TODO at least max position must be calibrated manually and refactored here
 
-    private boolean positionLowerLimit = false;
-    private boolean positionUpperLimit = false;
-
-    @AutoLogOutput
     private double maxSpeed = 1.0;
 
-    @AutoLogOutput
-    private double speed = 0.0;
+    private final SparkMax leaderMotor = new SparkMax(leaderMotorID, MotorType.kBrushless);
 
-    private final SparkMax leaderMotor = new SparkMax(kLeaderID, MotorType.kBrushless);
-
-    private final SparkMax followerMotor = new SparkMax(kFollowerID, MotorType.kBrushless);
+    private final SparkMax followerMotor = new SparkMax(followerMotorID, MotorType.kBrushless);
 
     private final RelativeEncoder encoder = leaderMotor.getEncoder();
 
@@ -48,22 +41,37 @@ public class Climber extends SubsystemBase {
         followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
 
         // apply configs, check for errors
-        if (leaderMotor.configure(leaderConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters)
+        if (leaderMotor.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
                 != REVLibError.kOk) {
-            System.err.println("Error configuring Climber Leader Motor");
+            throw new IllegalStateException("Error configuring Climber Leader Motor");
         }
-        if (followerMotor.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters)
+        if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
                 != REVLibError.kOk) {
-            System.err.println("Error configuring Climber Follower Motor");
+            throw new IllegalStateException("Error configuring Climber Follower Motor");
         }
 
         // on startup, assume climber is in the "down" position
         encoder.setPosition(0.0);
     }
 
+    private boolean isAtUpperLimit() {
+        return encoderPosition >= encoderPositionMax;
+    }
+
+    private boolean isAtLowerLimit() {
+        return encoderPosition <= encoderPositionMin;
+    }
+
+    private void setSpeed(double speed) {
+        leaderMotor.set(speed * maxSpeed);
+    }
+
+    /**
+     * Set the maximum speed threshold for the climber.
+     * @param speed the maximum speed. This number should be between 0 and 1.0.
+     */
     public void setMaxSpeed(double speed) {
         if (speed > 1.0 || speed < 0.0) {
-            Logger.recordMetadata("Climber/errorString", "Max speed set out of bounds.");
             maxSpeed = 1.0;
         } else {
             maxSpeed = speed;
@@ -74,7 +82,7 @@ public class Climber extends SubsystemBase {
      * Move the climber up at full speed
      */
     public void up() {
-        if (!positionUpperLimit) {
+        if (!isAtUpperLimit()) {
             setSpeed(1.0);
         }
     }
@@ -83,31 +91,20 @@ public class Climber extends SubsystemBase {
      * Move the climber down at full speed
      */
     public void down() {
-        if (!positionLowerLimit) {
+        if (!isAtLowerLimit()) {
             setSpeed(-1.0);
         }
-    }
-
-    private void setSpeed(double speed) {
-        this.speed = speed;
-        leaderMotor.set(speed * maxSpeed);
     }
 
     /**
      * Stop the climber.
      */
     public void stop() {
-        this.speed = 0.0;
         leaderMotor.stopMotor();
     }
 
     @Override
     public void periodic() {
-        super.periodic();
         encoderPosition = encoder.getPosition();
-        // Logger.recordOutput("Climber/encoderPosition", encoder.getPosition());
-
-            positionUpperLimit = encoderPosition >= encoderPositionMax;
-            positionLowerLimit = encoderPosition <= encoderPositionMin;
     }
 }
