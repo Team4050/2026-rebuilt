@@ -1,0 +1,95 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3910674157303367,
+        "y": 5.296
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5971450320911014,
+        "y": 4.939063098160469
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.1439213483146067,
+        "y": 1.8133595505617985
+      },
+      "prevControl": {
+        "x": 2.3707926983394763,
+        "y": 1.8133595505617985
+      },
+      "nextControl": {
+        "x": 3.831178103973412,
+        "y": 1.8133595505617985
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.334988764044944,
+        "y": 2.0885168539325845
+      },
+      "prevControl": {
+        "x": 4.883050123364391,
+        "y": 1.3390171550429901
+      },
+      "nextControl": {
+        "x": 5.786927404725497,
+        "y": 2.838016552822179
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.875112359550561,
+        "y": 5.176393258426967
+      },
+      "prevControl": {
+        "x": 5.789291687630247,
+        "y": 4.6896800420179146
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 7.0,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}
