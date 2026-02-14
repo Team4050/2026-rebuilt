@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
 
     private final SparkMax intake = new SparkMax(51, SparkMax.MotorType.kBrushless);
-    private final SparkMax intakeDeply = new SparkMax(52, SparkMax.MotorType.kBrushless);
+    private final SparkMax intakeDeploy = new SparkMax(52, SparkMax.MotorType.kBrushless);
 
     public void stop() {
         intakeStop();
@@ -26,15 +26,15 @@ public class Intake extends SubsystemBase {
     }
 
     public void deployOut() {
-        intakeDeply.set(0.5);
+        intakeDeploy.set(0.5);
     }
 
     public void deployStop() {
-        intakeDeply.set(0);
+        intakeDeploy.set(0);
     }
 
 
     public void deployIn() {
-        intakeDeply.set(-0.5);
+        intakeDeploy.set(-0.5);
     }
 }
