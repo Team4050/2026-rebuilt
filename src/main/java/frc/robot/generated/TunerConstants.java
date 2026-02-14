@@ -69,9 +69,10 @@ public class TunerConstants {
     // This needs to be tuned to your individual robot
     private static final Current kSlipCurrent = Amps.of(120);
 
-    // Theoretical free speed (m/s) at 12 V applied output;
-    // This needs to be tuned to your individual robot
-    public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.58);
+    // Theoretical free speed (m/s) at 12 V applied output.
+    // See https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033831213 for approx. free
+    // speed of our swerve modules.
+    public static final LinearVelocity kSpeedAt12Volts = FeetPerSecond.of(15);
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -102,8 +103,8 @@ public class TunerConstants {
     // Phoenix constants - Likely don't need changed manually but may be changed when re-calibrating with Phoenix Tuner
     // =========================================================================================================================
 
-    private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
-    private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+    private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+    private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
     private static final DriveMotorArrangement kDriveMotorType = DriveMotorArrangement.TalonFX_Integrated;
     private static final SteerMotorArrangement kSteerMotorType = SteerMotorArrangement.TalonFX_Integrated;
     private static final SteerFeedbackType kSteerFeedbackType = SteerFeedbackType.FusedCANcoder;
