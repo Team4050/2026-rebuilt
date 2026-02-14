@@ -96,9 +96,7 @@ public class RobotState {
     // }
 
     // ===================================================================================
-    // VISION STATE
-    // Producer: VisionSubsystem
-    // Consumer: CommandSwerveDrivetrain
+    // Vision State
     // ===================================================================================
 
     public record VisionMeasurement(
@@ -157,12 +155,10 @@ public class RobotState {
         return visionRejectedCount;
     }
 
-    // Examples
+    // AI Generated Examples
 
     // // ===================================================================================
-    // // TARGETING STATE
-    // // Producer: Auto routines, driver input, game piece detection
-    // // Consumers: Drivetrain (auto-aim), Shooter, Turret, LEDs
+    // // Targeting State
     // // ===================================================================================
 
     // private Translation2d targetPosition = null;
@@ -233,9 +229,7 @@ public class RobotState {
     // }
 
     // // ===================================================================================
-    // // ALLIANCE & MATCH STATE
-    // // Producer: DriverStation wrapper (set once at match start)
-    // // Consumers: Auto paths, vision filtering, target selection, LEDs
+    // // Alliance and Match State
     // // ===================================================================================
 
     // private Alliance alliance = Alliance.Blue;
@@ -270,9 +264,7 @@ public class RobotState {
     // }
 
     // // ===================================================================================
-    // // GAME PIECE STATE (STUB - customize for your game)
-    // // Producer: Intake subsystem, sensors
-    // // Consumers: Auto logic, LEDs, driver feedback, scoring commands
+    // // Game Piece State (Stub - customize for your game)
     // // ===================================================================================
 
     // // Example for 2025 Reefscape - adjust for your game
@@ -332,9 +324,7 @@ public class RobotState {
     // }
 
     // // ===================================================================================
-    // // MECHANISM STATE (STUBS - add your mechanisms)
-    // // Producer: Individual mechanism subsystems
-    // // Consumers: Collision avoidance, targeting calculations, state machines
+    // // Mechanism State
     // // ===================================================================================
 
     // // --- Arm Example ---
@@ -445,8 +435,7 @@ public class RobotState {
     // }
 
     // // ===================================================================================
-    // // SHOT READINESS (combines multiple subsystem states)
-    // // Useful for triggers, LEDs, and driver feedback
+    // // Shot Readiness (combines multiple subsystem states)
     // // ===================================================================================
 
     // /** Check if all systems are ready to shoot */
@@ -463,7 +452,7 @@ public class RobotState {
     // }
 
     // // ===================================================================================
-    // // ADVANTAGEKIT LOGGING
+    // // AdvantageKit Logging
     // // Call this from Robot.robotPeriodic()
     // // ===================================================================================
 
