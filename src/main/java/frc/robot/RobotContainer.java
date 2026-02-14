@@ -88,15 +88,16 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        // Control the climber with up and down on D-pad
         // RUN INTAKE COMMANDS
         // TODO: RUMBLE WHEN INTAKE switching directions
-        joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::runIntake));
-        joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::reverseIntake));
+        joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeForward));
+        joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeReverse));
+        joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
+        joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
 
-        intakeSub.setDefaultCommand(new RunCommand(intakeSub::stopIntake, intakeSub));
-        joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        intakeSub.setDefaultCommand(new RunCommand(intakeSub::stop, intakeSub));
 
+        // Control the climber with up and down on D-pad
         joystickSecondary.povUp().onTrue(climber.runOnce(climber::up));
         joystickSecondary.povDown().whileTrue(climber.runOnce(climber::down));
     }
