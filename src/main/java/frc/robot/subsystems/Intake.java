@@ -7,7 +7,7 @@ public class Intake extends SubsystemBase {
 
     private final SparkMax intake = new SparkMax(5, SparkMax.MotorType.kBrushless);
     // private final SparkMax intakdeply = new SparkMax(5, SparkMax.MotorType.kBrushless);
-    // rem to add deploy motor later
+    // TODO: add deploy motor later
 
     public void runIntake() {
         intake.set(1);
