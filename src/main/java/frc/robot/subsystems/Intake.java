@@ -33,7 +33,6 @@ public class Intake extends SubsystemBase {
         intakeDeploy.set(0);
     }
 
-
     public void deployIn() {
         intakeDeploy.set(-0.5);
     }
