@@ -9,12 +9,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-
-    private static final int leaderMotorID = 53;
-    private static final int followerMotorID = 54;
-
     // default units are rotations
     private double encoderPositionMin = 0.0;
     // TODO at least max position must be calibrated manually and refactored here
@@ -22,9 +19,9 @@ public class Climber extends SubsystemBase {
 
     private double maxSpeed = 1.0;
 
-    private final SparkMax leaderMotor = new SparkMax(leaderMotorID, MotorType.kBrushless);
+    private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
-    private final SparkMax followerMotor = new SparkMax(followerMotorID, MotorType.kBrushless);
+    private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
 
     private final RelativeEncoder encoder = leaderMotor.getEncoder();
 

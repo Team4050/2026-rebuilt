@@ -12,39 +12,14 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.*;
+import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TunerConstants {
 
     // Note: canBus parameter is significant. CANivore devices are named in Phoenix Tuner, so this must match the name
     // of our CANivore.
-    public static final CANBus kCANBus = new CANBus("Drivetrain");
-
-    // =========================================================================================================================
-    // CAN device IDs - Schema is <module number: 1-4><device: drive = 1, steer = 2, encoder = 3>
-    // =========================================================================================================================
-
-    private static final int kPigeonId = 10;
-
-    // Front left - Module 1
-    private static final int kFrontLeftDriveMotorId = 11;
-    private static final int kFrontLeftSteerMotorId = 12;
-    private static final int kFrontLeftEncoderId = 13;
-
-    // Front right - Module 4
-    private static final int kFrontRightDriveMotorId = 41;
-    private static final int kFrontRightSteerMotorId = 42;
-    private static final int kFrontRightEncoderId = 43;
-
-    // Back left - Module 2
-    private static final int kBackLeftDriveMotorId = 21;
-    private static final int kBackLeftSteerMotorId = 22;
-    private static final int kBackLeftEncoderId = 23;
-
-    // Back right - Module 3
-    private static final int kBackRightDriveMotorId = 31;
-    private static final int kBackRightSteerMotorId = 32;
-    private static final int kBackRightEncoderId = 33;
+    public static final CANBus kCANBus = new CANBus(Constants.canivoreCanBusName);
 
     // =========================================================================================================================
     // Swerve module gains and constants - To be tuned as-needed
@@ -103,8 +78,8 @@ public class TunerConstants {
     // Phoenix constants - Likely don't need changed manually but may be changed when re-calibrating with Phoenix Tuner
     // =========================================================================================================================
 
-    private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
-    private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+    private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+    private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
     private static final DriveMotorArrangement kDriveMotorType = DriveMotorArrangement.TalonFX_Integrated;
     private static final SteerMotorArrangement kSteerMotorType = SteerMotorArrangement.TalonFX_Integrated;
     private static final SteerFeedbackType kSteerFeedbackType = SteerFeedbackType.FusedCANcoder;
@@ -118,7 +93,7 @@ public class TunerConstants {
 
     public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()
             .withCANBusName(kCANBus.getName())
-            .withPigeon2Id(kPigeonId)
+            .withPigeon2Id(Constants.Drivetrain.pigeonId)
             .withPigeon2Configs(pigeonConfigs);
 
     private static final SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -154,9 +129,9 @@ public class TunerConstants {
 
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             FrontLeft = ConstantCreator.createModuleConstants(
-                    kFrontLeftSteerMotorId,
-                    kFrontLeftDriveMotorId,
-                    kFrontLeftEncoderId,
+                    Constants.Drivetrain.frontLeftSteerId,
+                    Constants.Drivetrain.frontLeftDriveId,
+                    Constants.Drivetrain.frontLeftEncoderId,
                     kFrontLeftEncoderOffset,
                     kFrontLeftXPos,
                     kFrontLeftYPos,
@@ -173,9 +148,9 @@ public class TunerConstants {
 
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             FrontRight = ConstantCreator.createModuleConstants(
-                    kFrontRightSteerMotorId,
-                    kFrontRightDriveMotorId,
-                    kFrontRightEncoderId,
+                    Constants.Drivetrain.frontRightSteerId,
+                    Constants.Drivetrain.frontRightDriveId,
+                    Constants.Drivetrain.frontRightEncoderId,
                     kFrontRightEncoderOffset,
                     kFrontRightXPos,
                     kFrontRightYPos,
@@ -192,9 +167,9 @@ public class TunerConstants {
 
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             BackLeft = ConstantCreator.createModuleConstants(
-                    kBackLeftSteerMotorId,
-                    kBackLeftDriveMotorId,
-                    kBackLeftEncoderId,
+                    Constants.Drivetrain.backLeftSteerId,
+                    Constants.Drivetrain.backLeftDriveId,
+                    Constants.Drivetrain.backLeftEncoderId,
                     kBackLeftEncoderOffset,
                     kBackLeftXPos,
                     kBackLeftYPos,
@@ -211,9 +186,9 @@ public class TunerConstants {
 
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             BackRight = ConstantCreator.createModuleConstants(
-                    kBackRightSteerMotorId,
-                    kBackRightDriveMotorId,
-                    kBackRightEncoderId,
+                    Constants.Drivetrain.backRightSteerId,
+                    Constants.Drivetrain.backRightDriveId,
+                    Constants.Drivetrain.backRightEncoderId,
                     kBackRightEncoderOffset,
                     kBackRightXPos,
                     kBackRightYPos,

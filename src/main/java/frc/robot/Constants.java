@@ -1,0 +1,40 @@
+package frc.robot;
+
+public final class Constants {
+
+    public static final String canivoreCanBusName = "Drivetrain";
+
+    public static final int pdhId = 1;
+
+    public final class Drivetrain {
+        public static final int pigeonId = 10;
+
+        // =========================================================================================================================
+        // CAN device IDs - Schema is <module number: 1-4><device: drive = 1, steer = 2, encoder = 3>
+        // =========================================================================================================================
+
+        public static final int frontLeftDriveId = 11;
+        public static final int frontLeftSteerId = 12;
+        public static final int frontLeftEncoderId = 13;
+
+        public static final int frontRightDriveId = 21;
+        public static final int frontRightSteerId = 22;
+        public static final int frontRightEncoderId = 23;
+
+        public static final int backLeftDriveId = 31;
+        public static final int backLeftSteerId = 32;
+        public static final int backLeftEncoderId = 33;
+
+        public static final int backRightDriveId = 41;
+        public static final int backRightSteerId = 42;
+        public static final int backRightEncoderId = 43;
+    }
+
+    public final class Subsystems {
+        public static final int intakeRollerId = 51;
+        public static final int intakeDeployId = 52;
+
+        public static final int climberPrimaryId = 53;
+        public static final int climberFollowerId = 54;
+    }
+}
