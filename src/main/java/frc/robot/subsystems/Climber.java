@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
 
-    private static final int leaderMotorID = 6;
-    private static final int followerMotorID = 7;
+    private static final int leaderMotorID = 53;
+    private static final int followerMotorID = 54;
 
     // default units are rotations
     private double encoderPositionMin = 0.0;
