@@ -36,6 +36,8 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
+    private final Telemetry logger = new Telemetry(MaxSpeed);
+
     private final CommandXboxController joystickPrimary = new CommandXboxController(0);
     private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
@@ -100,6 +102,8 @@ public class RobotContainer {
         // Control the climber with up and down on D-pad
         joystickSecondary.povUp().onTrue(climber.runOnce(climber::up));
         joystickSecondary.povDown().whileTrue(climber.runOnce(climber::down));
+
+        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
