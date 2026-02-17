@@ -21,27 +21,28 @@ public class Climber extends SubsystemBase {
 
     private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
-    private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
+    // private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId,
+    // MotorType.kBrushless);
 
     private final RelativeEncoder encoder = leaderMotor.getEncoder();
 
     public Climber() {
         SparkMaxConfig leaderConfig = new SparkMaxConfig();
-        SparkMaxConfig followerConfig = new SparkMaxConfig();
+        // SparkMaxConfig followerConfig = new SparkMaxConfig();
 
         leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
 
-        followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
+        // followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
 
         // apply configs, check for errors
         if (leaderMotor.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
                 != REVLibError.kOk) {
             throw new IllegalStateException("Error configuring Climber Leader Motor");
         }
-        if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-                != REVLibError.kOk) {
-            throw new IllegalStateException("Error configuring Climber Follower Motor");
-        }
+        // if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+        //         != REVLibError.kOk) {
+        //     throw new IllegalStateException("Error configuring Climber Follower Motor");
+        // }
 
         // on startup, assume climber is in the "down" position
         encoder.setPosition(0.0);
