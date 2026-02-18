@@ -52,5 +52,6 @@
   // Misc
   "git.blame.editorDecoration.enabled": true,
   "git.autofetch": true,
-  "git.branchProtection": ["main"]
+  "git.branchProtection": ["main"],
+  "git.rebaseWhenSync": true
 }
