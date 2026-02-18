@@ -88,8 +88,8 @@ public class RobotContainer {
         intakeSub.setDefaultCommand(new RunCommand(intakeSub::stop, intakeSub));
         joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeForward));
         joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeReverse));
-        joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
-        joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
+        // joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
+        // joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
 
         climber.setDefaultCommand(new RunCommand(climber::stop, climber));
         joystickSecondary.povUp().onTrue(climber.runOnce(climber::up));
