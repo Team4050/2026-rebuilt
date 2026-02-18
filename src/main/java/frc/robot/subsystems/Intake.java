@@ -6,14 +6,14 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
     private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
-    // private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
+    // private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
+    // SparkMax.MotorType.kBrushless);
 
     public Intake() {
         SparkMaxConfig mainConfig = new SparkMaxConfig();
@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeForward() {
-        intake.set(1);
+        intake.set(0.25);
     }
 
     public void intakeStop() {
@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeReverse() {
-        intake.set(-1);
+        intake.set(-0.25);
     }
 
     // public void deployOut() {

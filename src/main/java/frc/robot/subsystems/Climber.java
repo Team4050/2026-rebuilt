@@ -17,7 +17,7 @@ public class Climber extends SubsystemBase {
     // TODO at least max position must be calibrated manually and refactored here
     private double encoderPositionMax = 5.0;
 
-    private double maxSpeed = 1.0;
+    private double maxSpeed = 0.25;
 
     private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
