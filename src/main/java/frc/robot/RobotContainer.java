@@ -91,9 +91,12 @@ public class RobotContainer {
         // joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
         // joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
 
-        climber.setDefaultCommand(new RunCommand(climber::stop, climber));
-        joystickSecondary.povUp().onTrue(climber.runOnce(climber::up));
+        // climber.setDefaultCommand(new RunCommand(climber::stop, climber));
+        joystickSecondary.povUp().onTrue(new RunCommand(climber::up));
+        joystickSecondary.povUp().onFalse(new RunCommand(climber::stop));
+
         joystickSecondary.povDown().whileTrue(climber.runOnce(climber::down));
+        joystickSecondary.povDown().onFalse(new RunCommand(climber::stop));
     }
 
     public Command getAutonomousCommand() {

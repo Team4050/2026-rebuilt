@@ -17,7 +17,7 @@ public class Climber extends SubsystemBase {
     // TODO at least max position must be calibrated manually and refactored here
     private double encoderPositionMax = 5.0;
 
-    private double maxSpeed = 0.25;
+    private double speedFactor = 0.25;
 
     private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
@@ -57,18 +57,18 @@ public class Climber extends SubsystemBase {
     }
 
     private void setSpeed(double speed) {
-        leaderMotor.set(speed * maxSpeed);
+        leaderMotor.set(speed * speedFactor);
     }
 
     /**
      * Set the maximum speed threshold for the climber.
      * @param speed the maximum speed. This number should be between 0 and 1.0.
      */
-    public void setMaxSpeed(double speed) {
+    public void setSpeedFactor(double speed) {
         if (speed > 1.0 || speed < 0.0) {
-            maxSpeed = 1.0;
+            speedFactor = 1.0;
         } else {
-            maxSpeed = speed;
+            speedFactor = speed;
         }
     }
 
