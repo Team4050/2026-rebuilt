@@ -15,9 +15,9 @@ public class Climber extends SubsystemBase {
     // default units are rotations
     private double encoderPositionMin = 0.0;
     // TODO at least max position must be calibrated manually and refactored here
-    private double encoderPositionMax = 5.0;
+    private double encoderPositionMax = 10.0;
 
-    private double speedFactor = 0.25;
+    private double speedFactor = 0.5;
 
     private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
@@ -78,6 +78,8 @@ public class Climber extends SubsystemBase {
     public void up() {
         if (!isAtUpperLimit()) {
             setSpeed(1.0);
+        } else {
+            stop();
         }
     }
 
@@ -87,6 +89,8 @@ public class Climber extends SubsystemBase {
     public void down() {
         if (!isAtLowerLimit()) {
             setSpeed(-1.0);
+        } else {
+            stop();
         }
     }
 
