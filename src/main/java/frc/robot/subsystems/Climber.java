@@ -103,6 +103,6 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        /* not yet used */
+        System.out.println("Climber - Encoder Position: " + encoder.getPosition());
     }
 }
