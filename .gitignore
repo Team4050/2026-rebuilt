@@ -130,3 +130,5 @@ bin/
 *.dat
 *.hoot
 *.log
+
+BuildConstants.java

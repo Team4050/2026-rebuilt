@@ -4,37 +4,65 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.util.MatchData;
+import frc.robot.util.Elastic;
 
+@Logged
 public class Robot extends TimedRobot {
     private Command autonomousCommand;
 
+    private final RobotState robotState = RobotState.getInstance();
+
     private final RobotContainer robotContainer;
 
-    private final MatchData matchData = new MatchData();
-
     public Robot() {
-        // Silence joystick warnings in development (overridden when connected to FMS)
-        DriverStation.silenceJoystickConnectionWarning(true);
-
         // Serve Elastic dashboard config file
         // https://frc-elastic.gitbook.io/docs/additional-features-and-references/remote-layout-downloading#on-robot-configuration
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
+        // Default dashboard to diagnostics tab when not on main branch
+        if (!BuildConstants.GIT_BRANCH.equals("main")) {
+            Elastic.selectTab("Diagnostics");
+        }
+
         robotContainer = new RobotContainer();
 
-        matchData.init();
+        configureLogging();
+    }
+
+    private void configureLogging() {
+        // Silence joystick warnings in development (overridden when connected to FMS)
+        DriverStation.silenceJoystickConnectionWarning(true);
+
+        // Suppress .hoot file generation from CTRE SignalLogger
+        SignalLogger.enableAutoLogging(false);
+
+        // Start data logging — mirrors all NetworkTables to .wpilog on disk
+        DataLogManager.start();
+        DriverStation.startDataLog(DataLogManager.getLog());
+
+        Epilogue.configure(config -> {
+            if (isSimulation()) {
+                config.errorHandler = ErrorHandler.crashOnError();
+            }
+            config.minimumImportance = Logged.Importance.DEBUG;
+        });
+        Epilogue.bind(this);
     }
 
     @Override
     public void robotPeriodic() {
-        matchData.periodic();
+        robotState.periodic();
         CommandScheduler.getInstance().run();
     }
 

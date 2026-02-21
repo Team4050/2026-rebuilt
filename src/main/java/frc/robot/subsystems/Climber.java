@@ -148,4 +148,8 @@ public class Climber extends SubsystemBase {
             setSpeedForTarget();
         }
     }
+
+    public double getEncoderPosition() {
+        return encoder.getPosition();
+    }
 }
