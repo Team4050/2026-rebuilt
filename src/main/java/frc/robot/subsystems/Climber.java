@@ -4,6 +4,8 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -18,13 +20,8 @@ public class Climber extends SubsystemBase {
   // TODO at least max position must be calibrated manually and refactored here
   private double encoderPositionMax = 10.0;
 
-  private double speedFactor = 0.5;
-
-  private static final double POSITION_DELTA = 0.1;
-
-  private double targetPosition = -1.0;
-
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
+  private final SparkClosedLoopController controller;
 
   // private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId,
   // MotorType.kBrushless);
@@ -36,6 +33,13 @@ public class Climber extends SubsystemBase {
     // SparkMaxConfig followerConfig = new SparkMaxConfig();
 
     leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
+    leaderConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
+    leaderConfig
+        .softLimit
+        .forwardSoftLimit(encoderPositionMax)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimit(encoderPositionMin)
+        .reverseSoftLimitEnabled(true);
 
     // followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
 
@@ -44,112 +48,63 @@ public class Climber extends SubsystemBase {
         .configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       throw new IllegalStateException("Error configuring Climber Leader Motor");
     }
+
+    controller = leaderMotor.getClosedLoopController();
+
     // if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
     //         != REVLibError.kOk) {
     //     throw new IllegalStateException("Error configuring Climber Follower Motor");
     // }
 
     // on startup, assume climber is in the "down" position
-    encoder.setPosition(0.0);
+    encoder.setPosition(encoderPositionMin);
   }
 
-  private boolean isAtUpperLimit() {
-    return encoder.getPosition() >= encoderPositionMax;
+  private void setPosition(double position) {
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0.05);
   }
 
-  private boolean isAtLowerLimit() {
-    return encoder.getPosition() <= encoderPositionMin;
-  }
-
-  private void setSpeed(double speed) {
-    leaderMotor.set(speed * speedFactor);
-  }
-
-  private void disableTargetPosition() {
-    targetPosition = -1.0;
-  }
-
-  private boolean targetEnabled() {
-    return targetPosition >= 0;
-  }
-
-  private void setSpeedForTarget() {
-    if (isAtLowerLimit() || isAtUpperLimit()) {
-      stop();
-      return;
-    }
-
-    double position = encoder.getPosition();
-    if (position - targetPosition > POSITION_DELTA) {
-      down();
-    } else if (position - targetPosition < -POSITION_DELTA) {
-      up();
+  private double clampPosition(double position) {
+    if (position > encoderPositionMax) {
+      return encoderPositionMax;
+    } else if (position < encoderPositionMin) {
+      return encoderPositionMin;
     } else {
-      stop();
-      targetPosition = -1.0;
+      return position;
     }
-  }
-
-  /**
-   * Set the maximum speed threshold for the climber.
-   *
-   * @param speed
-   *          the maximum speed. This number should be between 0 and 1.0.
-   */
-  public void setSpeedFactor(double speed) {
-    if (speed > 1.0 || speed < 0.0) {
-      speedFactor = 1.0;
-    } else {
-      speedFactor = speed;
-    }
-  }
-
-  /**
-   * Move the climber up at full speed
-   */
-  public void up() {
-    disableTargetPosition();
-    if (!isAtUpperLimit()) {
-      setSpeed(1.0);
-    } else {
-      stop();
-    }
-  }
-
-  /**
-   * Move the climber down at full speed
-   */
-  public void down() {
-    disableTargetPosition();
-    if (!isAtLowerLimit()) {
-      setSpeed(-1.0);
-    } else {
-      stop();
-    }
-  }
-
-  /**
-   * Stop the climber.
-   */
-  public void stop() {
-    leaderMotor.stopMotor();
   }
 
   /**
    * Set a position for the climber to move to.
    */
   public void setTargetPosition(double position) {
-    double currentPosition = encoder.getPosition();
-    if (Math.abs(currentPosition - position) > POSITION_DELTA) {
-      targetPosition = position;
-    }
+    setPosition(clampPosition(position));
+  }
+
+  /**
+   * Move the climber up at full speed
+   */
+  public void up() {
+    setPosition(encoderPositionMax);
+  }
+
+  /**
+   * Move the climber down at full speed
+   */
+  public void down() {
+    setPosition(encoderPositionMin);
+  }
+
+  /**
+   * Stop the climber.
+   */
+  public void stop() {
+    controller.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 
   @Override
   public void periodic() {
-    if (targetEnabled()) {
-      setSpeedForTarget();
-    }
+    /* currently unused */
   }
 
   public double getEncoderPosition() {
