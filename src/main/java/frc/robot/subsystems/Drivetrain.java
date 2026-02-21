@@ -10,6 +10,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,7 +29,7 @@ import java.util.function.Supplier;
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
  * be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -104,8 +106,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
      * @param modules Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
+    public Drivetrain(SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -123,7 +124,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *     to 0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
      * @param modules Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public Drivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -148,7 +149,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *     y, theta]ᵀ, with units in meters and radians
      * @param modules Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public Drivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
             Matrix<N3, N1> odometryStandardDeviation,
@@ -195,6 +196,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
+    }
+
+    public Pose2d getPose() {
+        return getState().Pose;
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return getState().Speeds;
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return getState().ModuleStates;
+    }
+
+    public SwerveModuleState[] getModuleTargets() {
+        return getState().ModuleTargets;
+    }
+
+    public Rotation2d getHeading() {
+        return getState().Pose.getRotation();
     }
 
     @Override

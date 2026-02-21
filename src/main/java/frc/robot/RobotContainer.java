@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
@@ -35,7 +35,7 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final Intake intakeSub = new Intake();
     public final Climber climber = new Climber();
@@ -44,7 +44,15 @@ public class RobotContainer {
     private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
     public RobotContainer() {
+        initRobotState();
         configureBindings();
+    }
+
+    private void initRobotState() {
+        RobotState rs = RobotState.getInstance();
+        rs.addDrivetrain(drivetrain);
+        rs.addIntake(intakeSub);
+        rs.addClimber(climber);
     }
 
     private void configureBindings() {
