@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
     id "com.diffplug.spotless" version "6.25.0"
+    id "com.peterabeles.gversion" version "1.10"
 }
 
 java {
@@ -117,6 +118,16 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add "-XDstringConcat=inline"
 }
 
+gversion {
+    srcDir       = "src/main/java/"
+    classPackage = "frc.robot"
+    className    = "BuildConstants"
+    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+    timeZone     = "America/New_York"
+    indent       = "    "
+}
+project.compileJava.dependsOn(createVersionFile)
+
 task eventDeploy {
     doLast {
         if (project.gradle.startParameter.taskNames.any({ it.toLowerCase().contains("deploy") })) {
@@ -147,32 +158,8 @@ task eventDeploy {
         }
     }
 }
-project.compileJava.dependsOn(eventDeploy)
+createVersionFile.dependsOn(eventDeploy)
 
-task installGitHook(type: Copy){
-    from new File(rootProject.rootDir, 'scripts/pre-commit')
-    into { new File(rootProject.rootDir, '.git/hooks')}
-    filePermissions {
-        user {
-            read = true
-            write = true
-            execute = true
-        }
-        group {
-            read = true
-            write = true
-            execute = true
-        }
-        other {
-            read = true
-            write = false
-            execute = true
-        }
-    }
-}
-build.dependsOn(installGitHook)
-
-project.compileJava.dependsOn(spotlessApply)
 spotless {
     java {
         target fileTree(".") {
@@ -215,3 +202,27 @@ spotless {
         endWithNewline()
     }
 }
+project.compileJava.dependsOn(spotlessApply)
+
+task installGitHook(type: Copy){
+    from new File(rootProject.rootDir, 'scripts/pre-commit')
+    into { new File(rootProject.rootDir, '.git/hooks')}
+    filePermissions {
+        user {
+            read = true
+            write = true
+            execute = true
+        }
+        group {
+            read = true
+            write = true
+            execute = true
+        }
+        other {
+            read = true
+            write = false
+            execute = true
+        }
+    }
+}
+project.compileJava.dependsOn(installGitHook)

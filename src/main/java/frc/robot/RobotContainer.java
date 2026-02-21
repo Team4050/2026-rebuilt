@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -53,6 +55,9 @@ public class RobotContainer {
         rs.addDrivetrain(drivetrain);
         rs.addIntake(intakeSub);
         rs.addClimber(climber);
+
+        SmartDashboard.putData("SysId Routine", drivetrain.buildSysIdChooser());
+        SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
     }
 
     private void configureBindings() {

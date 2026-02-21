@@ -54,4 +54,8 @@ public class Intake extends SubsystemBase {
     // public void deployIn() {
     //     intakeDeploy.set(-0.5);
     // }
+
+    public double getSpeed() {
+        return intake.get();
+    }
 }
