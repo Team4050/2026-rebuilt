@@ -10,7 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -21,17 +21,12 @@ public class Climber extends SubsystemBase {
   private double encoderPositionMax = 10.0;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
-  private final SparkClosedLoopController controller;
-
-  // private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId,
-  // MotorType.kBrushless);
-
+  private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
   private final RelativeEncoder encoder = leaderMotor.getEncoder();
+  private final SparkClosedLoopController controller = leaderMotor.getClosedLoopController();
 
   public Climber() {
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
-    // SparkMaxConfig followerConfig = new SparkMaxConfig();
-
     leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
     leaderConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
     leaderConfig
@@ -41,27 +36,26 @@ public class Climber extends SubsystemBase {
         .reverseSoftLimit(encoderPositionMin)
         .reverseSoftLimitEnabled(true);
 
-    // followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
-
-    // apply configs, check for errors
     if (leaderMotor
         .configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       throw new IllegalStateException("Error configuring Climber Leader Motor");
     }
 
-    controller = leaderMotor.getClosedLoopController();
+    SparkMaxConfig followerConfig = new SparkMaxConfig();
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, false);
 
-    // if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-    //         != REVLibError.kOk) {
-    //     throw new IllegalStateException("Error configuring Climber Follower Motor");
-    // }
+    if (followerMotor
+        .configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+      DriverStation.reportWarning(
+          "WARNING: Climber follower motor failed to configure. Running leader only.", false);
+    }
 
     // on startup, assume climber is in the "down" position
     encoder.setPosition(encoderPositionMin);
   }
 
   private void setPosition(double position) {
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0.05);
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   private double clampPosition(double position) {
