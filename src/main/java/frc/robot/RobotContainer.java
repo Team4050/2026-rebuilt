@@ -99,6 +99,8 @@ public class RobotContainer {
                 .negate()
                 .and(joystickSecondary.povDown().negate())
                 .whileTrue(new RunCommand(climber::stop, climber));
+        joystickSecondary.povLeft().onTrue(new RunCommand(() -> climber.setTargetPosition(0.0), climber));
+        joystickSecondary.povRight().onTrue(new RunCommand(() -> climber.setTargetPosition(5.0), climber));
     }
 
     public Command getAutonomousCommand() {

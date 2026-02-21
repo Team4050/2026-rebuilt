@@ -19,6 +19,10 @@ public class Climber extends SubsystemBase {
 
     private double speedFactor = 0.5;
 
+    private static final double POSITION_DELTA = 0.1;
+
+    private double targetPosition = -1.0;
+
     private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
 
     // private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId,
@@ -60,6 +64,31 @@ public class Climber extends SubsystemBase {
         leaderMotor.set(speed * speedFactor);
     }
 
+    private void disableTargetPosition() {
+        targetPosition = -1.0;
+    }
+
+    private boolean targetEnabled() {
+        return targetPosition >= 0;
+    }
+
+    private void setSpeedForTarget() {
+        if (isAtLowerLimit() || isAtUpperLimit()) {
+            stop();
+            return;
+        }
+
+        double position = encoder.getPosition();
+        if (position - targetPosition > POSITION_DELTA) {
+            down();
+        } else if (position - targetPosition < -POSITION_DELTA) {
+            up();
+        } else {
+            stop();
+            targetPosition = -1.0;
+        }
+    }
+
     /**
      * Set the maximum speed threshold for the climber.
      * @param speed the maximum speed. This number should be between 0 and 1.0.
@@ -76,6 +105,7 @@ public class Climber extends SubsystemBase {
      * Move the climber up at full speed
      */
     public void up() {
+        disableTargetPosition();
         if (!isAtUpperLimit()) {
             setSpeed(1.0);
         } else {
@@ -87,6 +117,7 @@ public class Climber extends SubsystemBase {
      * Move the climber down at full speed
      */
     public void down() {
+        disableTargetPosition();
         if (!isAtLowerLimit()) {
             setSpeed(-1.0);
         } else {
@@ -101,8 +132,20 @@ public class Climber extends SubsystemBase {
         leaderMotor.stopMotor();
     }
 
+    /**
+     * Set a position for the climber to move to.
+     */
+    public void setTargetPosition(double position) {
+        double currentPosition = encoder.getPosition();
+        if (Math.abs(currentPosition - position) > POSITION_DELTA) {
+            targetPosition = position;
+        }
+    }
+
     @Override
     public void periodic() {
-        System.out.println("Climber - Encoder Position: " + encoder.getPosition());
+        if (targetEnabled()) {
+            setSpeedForTarget();
+        }
     }
 }
