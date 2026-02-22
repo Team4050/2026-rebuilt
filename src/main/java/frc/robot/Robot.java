@@ -31,8 +31,8 @@ public class Robot extends TimedRobot {
         // https://frc-elastic.gitbook.io/docs/additional-features-and-references/remote-layout-downloading#on-robot-configuration
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
-        // Default dashboard to diagnostics tab when not on main branch
-        if (!BuildConstants.GIT_BRANCH.equals("main")) {
+        // Default dashboard to diagnostics tab when not on main or event branch
+        if (!BuildConstants.GIT_BRANCH.equals("main") && !BuildConstants.GIT_BRANCH.startsWith("event/")) {
             Elastic.selectTab("Diagnostics");
         }
 
@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
         // Silence joystick warnings in development (overridden when connected to FMS)
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        // Suppress .hoot file generation from CTRE SignalLogger
+        // Suppress .hoot file generation from CTRE SignalLogger - we will do our own logging
         SignalLogger.enableAutoLogging(false);
 
         // Start data logging — mirrors all NetworkTables to .wpilog on disk
