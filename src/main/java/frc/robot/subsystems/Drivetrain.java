@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -211,14 +212,31 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+    private double lastRotationOutput;
+
     private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
             new SysIdRoutine.Config(null, Volts.of(4), null),
             new SysIdRoutine.Mechanism(
-                    output -> setControl(translationCharacterization.withVolts(output)), null, this));
+                    output -> setControl(translationCharacterization.withVolts(output)),
+                    log -> {
+                        logDriveMotor(log, "FL", 0);
+                        logDriveMotor(log, "FR", 1);
+                        logDriveMotor(log, "BL", 2);
+                        logDriveMotor(log, "BR", 3);
+                    },
+                    this));
 
     private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
             new SysIdRoutine.Config(null, Volts.of(7), null),
-            new SysIdRoutine.Mechanism(volts -> setControl(steerCharacterization.withVolts(volts)), null, this));
+            new SysIdRoutine.Mechanism(
+                    volts -> setControl(steerCharacterization.withVolts(volts)),
+                    log -> {
+                        logSteerMotor(log, "FL", 0);
+                        logSteerMotor(log, "FR", 1);
+                        logSteerMotor(log, "BL", 2);
+                        logSteerMotor(log, "BR", 3);
+                    },
+                    this));
 
     private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -228,7 +246,54 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                     Volts.of(Math.PI),
                     null),
             new SysIdRoutine.Mechanism(
-                    output -> setControl(rotationCharacterization.withRotationalRate(output.in(Volts))), null, this));
+                    output -> {
+                        lastRotationOutput = output.in(Volts);
+                        setControl(rotationCharacterization.withRotationalRate(lastRotationOutput));
+                    },
+                    log -> {
+                        var pigeon = getPigeon2();
+                        var yaw = pigeon.getYaw();
+                        var angularVelocity = pigeon.getAngularVelocityZWorld();
+                        yaw.refresh();
+                        angularVelocity.refresh();
+                        log.motor("Rotation")
+                                .voltage(Volts.of(lastRotationOutput))
+                                .angularPosition(yaw.getValue())
+                                .angularVelocity(angularVelocity.getValue());
+                    },
+                    this));
+
+    private void logDriveMotor(SysIdRoutineLog log, String name, int moduleIndex) {
+        var motor = getModule(moduleIndex).getDriveMotor();
+        var voltage = motor.getMotorVoltage();
+        var position = motor.getPosition();
+        var velocity = motor.getVelocity();
+
+        voltage.refresh();
+        position.refresh();
+        velocity.refresh();
+
+        log.motor(name)
+                .voltage(voltage.getValue())
+                .angularPosition(position.getValue())
+                .angularVelocity(velocity.getValue());
+    }
+
+    private void logSteerMotor(SysIdRoutineLog log, String name, int moduleIndex) {
+        var motor = getModule(moduleIndex).getSteerMotor();
+        var voltage = motor.getMotorVoltage();
+        var position = motor.getPosition();
+        var velocity = motor.getVelocity();
+
+        voltage.refresh();
+        position.refresh();
+        velocity.refresh();
+
+        log.motor(name)
+                .voltage(voltage.getValue())
+                .angularPosition(position.getValue())
+                .angularVelocity(velocity.getValue());
+    }
 
     public SendableChooser<Command> buildSysIdChooser() {
         SendableChooser<Command> chooser = new SendableChooser<Command>();
