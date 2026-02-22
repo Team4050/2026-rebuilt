@@ -130,5 +130,9 @@ bin/
 *.dat
 *.hoot
 *.log
+*.wpilog
+
+simgui*.json
+networktables.json
 
 BuildConstants.java
