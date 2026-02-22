@@ -41,4 +41,9 @@ public final class Constants {
         public static final int climberPrimaryId = 53;
         public static final int climberFollowerId = 54;
     }
+
+    public final class Vision {
+        public static final boolean VISION_ENABLED = true;
+        public static final String LIMELIGHT_NAME = "limelight";
+    }
 }

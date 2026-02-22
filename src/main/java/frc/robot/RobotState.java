@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.util.LimelightHelpers;
 import java.util.Set;
 
 @Logged
@@ -42,6 +44,7 @@ public class RobotState {
 
     public void periodic() {
         updateMatchDataPeriodic();
+        updateVisionPeriodic();
     }
 
     // ===================== Drivetrain =====================
@@ -131,6 +134,54 @@ public class RobotState {
     @Logged
     public double getIntakeSpeed() {
         return intake.getSpeed();
+    }
+
+    // ===================== Vision =====================
+
+    private Pose2d visionPose = new Pose2d();
+
+    @SuppressWarnings("unused")
+    private int visionTagCount = 0;
+
+    @SuppressWarnings("unused")
+    private double visionAvgTagDist = 0;
+
+    @SuppressWarnings("unused")
+    private double visionLatencyMs = 0;
+
+    @SuppressWarnings("unused")
+    private boolean visionValid = false;
+
+    private void updateVisionPeriodic() {
+        if (!Constants.Vision.VISION_ENABLED || drivetrain == null) {
+            return;
+        }
+
+        String ll = Constants.Vision.LIMELIGHT_NAME;
+
+        // Provide gyro heading for MegaTag2 localization
+        LimelightHelpers.SetRobotOrientation(ll, drivetrain.getHeading().getDegrees(), 0, 0, 0, 0, 0);
+
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(ll);
+
+        if (!LimelightHelpers.validPoseEstimate(estimate)) {
+            visionValid = false;
+            return;
+        }
+
+        visionPose = estimate.pose;
+        visionTagCount = estimate.tagCount;
+        visionAvgTagDist = estimate.avgTagDist;
+        visionLatencyMs = estimate.latency;
+        visionValid = true;
+
+        // Show vision estimate on field widget
+        drivetrain.getFieldPosition().getObject("Vision").setPose(visionPose);
+
+        // Scale standard deviations with distance — farther tags = less trustworthy
+        double xyStdDev = 0.7 * estimate.avgTagDist;
+        drivetrain.addVisionMeasurement(
+                estimate.pose, estimate.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, Double.MAX_VALUE));
     }
 
     // ===================== Match data =====================
