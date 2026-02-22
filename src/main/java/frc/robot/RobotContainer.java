@@ -24,9 +24,9 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
-    private double MaxSpeed =
+    private final double MaxSpeed =
             0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate =
+    private final double MaxAngularRate =
             RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */

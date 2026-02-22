@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -43,7 +42,7 @@ public class RobotState {
     private boolean needGameDataCheck = true;
 
     @SuppressWarnings("unused")
-    private PowerDistribution pdh = new PowerDistribution();
+    private final PowerDistribution pdh = new PowerDistribution();
 
     @NotLogged
     private final Field2d field = new Field2d();
@@ -69,30 +68,28 @@ public class RobotState {
     public void addDrivetrain(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
+        // Epilogue doesn't support logging complex objects like Field2d, so add it as a Sendable instead
         SmartDashboard.putData("Field", field);
-        SmartDashboard.putData("Swerve Drive", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("SwerveDrive");
-                builder.addDoubleProperty(
-                        "Front Left Angle", () -> drivetrain.getModuleStates()[0].angle.getRadians(), null);
-                builder.addDoubleProperty(
-                        "Front Left Velocity", () -> drivetrain.getModuleStates()[0].speedMetersPerSecond, null);
-                builder.addDoubleProperty(
-                        "Front Right Angle", () -> drivetrain.getModuleStates()[1].angle.getRadians(), null);
-                builder.addDoubleProperty(
-                        "Front Right Velocity", () -> drivetrain.getModuleStates()[1].speedMetersPerSecond, null);
-                builder.addDoubleProperty(
-                        "Back Left Angle", () -> drivetrain.getModuleStates()[2].angle.getRadians(), null);
-                builder.addDoubleProperty(
-                        "Back Left Velocity", () -> drivetrain.getModuleStates()[2].speedMetersPerSecond, null);
-                builder.addDoubleProperty(
-                        "Back Right Angle", () -> drivetrain.getModuleStates()[3].angle.getRadians(), null);
-                builder.addDoubleProperty(
-                        "Back Right Velocity", () -> drivetrain.getModuleStates()[3].speedMetersPerSecond, null);
-                builder.addDoubleProperty(
-                        "Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
-            }
+        SmartDashboard.putData("Swerve Drive", (SendableBuilder builder) -> {
+            builder.setSmartDashboardType("SwerveDrive");
+            builder.addDoubleProperty(
+                    "Front Left Angle", () -> drivetrain.getModuleStates()[0].angle.getRadians(), null);
+            builder.addDoubleProperty(
+                    "Front Left Velocity", () -> drivetrain.getModuleStates()[0].speedMetersPerSecond, null);
+            builder.addDoubleProperty(
+                    "Front Right Angle", () -> drivetrain.getModuleStates()[1].angle.getRadians(), null);
+            builder.addDoubleProperty(
+                    "Front Right Velocity", () -> drivetrain.getModuleStates()[1].speedMetersPerSecond, null);
+            builder.addDoubleProperty(
+                    "Back Left Angle", () -> drivetrain.getModuleStates()[2].angle.getRadians(), null);
+            builder.addDoubleProperty(
+                    "Back Left Velocity", () -> drivetrain.getModuleStates()[2].speedMetersPerSecond, null);
+            builder.addDoubleProperty(
+                    "Back Right Angle", () -> drivetrain.getModuleStates()[3].angle.getRadians(), null);
+            builder.addDoubleProperty(
+                    "Back Right Velocity", () -> drivetrain.getModuleStates()[3].speedMetersPerSecond, null);
+            builder.addDoubleProperty(
+                    "Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
         });
     }
 
@@ -198,17 +195,10 @@ public class RobotState {
         if (needGameDataCheck) {
             String gameData = DriverStation.getGameSpecificMessage();
             if (gameData.length() > 0) {
-                switch (gameData.charAt(0)) {
-                    case 'B':
-                        firstAllianceInactive = DriverStation.Alliance.Blue;
-                        break;
-                    case 'R':
-                        firstAllianceInactive = DriverStation.Alliance.Red;
-                        break;
-                    default:
-                        firstAllianceInactive = null;
-                        break;
-                }
+                firstAllianceInactive = switch (gameData.charAt(0)) {
+                    case 'B' -> DriverStation.Alliance.Blue;
+                    case 'R' -> DriverStation.Alliance.Red;
+                    default -> null;};
                 needGameDataCheck = false;
             }
         }
