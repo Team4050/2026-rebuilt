@@ -23,25 +23,6 @@ import java.util.Set;
 public class RobotState {
     private static RobotState instance;
 
-    public enum MatchPeriod {
-        DISABLED,
-        AUTONOMOUS,
-        TELEOP,
-        ENDGAME,
-        TEST
-    }
-
-    private static final double ALLIANCE_SHIFTS_START = 130.0; // after 10s transition
-    private static final double SHIFT_DURATION = 25.0;
-
-    private double matchRemainingTime = -1;
-
-    @NotLogged
-    private DriverStation.Alliance alliance;
-
-    @NotLogged
-    private DriverStation.Alliance firstAllianceInactive;
-
     @NotLogged
     private boolean needGameDataCheck = true;
 
@@ -61,7 +42,7 @@ public class RobotState {
         updateMatchDataPeriodic();
     }
 
-    // --- Drivetrain ---
+    // ===================== Drivetrain =====================
 
     private Drivetrain drivetrain;
 
@@ -125,7 +106,7 @@ public class RobotState {
         return drivetrain.getHeading();
     }
 
-    // --- Climber ---
+    // ===================== Climber =====================
 
     private Climber climber;
 
@@ -138,7 +119,7 @@ public class RobotState {
         return climber.getEncoderPosition();
     }
 
-    // --- Intake ---
+    // ===================== Intake =====================
 
     private Intake intake;
 
@@ -151,7 +132,26 @@ public class RobotState {
         return intake.getSpeed();
     }
 
-    // --- Match data ---
+    // ===================== Match data =====================
+
+    public enum MatchPeriod {
+        DISABLED,
+        AUTONOMOUS,
+        TELEOP,
+        ENDGAME,
+        TEST
+    }
+
+    private static final double ALLIANCE_SHIFTS_START = 130.0; // after 10s transition
+    private static final double SHIFT_DURATION = 25.0;
+
+    private double matchRemainingTime = -1;
+
+    @NotLogged
+    private DriverStation.Alliance alliance;
+
+    @NotLogged
+    private DriverStation.Alliance firstAllianceInactive;
 
     @Logged
     public MatchPeriod getMatchPeriod() {
@@ -177,10 +177,6 @@ public class RobotState {
         return (firstAllianceInactive == alliance) == evenShift;
     }
 
-    /**
-     * Returns the current alliance shift number (1-4), or 0 if not in an alliance shift
-     * (transition, endgame, or not in teleop).
-     */
     @NotLogged
     private int getAllianceShiftNumber() {
         if (getMatchPeriod() != MatchPeriod.TELEOP) {
