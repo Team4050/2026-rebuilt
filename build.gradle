@@ -119,8 +119,8 @@ tasks.withType(JavaCompile) {
 }
 
 gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "frc.robot"
+    srcDir       = "src/main/java"
+    classPackage = "frc.robot.generated"
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/New_York"
