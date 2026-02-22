@@ -6,7 +6,21 @@
       "name": "Teleoperated",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "limelight",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 1408.0,
+            "height": 640.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          }
+        ]
       }
     },
     {
@@ -19,7 +33,48 @@
     {
       "name": "Diagnostics",
       "grid_layout": {
-        "layouts": [],
+        "layouts": [
+          {
+            "title": "SysID",
+            "x": 384.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Run SysId",
+                "x": 1536.0,
+                "y": 128.0,
+                "width": 384.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Run SysId",
+                  "period": 0.06,
+                  "show_type": false,
+                  "maximize_button_space": true
+                }
+              },
+              {
+                "title": "SysId Routine",
+                "x": 1408.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/SysId Routine",
+                  "period": 0.06,
+                  "sort_options": true
+                }
+              }
+            ]
+          }
+        ],
         "containers": [
           {
             "title": "Power Distribution",
@@ -34,35 +89,10 @@
             }
           },
           {
-            "title": "FMSInfo",
-            "x": 0.0,
-            "y": 512.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "FMSInfo",
-            "properties": {
-              "topic": "/FMSInfo",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "limelight",
-            "x": 384.0,
-            "y": 0.0,
-            "width": 1024.0,
-            "height": 512.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          },
-          {
             "title": "Field",
-            "x": 384.0,
-            "y": 512.0,
-            "width": 640.0,
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 768.0,
             "height": 384.0,
             "type": "Field",
             "properties": {
@@ -72,13 +102,17 @@
               "robot_width": 0.82,
               "robot_length": 0.82,
               "show_other_objects": true,
-              "show_trajectories": true
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
             }
           },
           {
             "title": "Swerve Drive",
-            "x": 1024.0,
-            "y": 512.0,
+            "x": 640.0,
+            "y": 0.0,
             "width": 384.0,
             "height": 384.0,
             "type": "SwerveDrive",
@@ -91,25 +125,13 @@
           },
           {
             "title": "Command Scheduler",
-            "x": 0.0,
-            "y": 640.0,
-            "width": 384.0,
-            "height": 256.0,
+            "x": 384.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
             "type": "Scheduler",
             "properties": {
               "topic": "/SmartDashboard/Scheduler",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "SysId Routine",
-            "x": 0.0,
-            "y": 896.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/SysId Routine",
               "period": 0.06
             }
           }
