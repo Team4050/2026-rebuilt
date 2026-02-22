@@ -54,24 +54,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain
-                        .applyRequest(
-                                () -> drive.withVelocityX(
-                                                -joystickPrimary.getLeftY() * MaxSpeed) // Drive forward with negative Y
-                                        // (forward)
-                                        .withVelocityY(
-                                                -joystickPrimary.getLeftX() * MaxSpeed) // Drive left with negative X
-                                        // (left)
-                                        .withRotationalRate(
-                                                -joystickPrimary.getRightX() * MaxAngularRate) // Drive counterclockwise
-                                // with negative X (left)
-                                )
-                        .withName("Teleop Swerve Drive"));
-
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -80,6 +62,12 @@ public class RobotContainer {
                         .applyRequest(() -> idle)
                         .ignoringDisable(true)
                         .withName("Idle Swerve Drive"));
+
+        drivetrain.setDefaultCommand(drivetrain
+                .applyRequest(() -> drive.withVelocityX(-joystickPrimary.getLeftY() * MaxSpeed)
+                        .withVelocityY(-joystickPrimary.getLeftX() * MaxSpeed)
+                        .withRotationalRate(-joystickPrimary.getRightX() * MaxAngularRate))
+                .withName("Teleop Swerve Drive"));
 
         joystickPrimary.a().whileTrue(drivetrain.applyRequest(() -> brake).withName("Brake Swerve Drive"));
         joystickPrimary
