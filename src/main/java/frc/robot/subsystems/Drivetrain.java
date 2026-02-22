@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -18,10 +17,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -42,59 +43,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedOperatorPerspective = false;
 
-    /* Swerve requests to apply during SysId characterization */
-    private final SwerveRequest.SysIdSwerveTranslation translationCharacterization =
-            new SwerveRequest.SysIdSwerveTranslation();
-    private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-    private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
-
-    /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
-    private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> setControl(translationCharacterization.withVolts(output)), null, this));
-
-    /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
-    private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(7), // Use dynamic voltage of 7 V
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
-            new SysIdRoutine.Mechanism(volts -> setControl(steerCharacterization.withVolts(volts)), null, this));
-
-    /*
-     * SysId routine for characterizing rotation.
-     * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
-     */
-    private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    /* This is in radians per second², but SysId only supports "volts per second" */
-                    Volts.of(Math.PI / 6).per(Second),
-                    /* This is in radians per second, but SysId only supports "volts" */
-                    Volts.of(Math.PI),
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> {
-                        /* output is actually radians per second, but SysId only supports "volts" */
-                        setControl(rotationCharacterization.withRotationalRate(output.in(Volts)));
-                        /* also log the requested output for SysId */
-                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-                    },
-                    null,
-                    this));
-
-    /* The SysId routine to test */
-    private SysIdRoutine sysIdRoutineToApply = sysIdRoutineTranslation;
+    private final Field2d fieldPosition = new Field2d();
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -175,61 +124,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         return run(() -> this.setControl(request.get()));
     }
 
-    /**
-     * Runs the SysId Quasistatic test in the given direction for the routine specified by {@link
-     * #sysIdRoutineToApply}.
-     *
-     * @param direction Direction of the SysId Quasistatic test
-     * @return Command to run
-     */
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return sysIdRoutineToApply.quasistatic(direction);
-    }
-
-    /**
-     * Runs the SysId Dynamic test in the given direction for the routine specified by {@link
-     * #sysIdRoutineToApply}.
-     *
-     * @param direction Direction of the SysId Dynamic test
-     * @return Command to run
-     */
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return sysIdRoutineToApply.dynamic(direction);
-    }
-
-    public Pose2d getPose() {
-        return getState().Pose;
-    }
-
-    public ChassisSpeeds getSpeeds() {
-        return getState().Speeds;
-    }
-
-    public SwerveModuleState[] getModuleStates() {
-        return getState().ModuleStates;
-    }
-
-    public SwerveModuleState[] getModuleTargets() {
-        return getState().ModuleTargets;
-    }
-
-    public Rotation2d getHeading() {
-        return getState().Pose.getRotation();
-    }
-
-    /**
-     * Builds a SendableChooser that lets the dashboard select which SysId routine to run.
-     * The existing button bindings automatically use whichever routine is selected.
-     */
-    public SendableChooser<SysIdRoutine> buildSysIdChooser() {
-        var chooser = new SendableChooser<SysIdRoutine>();
-        chooser.setDefaultOption("Translation", sysIdRoutineTranslation);
-        chooser.addOption("Steer", sysIdRoutineSteer);
-        chooser.addOption("Rotation", sysIdRoutineRotation);
-        chooser.onChange(routine -> sysIdRoutineToApply = routine);
-        return chooser;
-    }
-
     @Override
     public void periodic() {
         /*
@@ -248,6 +142,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                 hasAppliedOperatorPerspective = true;
             });
         }
+
+        fieldPosition.setRobotPose(getPose());
     }
 
     private void startSimThread() {
@@ -306,5 +202,78 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     @Override
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    // ===================== SysID =====================
+
+    private final SwerveRequest.SysIdSwerveTranslation translationCharacterization =
+            new SwerveRequest.SysIdSwerveTranslation();
+    private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
+    private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+
+    private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
+            new SysIdRoutine.Config(null, Volts.of(4), null),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(translationCharacterization.withVolts(output)), null, this));
+
+    private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
+            new SysIdRoutine.Config(null, Volts.of(7), null),
+            new SysIdRoutine.Mechanism(volts -> setControl(steerCharacterization.withVolts(volts)), null, this));
+
+    private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    /* This is in radians per second², but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(rotationCharacterization.withRotationalRate(output.in(Volts))), null, this));
+
+    /**
+     * Builds a SendableChooser for all SysId commands. Pair with a dashboard "Command" button
+     * that defers to the selected command.
+     */
+    public SendableChooser<Command> buildSysIdChooser() {
+        SendableChooser<Command> chooser = new SendableChooser<Command>();
+        chooser.setDefaultOption("Translation QS Fwd", sysIdRoutineTranslation.quasistatic(Direction.kForward));
+        chooser.addOption("Translation QS Rev", sysIdRoutineTranslation.quasistatic(Direction.kReverse));
+        chooser.addOption("Translation Dyn Fwd", sysIdRoutineTranslation.dynamic(Direction.kForward));
+        chooser.addOption("Translation Dyn Rev", sysIdRoutineTranslation.dynamic(Direction.kReverse));
+        chooser.addOption("Steer QS Fwd", sysIdRoutineSteer.quasistatic(Direction.kForward));
+        chooser.addOption("Steer QS Rev", sysIdRoutineSteer.quasistatic(Direction.kReverse));
+        chooser.addOption("Steer Dyn Fwd", sysIdRoutineSteer.dynamic(Direction.kForward));
+        chooser.addOption("Steer Dyn Rev", sysIdRoutineSteer.dynamic(Direction.kReverse));
+        chooser.addOption("Rotation QS Fwd", sysIdRoutineRotation.quasistatic(Direction.kForward));
+        chooser.addOption("Rotation QS Rev", sysIdRoutineRotation.quasistatic(Direction.kReverse));
+        chooser.addOption("Rotation Dyn Fwd", sysIdRoutineRotation.dynamic(Direction.kForward));
+        chooser.addOption("Rotation Dyn Rev", sysIdRoutineRotation.dynamic(Direction.kReverse));
+        return chooser;
+    }
+
+    // ===================== Getters for RobotState =====================
+
+    public Field2d getFieldPosition() {
+        return fieldPosition;
+    }
+
+    public Pose2d getPose() {
+        return getState().Pose;
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return getState().Speeds;
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return getState().ModuleStates;
+    }
+
+    public SwerveModuleState[] getModuleTargets() {
+        return getState().ModuleTargets;
+    }
+
+    public Rotation2d getHeading() {
+        return getState().Pose.getRotation();
     }
 }

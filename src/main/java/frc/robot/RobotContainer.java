@@ -11,13 +11,10 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -29,7 +26,6 @@ public class RobotContainer {
     private final double MaxAngularRate =
             RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1)
             .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -55,9 +51,6 @@ public class RobotContainer {
         rs.addDrivetrain(drivetrain);
         rs.addIntake(intakeSub);
         rs.addClimber(climber);
-
-        SmartDashboard.putData("SysId Routine", drivetrain.buildSysIdChooser());
-        SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
     }
 
     private void configureBindings() {
@@ -90,13 +83,6 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystickPrimary.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystickPrimary.back().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystickPrimary.back().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystickPrimary.start().and(joystickPrimary.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystickPrimary.start().and(joystickPrimary.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         intakeSub.setDefaultCommand(new RunCommand(intakeSub::stop, intakeSub));
         joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeForward));
