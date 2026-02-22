@@ -36,7 +36,9 @@ public class RobotState {
         return instance;
     }
 
-    private RobotState() {}
+    private RobotState() {
+        SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
+    }
 
     public void periodic() {
         updateMatchDataPeriodic();
@@ -54,7 +56,6 @@ public class RobotState {
         SmartDashboard.putData(
                 "Run SysId",
                 Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("Run SysId"));
-        SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
         // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
         SmartDashboard.putData("Field", drivetrain.getFieldPosition());

@@ -230,10 +230,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
             new SysIdRoutine.Mechanism(
                     output -> setControl(rotationCharacterization.withRotationalRate(output.in(Volts))), null, this));
 
-    /**
-     * Builds a SendableChooser for all SysId commands. Pair with a dashboard "Command" button
-     * that defers to the selected command.
-     */
     public SendableChooser<Command> buildSysIdChooser() {
         SendableChooser<Command> chooser = new SendableChooser<Command>();
         chooser.setDefaultOption("Translation QS Fwd", sysIdRoutineTranslation.quasistatic(Direction.kForward));
