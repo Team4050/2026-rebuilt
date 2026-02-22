@@ -90,7 +90,8 @@ public class RobotState {
                         "Back Right Angle", () -> drivetrain.getModuleStates()[3].angle.getRadians(), null);
                 builder.addDoubleProperty(
                         "Back Right Velocity", () -> drivetrain.getModuleStates()[3].speedMetersPerSecond, null);
-                builder.addDoubleProperty("Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
+                builder.addDoubleProperty(
+                        "Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
             }
         });
     }
