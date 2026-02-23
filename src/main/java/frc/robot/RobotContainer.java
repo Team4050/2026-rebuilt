@@ -21,85 +21,84 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
-    private final double MaxSpeed =
-            0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private final double MaxAngularRate =
-            RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private final double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(MaxSpeed * 0.1)
+      .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final Intake intakeSub = new Intake();
-    public final Climber climber = new Climber();
+  public final Intake intakeSub = new Intake();
+  public final Climber climber = new Climber();
 
-    private final CommandXboxController joystickPrimary = new CommandXboxController(0);
-    private final CommandXboxController joystickSecondary = new CommandXboxController(1);
+  private final CommandXboxController joystickPrimary = new CommandXboxController(0);
+  private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
-    public RobotContainer() {
-        initRobotState();
-        configureBindings();
-    }
+  public RobotContainer() {
+    initRobotState();
+    configureBindings();
+  }
 
-    private void initRobotState() {
-        RobotState rs = RobotState.getInstance();
-        rs.addDrivetrain(drivetrain);
-        rs.addIntake(intakeSub);
-        rs.addClimber(climber);
-    }
+  private void initRobotState() {
+    RobotState rs = RobotState.getInstance();
+    rs.addDrivetrain(drivetrain);
+    rs.addIntake(intakeSub);
+    rs.addClimber(climber);
+  }
 
-    private void configureBindings() {
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled()
-                .whileTrue(drivetrain
-                        .applyRequest(() -> idle)
-                        .ignoringDisable(true)
-                        .withName("Idle Swerve Drive"));
+  private void configureBindings() {
+    // Idle while the robot is disabled. This ensures the configured
+    // neutral mode is applied to the drive motors while disabled.
+    final var idle = new SwerveRequest.Idle();
+    RobotModeTriggers
+        .disabled()
+        .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true).withName("Idle Swerve Drive"));
 
-        drivetrain.setDefaultCommand(drivetrain
-                .applyRequest(() -> drive.withVelocityX(-joystickPrimary.getLeftY() * MaxSpeed)
-                        .withVelocityY(-joystickPrimary.getLeftX() * MaxSpeed)
-                        .withRotationalRate(-joystickPrimary.getRightX() * MaxAngularRate))
-                .withName("Teleop Swerve Drive"));
+    var teleopDrive = drivetrain
+        .applyRequest(
+            () -> drive
+                .withVelocityX(-joystickPrimary.getLeftY() * MaxSpeed)
+                .withVelocityY(-joystickPrimary.getLeftX() * MaxSpeed)
+                .withRotationalRate(-joystickPrimary.getRightX() * MaxAngularRate))
+        .withName("Teleop Swerve Drive");
+    drivetrain.setDefaultCommand(teleopDrive);
 
-        joystickPrimary.a().whileTrue(drivetrain.applyRequest(() -> brake).withName("Brake Swerve Drive"));
-        joystickPrimary
-                .b()
-                .whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(
-                        new Rotation2d(-joystickPrimary.getLeftY(), -joystickPrimary.getLeftX()))));
+    joystickPrimary.a().whileTrue(drivetrain.applyRequest(() -> brake).withName("Brake Swerve Drive"));
+    var pointWheels = drivetrain
+        .applyRequest(
+            () -> point.withModuleDirection(new Rotation2d(-joystickPrimary.getLeftY(), -joystickPrimary.getLeftX())));
+    joystickPrimary.b().whileTrue(pointWheels);
 
-        // Reset the field-centric heading on left bumper press.
-        joystickPrimary
-                .leftBumper()
-                .onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric).withName("Reset Field Centric Heading"));
+    // Reset the field-centric heading on left bumper press.
+    joystickPrimary
+        .leftBumper()
+        .onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric).withName("Reset Field Centric Heading"));
 
-        intakeSub.setDefaultCommand(new RunCommand(intakeSub::stop, intakeSub));
-        joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeForward));
-        joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeReverse));
-        // joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
-        // joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
+    intakeSub.setDefaultCommand(new RunCommand(intakeSub::stop, intakeSub));
+    joystickSecondary.leftBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeForward));
+    joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeReverse));
+    // joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
+    // joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
 
-        // climber.setDefaultCommand(new RunCommand(climber::stop, climber));
-        joystickSecondary.povUp().whileTrue(new RunCommand(climber::up, climber));
-        joystickSecondary.povDown().whileTrue(new RunCommand(climber::down, climber));
-        joystickSecondary
-                .povUp()
-                .negate()
-                .and(joystickSecondary.povDown().negate())
-                .whileTrue(new RunCommand(climber::stop, climber));
-        joystickSecondary.povLeft().onTrue(new RunCommand(() -> climber.setTargetPosition(0.0), climber));
-        joystickSecondary.povRight().onTrue(new RunCommand(() -> climber.setTargetPosition(5.0), climber));
-    }
+    // climber.setDefaultCommand(new RunCommand(climber::stop, climber));
+    joystickSecondary.povUp().whileTrue(new RunCommand(climber::up, climber));
+    joystickSecondary.povDown().whileTrue(new RunCommand(climber::down, climber));
+    joystickSecondary
+        .povUp()
+        .negate()
+        .and(joystickSecondary.povDown().negate())
+        .whileTrue(new RunCommand(climber::stop, climber));
+    joystickSecondary.povLeft().onTrue(new RunCommand(() -> climber.setTargetPosition(0.0), climber));
+    joystickSecondary.povRight().onTrue(new RunCommand(() -> climber.setTargetPosition(5.0), climber));
+  }
 
-    public Command getAutonomousCommand() {
-        // TODO: Autonomous code
-        return null;
-    }
+  public Command getAutonomousCommand() {
+    // TODO: Autonomous code
+    return null;
+  }
 }
