@@ -56,25 +56,45 @@ public class LimelightHelpers {
     @JsonProperty("t6t_rs")
     private double[] targetPose_RobotSpace;
 
-    public Pose3d getCameraPose_TargetSpace() { return toPose3D(cameraPose_TargetSpace); }
+    public Pose3d getCameraPose_TargetSpace() {
+      return toPose3D(cameraPose_TargetSpace);
+    }
 
-    public Pose3d getRobotPose_FieldSpace() { return toPose3D(robotPose_FieldSpace); }
+    public Pose3d getRobotPose_FieldSpace() {
+      return toPose3D(robotPose_FieldSpace);
+    }
 
-    public Pose3d getRobotPose_TargetSpace() { return toPose3D(robotPose_TargetSpace); }
+    public Pose3d getRobotPose_TargetSpace() {
+      return toPose3D(robotPose_TargetSpace);
+    }
 
-    public Pose3d getTargetPose_CameraSpace() { return toPose3D(targetPose_CameraSpace); }
+    public Pose3d getTargetPose_CameraSpace() {
+      return toPose3D(targetPose_CameraSpace);
+    }
 
-    public Pose3d getTargetPose_RobotSpace() { return toPose3D(targetPose_RobotSpace); }
+    public Pose3d getTargetPose_RobotSpace() {
+      return toPose3D(targetPose_RobotSpace);
+    }
 
-    public Pose2d getCameraPose_TargetSpace2D() { return toPose2D(cameraPose_TargetSpace); }
+    public Pose2d getCameraPose_TargetSpace2D() {
+      return toPose2D(cameraPose_TargetSpace);
+    }
 
-    public Pose2d getRobotPose_FieldSpace2D() { return toPose2D(robotPose_FieldSpace); }
+    public Pose2d getRobotPose_FieldSpace2D() {
+      return toPose2D(robotPose_FieldSpace);
+    }
 
-    public Pose2d getRobotPose_TargetSpace2D() { return toPose2D(robotPose_TargetSpace); }
+    public Pose2d getRobotPose_TargetSpace2D() {
+      return toPose2D(robotPose_TargetSpace);
+    }
 
-    public Pose2d getTargetPose_CameraSpace2D() { return toPose2D(targetPose_CameraSpace); }
+    public Pose2d getTargetPose_CameraSpace2D() {
+      return toPose2D(targetPose_CameraSpace);
+    }
 
-    public Pose2d getTargetPose_RobotSpace2D() { return toPose2D(targetPose_RobotSpace); }
+    public Pose2d getTargetPose_RobotSpace2D() {
+      return toPose2D(targetPose_RobotSpace);
+    }
 
     @JsonProperty("ta")
     public double ta;
@@ -135,25 +155,45 @@ public class LimelightHelpers {
     @JsonProperty("t6t_rs")
     private double[] targetPose_RobotSpace;
 
-    public Pose3d getCameraPose_TargetSpace() { return toPose3D(cameraPose_TargetSpace); }
+    public Pose3d getCameraPose_TargetSpace() {
+      return toPose3D(cameraPose_TargetSpace);
+    }
 
-    public Pose3d getRobotPose_FieldSpace() { return toPose3D(robotPose_FieldSpace); }
+    public Pose3d getRobotPose_FieldSpace() {
+      return toPose3D(robotPose_FieldSpace);
+    }
 
-    public Pose3d getRobotPose_TargetSpace() { return toPose3D(robotPose_TargetSpace); }
+    public Pose3d getRobotPose_TargetSpace() {
+      return toPose3D(robotPose_TargetSpace);
+    }
 
-    public Pose3d getTargetPose_CameraSpace() { return toPose3D(targetPose_CameraSpace); }
+    public Pose3d getTargetPose_CameraSpace() {
+      return toPose3D(targetPose_CameraSpace);
+    }
 
-    public Pose3d getTargetPose_RobotSpace() { return toPose3D(targetPose_RobotSpace); }
+    public Pose3d getTargetPose_RobotSpace() {
+      return toPose3D(targetPose_RobotSpace);
+    }
 
-    public Pose2d getCameraPose_TargetSpace2D() { return toPose2D(cameraPose_TargetSpace); }
+    public Pose2d getCameraPose_TargetSpace2D() {
+      return toPose2D(cameraPose_TargetSpace);
+    }
 
-    public Pose2d getRobotPose_FieldSpace2D() { return toPose2D(robotPose_FieldSpace); }
+    public Pose2d getRobotPose_FieldSpace2D() {
+      return toPose2D(robotPose_FieldSpace);
+    }
 
-    public Pose2d getRobotPose_TargetSpace2D() { return toPose2D(robotPose_TargetSpace); }
+    public Pose2d getRobotPose_TargetSpace2D() {
+      return toPose2D(robotPose_TargetSpace);
+    }
 
-    public Pose2d getTargetPose_CameraSpace2D() { return toPose2D(targetPose_CameraSpace); }
+    public Pose2d getTargetPose_CameraSpace2D() {
+      return toPose2D(targetPose_CameraSpace);
+    }
 
-    public Pose2d getTargetPose_RobotSpace2D() { return toPose2D(targetPose_RobotSpace); }
+    public Pose2d getTargetPose_RobotSpace2D() {
+      return toPose2D(targetPose_RobotSpace);
+    }
 
     @JsonProperty("ta")
     public double ta;
@@ -232,7 +272,9 @@ public class LimelightHelpers {
     public LimelightTarget_Barcode() {
     }
 
-    public String getFamily() { return family; }
+    public String getFamily() {
+      return family;
+    }
   }
 
   /**
@@ -505,17 +547,29 @@ public class LimelightHelpers {
     @JsonProperty("PythonOut")
     public double[] pythonOutput;
 
-    public Pose3d getBotPose3d() { return toPose3D(botpose); }
+    public Pose3d getBotPose3d() {
+      return toPose3D(botpose);
+    }
 
-    public Pose3d getBotPose3d_wpiRed() { return toPose3D(botpose_wpired); }
+    public Pose3d getBotPose3d_wpiRed() {
+      return toPose3D(botpose_wpired);
+    }
 
-    public Pose3d getBotPose3d_wpiBlue() { return toPose3D(botpose_wpiblue); }
+    public Pose3d getBotPose3d_wpiBlue() {
+      return toPose3D(botpose_wpiblue);
+    }
 
-    public Pose2d getBotPose2d() { return toPose2D(botpose); }
+    public Pose2d getBotPose2d() {
+      return toPose2D(botpose);
+    }
 
-    public Pose2d getBotPose2d_wpiRed() { return toPose2D(botpose_wpired); }
+    public Pose2d getBotPose2d_wpiRed() {
+      return toPose2D(botpose_wpired);
+    }
 
-    public Pose2d getBotPose2d_wpiBlue() { return toPose2D(botpose_wpiblue); }
+    public Pose2d getBotPose2d_wpiBlue() {
+      return toPose2D(botpose_wpiblue);
+    }
 
     @JsonProperty("Retro")
     public LimelightTarget_Retro[] targets_Retro;

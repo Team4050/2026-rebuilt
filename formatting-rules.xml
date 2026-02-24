@@ -30,11 +30,6 @@
     <setting
       id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="true" />
 
-    <!-- Keep simple methods/getters/setters on one line -->
-    <setting
-      id="org.eclipse.jdt.core.formatter.keep_simple_getter_setter_on_one_line"
-      value="true" />
-
     <!-- Wrapping: 16 = wrap where necessary (bin-pack) -->
     <!-- Method declarations -->
     <setting

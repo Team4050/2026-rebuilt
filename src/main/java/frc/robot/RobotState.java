@@ -70,19 +70,29 @@ public class RobotState {
   }
 
   @Logged
-  public Pose2d getChassisPose() { return drivetrain.getPose(); }
+  public Pose2d getChassisPose() {
+    return drivetrain.getPose();
+  }
 
   @Logged
-  public ChassisSpeeds getChassisSpeeds() { return drivetrain.getSpeeds(); }
+  public ChassisSpeeds getChassisSpeeds() {
+    return drivetrain.getSpeeds();
+  }
 
   @Logged
-  public SwerveModuleState[] getChassisModuleStates() { return drivetrain.getModuleStates(); }
+  public SwerveModuleState[] getChassisModuleStates() {
+    return drivetrain.getModuleStates();
+  }
 
   @Logged
-  public SwerveModuleState[] getChassisModuleTargets() { return drivetrain.getModuleTargets(); }
+  public SwerveModuleState[] getChassisModuleTargets() {
+    return drivetrain.getModuleTargets();
+  }
 
   @Logged
-  public Rotation2d getChassisHeading() { return drivetrain.getHeading(); }
+  public Rotation2d getChassisHeading() {
+    return drivetrain.getHeading();
+  }
 
   // ===================== Climber =====================
 
@@ -93,7 +103,9 @@ public class RobotState {
   }
 
   @Logged
-  public double getClimberPosition() { return climber.getEncoderPosition(); }
+  public double getClimberPosition() {
+    return climber.getEncoderPosition();
+  }
 
   // ===================== Intake =====================
 
@@ -104,7 +116,9 @@ public class RobotState {
   }
 
   @Logged
-  public double getIntakeSpeed() { return intake.getSpeed(); }
+  public double getIntakeSpeed() {
+    return intake.getSpeed();
+  }
 
   // ===================== Vision =====================
 

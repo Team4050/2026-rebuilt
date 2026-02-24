@@ -329,15 +329,27 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   // ===================== Getters for RobotState =====================
 
-  public Field2d getFieldPosition() { return fieldPosition; }
+  public Field2d getFieldPosition() {
+    return fieldPosition;
+  }
 
-  public Pose2d getPose() { return getState().Pose; }
+  public Pose2d getPose() {
+    return getState().Pose;
+  }
 
-  public ChassisSpeeds getSpeeds() { return getState().Speeds; }
+  public ChassisSpeeds getSpeeds() {
+    return getState().Speeds;
+  }
 
-  public SwerveModuleState[] getModuleStates() { return getState().ModuleStates; }
+  public SwerveModuleState[] getModuleStates() {
+    return getState().ModuleStates;
+  }
 
-  public SwerveModuleState[] getModuleTargets() { return getState().ModuleTargets; }
+  public SwerveModuleState[] getModuleTargets() {
+    return getState().ModuleTargets;
+  }
 
-  public Rotation2d getHeading() { return getState().Pose.getRotation(); }
+  public Rotation2d getHeading() {
+    return getState().Pose.getRotation();
+  }
 }

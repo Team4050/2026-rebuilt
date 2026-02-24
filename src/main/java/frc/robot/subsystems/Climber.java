@@ -53,9 +53,13 @@ public class Climber extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  private boolean isAtUpperLimit() { return encoder.getPosition() >= encoderPositionMax; }
+  private boolean isAtUpperLimit() {
+    return encoder.getPosition() >= encoderPositionMax;
+  }
 
-  private boolean isAtLowerLimit() { return encoder.getPosition() <= encoderPositionMin; }
+  private boolean isAtLowerLimit() {
+    return encoder.getPosition() <= encoderPositionMin;
+  }
 
   private void setSpeed(double speed) {
     leaderMotor.set(speed * speedFactor);
@@ -148,5 +152,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public double getEncoderPosition() { return encoder.getPosition(); }
+  public double getEncoderPosition() {
+    return encoder.getPosition();
+  }
 }

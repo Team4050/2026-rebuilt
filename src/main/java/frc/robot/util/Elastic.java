@@ -200,12 +200,16 @@ public final class Elastic {
      * @param level
      *          the level to set the notification to
      */
-    public void setLevel(NotificationLevel level) { this.level = level; }
+    public void setLevel(NotificationLevel level) {
+      this.level = level;
+    }
 
     /**
      * @return the level of this notification
      */
-    public NotificationLevel getLevel() { return level; }
+    public NotificationLevel getLevel() {
+      return level;
+    }
 
     /**
      * Updates the title of this notification
@@ -213,14 +217,18 @@ public final class Elastic {
      * @param title
      *          the title to set the notification to
      */
-    public void setTitle(String title) { this.title = title; }
+    public void setTitle(String title) {
+      this.title = title;
+    }
 
     /**
      * Gets the title of this notification
      *
      * @return the title of this notification
      */
-    public String getTitle() { return title; }
+    public String getTitle() {
+      return title;
+    }
 
     /**
      * Updates the description of this notification
@@ -228,9 +236,13 @@ public final class Elastic {
      * @param description
      *          the description to set the notification to
      */
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) {
+      this.description = description;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+      return description;
+    }
 
     /**
      * Updates the display time of the notification
@@ -248,14 +260,18 @@ public final class Elastic {
      * @param displayTimeMillis
      *          the number of milliseconds to display the notification for
      */
-    public void setDisplayTimeMillis(int displayTimeMillis) { this.displayTimeMillis = displayTimeMillis; }
+    public void setDisplayTimeMillis(int displayTimeMillis) {
+      this.displayTimeMillis = displayTimeMillis;
+    }
 
     /**
      * Gets the display time of the notification in milliseconds
      *
      * @return the number of milliseconds the notification is displayed for
      */
-    public int getDisplayTimeMillis() { return displayTimeMillis; }
+    public int getDisplayTimeMillis() {
+      return displayTimeMillis;
+    }
 
     /**
      * Updates the width of the notification
@@ -263,14 +279,18 @@ public final class Elastic {
      * @param width
      *          the width to set the notification to
      */
-    public void setWidth(double width) { this.width = width; }
+    public void setWidth(double width) {
+      this.width = width;
+    }
 
     /**
      * Gets the width of the notification
      *
      * @return the width of the notification
      */
-    public double getWidth() { return width; }
+    public double getWidth() {
+      return width;
+    }
 
     /**
      * Updates the height of the notification
@@ -281,14 +301,18 @@ public final class Elastic {
      * @param height
      *          the height to set the notification to
      */
-    public void setHeight(double height) { this.height = height; }
+    public void setHeight(double height) {
+      this.height = height;
+    }
 
     /**
      * Gets the height of the notification
      *
      * @return the height of the notification
      */
-    public double getHeight() { return height; }
+    public double getHeight() {
+      return height;
+    }
 
     /**
      * Modifies the notification's level and returns itself to allow for method chaining
