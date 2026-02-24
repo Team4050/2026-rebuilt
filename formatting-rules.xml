@@ -64,7 +64,7 @@
     <!-- Enum, annotations, superinterfaces -->
     <setting
       id="org.eclipse.jdt.core.formatter.alignment_for_enum_constants"
-      value="16" />
+      value="80" />
     <setting
       id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_type_declaration"
       value="16" />
@@ -95,7 +95,7 @@
     <!-- Other wrapping -->
     <setting
       id="org.eclipse.jdt.core.formatter.alignment_for_expressions_in_array_initializer"
-      value="16" />
+      value="80" />
     <setting
       id="org.eclipse.jdt.core.formatter.alignment_for_expressions_in_for_loop_header"
       value="16" />

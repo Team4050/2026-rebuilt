@@ -17,14 +17,14 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.LimelightHelpers;
 
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class RobotState {
   private static RobotState instance;
 
   @NotLogged
   private boolean needGameDataCheck = true;
 
-  @SuppressWarnings("unused")
+  @Logged(name = "PDH")
   private final PowerDistribution pdh = new PowerDistribution();
 
   public static RobotState getInstance() {
@@ -39,6 +39,7 @@ public class RobotState {
   }
 
   public void periodic() {
+    updateDrivetrainPeriodic();
     updateMatchDataPeriodic();
     updateVisionPeriodic();
   }
@@ -47,6 +48,12 @@ public class RobotState {
 
   private Drivetrain drivetrain;
 
+  @NotLogged
+  private SwerveModuleState[] cachedModuleStates = new SwerveModuleState[] { new SwerveModuleState(),
+      new SwerveModuleState(),
+      new SwerveModuleState(),
+      new SwerveModuleState() };
+
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
@@ -54,43 +61,57 @@ public class RobotState {
     SmartDashboard.putData("Field", drivetrain.getFieldPosition());
     SmartDashboard.putData("Swerve Drive", (SendableBuilder builder) -> {
       builder.setSmartDashboardType("SwerveDrive");
-      builder.addDoubleProperty("Front Left Angle", () -> drivetrain.getModuleStates()[0].angle.getRadians(), null);
-      builder
-          .addDoubleProperty("Front Left Velocity", () -> drivetrain.getModuleStates()[0].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Front Right Angle", () -> drivetrain.getModuleStates()[1].angle.getRadians(), null);
-      builder
-          .addDoubleProperty("Front Right Velocity", () -> drivetrain.getModuleStates()[1].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Left Angle", () -> drivetrain.getModuleStates()[2].angle.getRadians(), null);
-      builder.addDoubleProperty("Back Left Velocity", () -> drivetrain.getModuleStates()[2].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Right Angle", () -> drivetrain.getModuleStates()[3].angle.getRadians(), null);
-      builder
-          .addDoubleProperty("Back Right Velocity", () -> drivetrain.getModuleStates()[3].speedMetersPerSecond, null);
+      builder.addDoubleProperty("Front Left Angle", () -> cachedModuleStates[0].angle.getRadians(), null);
+      builder.addDoubleProperty("Front Left Velocity", () -> cachedModuleStates[0].speedMetersPerSecond, null);
+      builder.addDoubleProperty("Front Right Angle", () -> cachedModuleStates[1].angle.getRadians(), null);
+      builder.addDoubleProperty("Front Right Velocity", () -> cachedModuleStates[1].speedMetersPerSecond, null);
+      builder.addDoubleProperty("Back Left Angle", () -> cachedModuleStates[2].angle.getRadians(), null);
+      builder.addDoubleProperty("Back Left Velocity", () -> cachedModuleStates[2].speedMetersPerSecond, null);
+      builder.addDoubleProperty("Back Right Angle", () -> cachedModuleStates[3].angle.getRadians(), null);
+      builder.addDoubleProperty("Back Right Velocity", () -> cachedModuleStates[3].speedMetersPerSecond, null);
       builder.addDoubleProperty("Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
     });
   }
 
-  @Logged
+  private void updateDrivetrainPeriodic() {
+    if (drivetrain == null) {
+      return;
+    }
+    cachedModuleStates = drivetrain.getModuleStates();
+  }
+
   public Pose2d getChassisPose() {
+    if (drivetrain == null) {
+      return new Pose2d();
+    }
     return drivetrain.getPose();
   }
 
-  @Logged
   public ChassisSpeeds getChassisSpeeds() {
+    if (drivetrain == null) {
+      return new ChassisSpeeds();
+    }
     return drivetrain.getSpeeds();
   }
 
-  @Logged
   public SwerveModuleState[] getChassisModuleStates() {
+    if (drivetrain == null) {
+      return new SwerveModuleState[0];
+    }
     return drivetrain.getModuleStates();
   }
 
-  @Logged
   public SwerveModuleState[] getChassisModuleTargets() {
+    if (drivetrain == null) {
+      return new SwerveModuleState[0];
+    }
     return drivetrain.getModuleTargets();
   }
 
-  @Logged
   public Rotation2d getChassisHeading() {
+    if (drivetrain == null) {
+      return new Rotation2d();
+    }
     return drivetrain.getHeading();
   }
 
@@ -102,8 +123,10 @@ public class RobotState {
     this.climber = climber;
   }
 
-  @Logged
   public double getClimberPosition() {
+    if (climber == null) {
+      return 0.0;
+    }
     return climber.getEncoderPosition();
   }
 
@@ -115,8 +138,10 @@ public class RobotState {
     this.intake = intake;
   }
 
-  @Logged
   public double getIntakeSpeed() {
+    if (intake == null) {
+      return 0.0;
+    }
     return intake.getSpeed();
   }
 
@@ -124,16 +149,16 @@ public class RobotState {
 
   private Pose2d visionPose = new Pose2d();
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") // Logged by Epilogue
   private int visionTagCount = 0;
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") // Logged by Epilogue
   private double visionAvgTagDist = 0;
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") // Logged by Epilogue
   private double visionLatencyMs = 0;
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") // Logged by Epilogue
   private boolean visionValid = false;
 
   private void updateVisionPeriodic() {
@@ -188,7 +213,6 @@ public class RobotState {
   @NotLogged
   private DriverStation.Alliance firstAllianceInactive;
 
-  @Logged
   public MatchPeriod getMatchPeriod() {
     if (DriverStation.isAutonomous()) {
       return MatchPeriod.AUTONOMOUS;
@@ -200,7 +224,6 @@ public class RobotState {
     return MatchPeriod.DISABLED;
   }
 
-  @Logged
   public boolean isOurScoringPeriod() {
     int shift = getAllianceShiftNumber();
     if (shift == 0 || firstAllianceInactive == null || alliance == null) {
@@ -224,7 +247,7 @@ public class RobotState {
   }
 
   private void updateMatchDataPeriodic() {
-    if (alliance == null) {
+    if (alliance == null || DriverStation.isDisabled()) {
       alliance = DriverStation.getAlliance().orElse(null);
     }
 
@@ -232,7 +255,7 @@ public class RobotState {
 
     if (needGameDataCheck) {
       String gameData = DriverStation.getGameSpecificMessage();
-      if (gameData.length() > 0) {
+      if (!gameData.isEmpty()) {
         firstAllianceInactive = switch (gameData.charAt(0)) {
           case 'B' -> DriverStation.Alliance.Blue;
           case 'R' -> DriverStation.Alliance.Red;

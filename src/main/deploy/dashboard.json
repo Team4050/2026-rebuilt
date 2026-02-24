@@ -43,7 +43,7 @@
             "height": 512.0,
             "type": "PowerDistribution",
             "properties": {
-              "topic": "Robot/robotState/pdh",
+              "topic": "Robot/Robot State/PDH",
               "period": 0.06
             }
           },

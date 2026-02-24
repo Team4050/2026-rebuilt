@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.BuildConstants;
 import frc.robot.util.Elastic;
 
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
