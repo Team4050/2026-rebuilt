@@ -8,10 +8,16 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.Set;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -52,6 +58,13 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    SendableChooser<Command> sysIdChooser = drivetrain.buildSysIdChooser();
+    SmartDashboard.putData("SysId Routine", sysIdChooser);
+    joystickPrimary
+        .start()
+        .and(joystickPrimary.back())
+        .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("Run SysId"));
+
     // Idle while the robot is disabled. This ensures the configured
     // neutral mode is applied to the drive motors while disabled.
     final var idle = new SwerveRequest.Idle();

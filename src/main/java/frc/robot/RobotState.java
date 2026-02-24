@@ -10,16 +10,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.LimelightHelpers;
-import java.util.Set;
 
 @Logged
 public class RobotState {
@@ -53,11 +49,6 @@ public class RobotState {
 
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
-
-    SendableChooser<Command> sysIdChooser = drivetrain.buildSysIdChooser();
-    SmartDashboard.putData("SysId Routine", sysIdChooser);
-    SmartDashboard
-        .putData("Run SysId", Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("Run SysId"));
 
     // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
     SmartDashboard.putData("Field", drivetrain.getFieldPosition());
