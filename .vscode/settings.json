@@ -29,7 +29,8 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
     "editor.codeActionsOnSave": {
-      "source.fixAll.spotlessGradle": "explicit"
+      "source.fixAll.spotlessGradle": "explicit",
+      "source.organizeImports": "explicit"
     }
   },
 

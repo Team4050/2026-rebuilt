@@ -1,11 +1,16 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,8 +30,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily be used in
@@ -226,7 +229,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-  private double lastRotationOutput;
+  private double lastRotationOutputVoltage;
 
   private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
       new SysIdRoutine.Config(null, Volts.of(4), null),
@@ -250,17 +253,19 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Volts.of(Math.PI / 6).per(Second),
       /* This is in radians per second, but SysId only supports "volts" */
       Volts.of(Math.PI), null), new SysIdRoutine.Mechanism(output -> {
-        lastRotationOutput = output.in(Volts);
-        setControl(rotationCharacterization.withRotationalRate(lastRotationOutput));
+        lastRotationOutputVoltage = output.in(Volts);
+        setControl(rotationCharacterization.withRotationalRate(lastRotationOutputVoltage));
       }, log -> {
         var pigeon = getPigeon2();
         var yaw = pigeon.getYaw();
         var angularVelocity = pigeon.getAngularVelocityZWorld();
+
         yaw.refresh();
         angularVelocity.refresh();
+
         log
             .motor("Rotation")
-            .voltage(Volts.of(lastRotationOutput))
+            .voltage(Volts.of(lastRotationOutputVoltage))
             .angularPosition(yaw.getValue())
             .angularVelocity(angularVelocity.getValue());
       }, this));
@@ -270,14 +275,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     var voltage = motor.getMotorVoltage();
     var position = motor.getPosition();
     var velocity = motor.getVelocity();
+    var current = motor.getTorqueCurrent();
 
     voltage.refresh();
     position.refresh();
     velocity.refresh();
+    current.refresh();
 
     log
         .motor(name)
         .voltage(voltage.getValue())
+        .current(current.getValue())
         .angularPosition(position.getValue())
         .angularVelocity(velocity.getValue());
   }
@@ -287,14 +295,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     var voltage = motor.getMotorVoltage();
     var position = motor.getPosition();
     var velocity = motor.getVelocity();
+    var current = motor.getTorqueCurrent();
 
     voltage.refresh();
     position.refresh();
     velocity.refresh();
+    current.refresh();
 
     log
         .motor(name)
         .voltage(voltage.getValue())
+        .current(current.getValue())
         .angularPosition(position.getValue())
         .angularVelocity(velocity.getValue());
   }
