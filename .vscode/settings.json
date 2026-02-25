@@ -25,11 +25,12 @@
 
   "[java][groovy][gradle]": {
     "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
     "editor.codeActionsOnSave": {
-      "source.fixAll.spotlessGradle": "explicit"
+      "source.fixAll.spotlessGradle": "explicit",
+      "source.organizeImports": "explicit"
     }
   },
 
