@@ -30,14 +30,16 @@ public class Climber extends SubsystemBase {
 
   // stall homing constants
   private static final double HOMING_SPEED = 0.2;
-  private static final double STALL_CURRENT_AMPS = 40.0;
+  private static final double STALL_CURRENT_AMPS = 10.0;
   private static final double STALL_VELOCITY_RPM = 5.0;
   private static final double STALL_TIME_SEC = 0.25;
 
   public Climber() {
     leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
     leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
-    leaderMotorConfig.softLimit.forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
+
+    // TODO revert this
+    leaderMotorConfig.softLimit.forwardSoftLimitEnabled(false).reverseSoftLimitEnabled(false);
 
     if (leaderMotor
         .configure(leaderMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
@@ -124,6 +126,8 @@ public class Climber extends SubsystemBase {
 
       @Override
       public void initialize() {
+        System.out.println("Stall home " + (direction ? "up" : "down"));
+
         stallTimer.stop();
         stallTimer.reset();
 
@@ -157,6 +161,7 @@ public class Climber extends SubsystemBase {
             stallTimer.start();
           }
         } else {
+          System.out.println("Stalled!");
           stallTimer.stop();
           stallTimer.reset();
         }
