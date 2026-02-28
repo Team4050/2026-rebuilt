@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase {
 
   // default units are rotations
   private double encoderPositionMin = 0.0;
-  private double encoderPositionMax = 130;
+  private double encoderPositionMax = 140;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
@@ -41,10 +41,14 @@ public class Intake extends SubsystemBase {
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     deployConfig.softLimit
         .forwardSoftLimit(encoderPositionMax)
-        .forwardSoftLimitEnabled(false)
+        .forwardSoftLimitEnabled(true)
         .reverseSoftLimit(encoderPositionMin)
-        .reverseSoftLimitEnabled(false);
-    deployConfig.absoluteEncoder.setSparkMaxDataPortConfig().positionConversionFactor(360).inverted(true);
+        .reverseSoftLimitEnabled(true);
+    deployConfig.absoluteEncoder
+        .setSparkMaxDataPortConfig()
+        .positionConversionFactor(360)
+        .inverted(true)
+        .zeroOffset(0.508333333);
 
     if (intake
         .configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -99,7 +103,7 @@ public class Intake extends SubsystemBase {
   }
 
   /**
-   * Move the climber down at full speed
+   *
    */
   public void deployIn() {
     setPosition(encoderPositionMin);
@@ -114,5 +118,11 @@ public class Intake extends SubsystemBase {
 
   public double getPosition() {
     return encoder.getPosition();
+  }
+
+  private double deployPosition = 0.0;
+
+  public void deployForward() {
+    setPosition(deployPosition += 1);
   }
 }
