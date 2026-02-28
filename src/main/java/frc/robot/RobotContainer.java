@@ -97,8 +97,6 @@ public class RobotContainer {
     joystickSecondary.rightBumper().toggleOnTrue(intakeSub.run(intakeSub::intakeReverse));
     joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
     joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
-    joystickSecondary.b().whileTrue(intakeSub.run(intakeSub::doverrideOut));
-    joystickSecondary.x().whileTrue(intakeSub.run(intakeSub::doverrideIn));
 
     joystickSecondary.povUp().whileTrue(new RunCommand(climber::up, climber));
     joystickSecondary.povDown().whileTrue(new RunCommand(climber::down, climber));
