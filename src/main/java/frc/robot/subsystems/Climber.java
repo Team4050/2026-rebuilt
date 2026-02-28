@@ -19,8 +19,9 @@ import frc.robot.Constants;
 public class Climber extends SubsystemBase {
   // default units are rotations
   private double encoderPositionMin = 0.0;
-  // TODO at least max position must be calibrated manually and refactored here
-  private double encoderPositionMax = 10.0;
+
+  // calibrated 2/26/2026
+  private double encoderPositionMax = 54.5;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
   private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
@@ -29,16 +30,16 @@ public class Climber extends SubsystemBase {
   private final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
 
   // stall homing constants
-  private static final double HOMING_SPEED = 0.2;
+  private static final double HOMING_SPEED = 0.1;
   private static final double STALL_CURRENT_AMPS = 10.0;
   private static final double STALL_VELOCITY_RPM = 5.0;
-  private static final double STALL_TIME_SEC = 0.25;
+  private static final double STALL_TIME_SEC = 0.1;
+
+  private boolean abort_homing = false;
 
   public Climber() {
-    leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
-    leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
-
-    // TODO revert this
+    leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
+    leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.1, 0.1);
     leaderMotorConfig.softLimit.forwardSoftLimitEnabled(false).reverseSoftLimitEnabled(false);
 
     if (leaderMotor
@@ -58,7 +59,8 @@ public class Climber extends SubsystemBase {
     }
 
     // on startup, assume climber is in the "down" position
-    encoder.setPosition(encoderPositionMin);
+    // TODO fix this
+    // encoder.setPosition(encoderPositionMin + 10);
   }
 
   private void setPosition(double position) {
@@ -86,6 +88,7 @@ public class Climber extends SubsystemBase {
    * Move the climber up at full speed
    */
   public void up() {
+    abort_homing = true;
     setPosition(encoderPositionMax);
   }
 
@@ -93,6 +96,7 @@ public class Climber extends SubsystemBase {
    * Move the climber down at full speed
    */
   public void down() {
+    abort_homing = true;
     setPosition(encoderPositionMin);
   }
 
@@ -119,49 +123,40 @@ public class Climber extends SubsystemBase {
     encoder.setPosition(position);
   }
 
-  private Command getHomeCommand(boolean direction) {
+  /**
+   * Command for stall homing the climber.
+   *
+   * @return The generated command.
+   */
+  public Command homeCommand() {
     return new Command() {
       private final Timer stallTimer = new Timer();
-      private boolean aborted = false;
 
       @Override
       public void initialize() {
-        System.out.println("Stall home " + (direction ? "up" : "down"));
+        System.out.println("Stall homing");
 
-        stallTimer.stop();
-        stallTimer.reset();
-
-        if (direction) {
-          leaderMotorConfig.softLimit.forwardSoftLimitEnabled(false);
-        } else {
-          leaderMotorConfig.softLimit.reverseSoftLimitEnabled(false);
-        }
-
-        if (leaderMotor.configure(
-                leaderMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters)
-                != REVLibError.kOk) {
-          DriverStation.reportWarning(
-              "WARNING: Failed to reconfigure Leader Motor during homing " + (direction ? "up" : "down")
-                  + " command. Aborting command.",
-              false);
-          aborted = true;
-        }
+        abort_homing = false;
       }
 
       @Override
       public void execute() {
-        if (aborted) return;
+        if (abort_homing) {
+          System.out.println("Aborted!");
+          leaderMotor.stopMotor();
+          return;
+        }
 
-        runOpenLoop(direction ? HOMING_SPEED : -HOMING_SPEED);
+        runOpenLoop(-HOMING_SPEED);
 
         boolean stalled = getCurrent() > STALL_CURRENT_AMPS && Math.abs(getVelocity()) < STALL_VELOCITY_RPM;
 
         if (stalled) {
           if (!stallTimer.isRunning()) {
             stallTimer.start();
+            System.out.println("Stalled!");
           }
         } else {
-          System.out.println("Stalled!");
           stallTimer.stop();
           stallTimer.reset();
         }
@@ -169,55 +164,16 @@ public class Climber extends SubsystemBase {
 
       @Override
       public boolean isFinished() {
-        return aborted || stallTimer.hasElapsed(STALL_TIME_SEC);
+        return abort_homing || stallTimer.hasElapsed(STALL_TIME_SEC);
       }
 
       @Override
       public void end(boolean interrupted) {
+        if (abort_homing) return;
         stop();
-
-        if (aborted) {
-          return;
-        }
-
-        if (direction) {
-          leaderMotorConfig
-              .softLimit
-              .forwardSoftLimit(encoder.getPosition())
-              .forwardSoftLimitEnabled(true);
-        } else {
-          leaderMotorConfig
-              .softLimit
-              .reverseSoftLimit(encoder.getPosition())
-              .reverseSoftLimitEnabled(true);
-        }
-
-        if (leaderMotor.configure(
-                leaderMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-                != REVLibError.kOk) {
-          throw new IllegalStateException("Climber Leader Motor failed to reconfigure after home "
-              + (direction ? "up" : "down") + " command.");
-        }
+        encoder.setPosition(encoderPositionMin);
       }
-    }.withName(direction ? "ClimberHomeUp" : "ClimberHomeDown");
-  }
-
-  /**
-   * Command for stall homing the maximum position of the Climber.
-   *
-   * @return The home up Command.
-   */
-  public Command homeUpCommand() {
-    return getHomeCommand(true);
-  }
-
-  /**
-   * Command for stall homing the maximum position of the Climber.
-   *
-   * @return The home down Command.
-   */
-  public Command homeDownCommand() {
-    return getHomeCommand(false);
+    }.withName("ClimberHome");
   }
 
   @Override
