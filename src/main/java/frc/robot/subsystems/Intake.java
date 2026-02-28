@@ -5,6 +5,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -18,7 +19,7 @@ public class Intake extends SubsystemBase {
 
   // default units are rotations
   private double encoderPositionMin = 0.0;
-  private double encoderPositionMax = 130.0;
+  private double encoderPositionMax = 130;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
@@ -34,13 +35,16 @@ public class Intake extends SubsystemBase {
     intakeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
     deployConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
 
-    deployConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
+    deployConfig.closedLoop
+        .pid(0.008, 0.0, 0.001, ClosedLoopSlot.kSlot0)
+        .outputRange(-0.5, 0.5)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     deployConfig.softLimit
         .forwardSoftLimit(encoderPositionMax)
         .forwardSoftLimitEnabled(false)
         .reverseSoftLimit(encoderPositionMin)
         .reverseSoftLimitEnabled(false);
-    deployConfig.absoluteEncoder.setSparkMaxDataPortConfig().positionConversionFactor(360).inverted(false);
+    deployConfig.absoluteEncoder.setSparkMaxDataPortConfig().positionConversionFactor(360).inverted(true);
 
     if (intake
         .configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
