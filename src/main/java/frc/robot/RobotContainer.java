@@ -98,9 +98,8 @@ public class RobotContainer {
     // joystickSecondary.y().toggleOnTrue(intakeSub.run(intakeSub::deployOut));
     // joystickSecondary.a().toggleOnTrue(intakeSub.run(intakeSub::deployIn));
 
-    // TODO fix these being backwards
-    joystickSecondary.povUp().whileTrue(new RunCommand(climber::down, climber));
-    joystickSecondary.povDown().whileTrue(new RunCommand(climber::up, climber));
+    joystickSecondary.povUp().whileTrue(new RunCommand(climber::up, climber));
+    joystickSecondary.povDown().whileTrue(new RunCommand(climber::down, climber));
     joystickSecondary
         .povUp()
         .negate()

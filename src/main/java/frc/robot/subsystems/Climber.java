@@ -18,16 +18,16 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   // default units are rotations
-  private double encoderPositionMin = 0.0;
+  private final double ENCODER_POSITION_MIN = 0.0;
 
-  // calibrated 2/26/2026
-  private double encoderPositionMax = 54.5;
+  // manually calibrated 2/26/2026 for climber rev. 2
+  private final double ENCODER_POSITION_MAX = 54.5;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
   private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
   private final RelativeEncoder encoder = leaderMotor.getEncoder();
-  private final SparkClosedLoopController controller = leaderMotor.getClosedLoopController();
-  private final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
+
+  private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
   // stall homing constants
   private static final double HOMING_SPEED = 0.1;
@@ -38,9 +38,9 @@ public class Climber extends SubsystemBase {
   private boolean abort_homing = false;
 
   public Climber() {
+    final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
     leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
     leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.1, 0.1);
-    leaderMotorConfig.softLimit.forwardSoftLimitEnabled(false).reverseSoftLimitEnabled(false);
 
     if (leaderMotor
         .configure(leaderMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
@@ -57,21 +57,17 @@ public class Climber extends SubsystemBase {
       DriverStation.reportWarning(
           "WARNING: Climber Follower Motor failed to configure. Running leader only.", false);
     }
-
-    // on startup, assume climber is in the "down" position
-    // TODO fix this
-    // encoder.setPosition(encoderPositionMin + 10);
   }
 
   private void setPosition(double position) {
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   private double clampPosition(double position) {
-    if (position > encoderPositionMax) {
-      return encoderPositionMax;
-    } else if (position < encoderPositionMin) {
-      return encoderPositionMin;
+    if (position > ENCODER_POSITION_MAX) {
+      return ENCODER_POSITION_MAX;
+    } else if (position < ENCODER_POSITION_MIN) {
+      return ENCODER_POSITION_MIN;
     } else {
       return position;
     }
@@ -89,7 +85,9 @@ public class Climber extends SubsystemBase {
    */
   public void up() {
     abort_homing = true;
-    setPosition(encoderPositionMax);
+
+    // "up" refers to climber primary moving up, and encoder values change in opposite direction
+    setPosition(ENCODER_POSITION_MIN);
   }
 
   /**
@@ -97,30 +95,16 @@ public class Climber extends SubsystemBase {
    */
   public void down() {
     abort_homing = true;
-    setPosition(encoderPositionMin);
+
+    // "down" refers to climber primary down, and encoder values change in opposite direction
+    setPosition(ENCODER_POSITION_MAX);
   }
 
   /**
    * Stop the climber.
    */
   public void stop() {
-    controller.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
-  }
-
-  public void runOpenLoop(double speed) {
-    leaderMotor.set(speed);
-  }
-
-  public double getCurrent() {
-    return leaderMotor.getOutputCurrent();
-  }
-
-  public double getVelocity() {
-    return encoder.getVelocity();
-  }
-
-  public void zeroEncoder(double position) {
-    encoder.setPosition(position);
+    pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 
   /**
@@ -134,7 +118,10 @@ public class Climber extends SubsystemBase {
 
       @Override
       public void initialize() {
-        System.out.println("Stall homing");
+        System.out.println("Climber - stall homing start.");
+
+        stallTimer.stop();
+        stallTimer.reset();
 
         abort_homing = false;
       }
@@ -142,19 +129,20 @@ public class Climber extends SubsystemBase {
       @Override
       public void execute() {
         if (abort_homing) {
-          System.out.println("Aborted!");
+          System.out.println("Climber - stall homing aborted.");
           leaderMotor.stopMotor();
           return;
         }
 
-        runOpenLoop(-HOMING_SPEED);
+        leaderMotor.set(-HOMING_SPEED);
 
-        boolean stalled = getCurrent() > STALL_CURRENT_AMPS && Math.abs(getVelocity()) < STALL_VELOCITY_RPM;
+        boolean stalled = leaderMotor.getOutputCurrent() > STALL_CURRENT_AMPS
+            && Math.abs(encoder.getVelocity()) < STALL_VELOCITY_RPM;
 
         if (stalled) {
           if (!stallTimer.isRunning()) {
             stallTimer.start();
-            System.out.println("Stalled!");
+            System.out.println("Climber - stalled.");
           }
         } else {
           stallTimer.stop();
@@ -171,7 +159,7 @@ public class Climber extends SubsystemBase {
       public void end(boolean interrupted) {
         if (abort_homing) return;
         stop();
-        encoder.setPosition(encoderPositionMin);
+        encoder.setPosition(ENCODER_POSITION_MIN);
       }
     }.withName("ClimberHome");
   }
