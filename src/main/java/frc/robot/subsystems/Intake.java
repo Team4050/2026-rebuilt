@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
 
   // default units are rotations
   private double encoderPositionMin = 0.0;
-  private double encoderPositionMax = 0.36;
+  private double encoderPositionMax = 130.0;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
@@ -28,29 +28,29 @@ public class Intake extends SubsystemBase {
   private final SparkClosedLoopController controller = intakeDeploy.getClosedLoopController();
 
   public Intake() {
-    SparkMaxConfig mainConfig = new SparkMaxConfig();
-    SparkMaxConfig pidConfig = new SparkMaxConfig();
+    SparkMaxConfig intakeConfig = new SparkMaxConfig();
+    SparkMaxConfig deployConfig = new SparkMaxConfig();
 
-    mainConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
-    pidConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+    intakeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+    deployConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
 
-    pidConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
-    pidConfig.softLimit
+    deployConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
+    deployConfig.softLimit
         .forwardSoftLimit(encoderPositionMax)
         .forwardSoftLimitEnabled(false)
         .reverseSoftLimit(encoderPositionMin)
         .reverseSoftLimitEnabled(false);
+    deployConfig.absoluteEncoder.setSparkMaxDataPortConfig().positionConversionFactor(360).inverted(false);
 
     if (intake
-        .configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+        .configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Intake Motor", false);
     }
 
     if (intakeDeploy
-        .configure(pidConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+        .configure(deployConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Intake Deploy Motor", false);
     }
-
   }
 
   private void setPosition(double position) {
