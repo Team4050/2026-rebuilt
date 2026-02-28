@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -42,12 +43,12 @@ public class Intake extends SubsystemBase {
 
     if (intake
         .configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      //throw new IllegalStateException("Error configuring Intake Motor");
+      DriverStation.reportWarning("Error configuring Intake Motor", false);
     }
 
     if (intakeDeploy
         .configure(pidConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      throw new IllegalStateException("Error configuring Intake Deploy Motor");
+      DriverStation.reportWarning("Error configuring Intake Deploy Motor", false);
     }
 
   }
