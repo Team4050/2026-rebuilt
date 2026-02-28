@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -17,13 +17,13 @@ public class Intake extends SubsystemBase {
 
   // default units are rotations
   private double encoderPositionMin = 0.0;
-  private double encoderPositionMax = 10.0;
+  private double encoderPositionMax = 0.36;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
       SparkMax.MotorType.kBrushless);
 
-  private final RelativeEncoder encoder = intakeDeploy.getEncoder();
+  private final AbsoluteEncoder encoder = intakeDeploy.getAbsoluteEncoder();
   private final SparkClosedLoopController controller = intakeDeploy.getClosedLoopController();
 
   public Intake() {
@@ -36,13 +36,13 @@ public class Intake extends SubsystemBase {
     pidConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
     pidConfig.softLimit
         .forwardSoftLimit(encoderPositionMax)
-        .forwardSoftLimitEnabled(true)
+        .forwardSoftLimitEnabled(false)
         .reverseSoftLimit(encoderPositionMin)
-        .reverseSoftLimitEnabled(true);
+        .reverseSoftLimitEnabled(false);
 
     if (intake
         .configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      throw new IllegalStateException("Error configuring Intake Motor");
+      //throw new IllegalStateException("Error configuring Intake Motor");
     }
 
     if (intakeDeploy
@@ -50,8 +50,6 @@ public class Intake extends SubsystemBase {
       throw new IllegalStateException("Error configuring Intake Deploy Motor");
     }
 
-    // on startup, assume climber is in the "down" position
-    encoder.setPosition(encoderPositionMin);
   }
 
   private void setPosition(double position) {
@@ -77,7 +75,6 @@ public class Intake extends SubsystemBase {
 
   public void stop() {
     intakeStop();
-    deployStop();
   }
 
   public void intakeStop() {
@@ -108,5 +105,9 @@ public class Intake extends SubsystemBase {
    */
   public void deployStop() {
     controller.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
+  }
+
+  public double getPosition() {
+    return encoder.getPosition();
   }
 }

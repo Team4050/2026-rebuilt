@@ -138,11 +138,11 @@ public class RobotState {
     this.intake = intake;
   }
 
-  public double getIntakeSpeed() {
+  public double getIntakePosition() {
     if (intake == null) {
       return 0.0;
     }
-    return intake.getSpeed();
+    return intake.getPosition();
   }
 
   // ===================== Vision =====================
