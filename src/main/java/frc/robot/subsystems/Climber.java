@@ -4,152 +4,169 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   // default units are rotations
-  private double encoderPositionMin = 0.0;
-  // TODO at least max position must be calibrated manually and refactored here
-  private double encoderPositionMax = 10.0;
+  private final double ENCODER_POSITION_MIN = 0.0;
 
-  private double speedFactor = 0.5;
-
-  private static final double POSITION_DELTA = 0.1;
-
-  private double targetPosition = -1.0;
+  // manually calibrated 2/26/2026 for climber rev. 2
+  private final double ENCODER_POSITION_MAX = 54.5;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
-
-  // private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId,
-  // MotorType.kBrushless);
-
+  private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
   private final RelativeEncoder encoder = leaderMotor.getEncoder();
 
+  private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
+
+  // stall homing constants
+  private static final double HOMING_SPEED = 0.1;
+  private static final double STALL_CURRENT_AMPS = 10.0;
+  private static final double STALL_VELOCITY_RPM = 5.0;
+  private static final double STALL_TIME_SEC = 0.1;
+
+  private boolean abort_homing = false;
+
   public Climber() {
-    SparkMaxConfig leaderConfig = new SparkMaxConfig();
-    // SparkMaxConfig followerConfig = new SparkMaxConfig();
+    final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
+    leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
+    leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.1, 0.1);
 
-    leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60);
-
-    // followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, true);
-
-    // apply configs, check for errors
     if (leaderMotor
-        .configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      throw new IllegalStateException("Error configuring Climber Leader Motor");
-    }
-    // if (followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-    //         != REVLibError.kOk) {
-    //     throw new IllegalStateException("Error configuring Climber Follower Motor");
-    // }
-
-    // on startup, assume climber is in the "down" position
-    encoder.setPosition(0.0);
-  }
-
-  private boolean isAtUpperLimit() {
-    return encoder.getPosition() >= encoderPositionMax;
-  }
-
-  private boolean isAtLowerLimit() {
-    return encoder.getPosition() <= encoderPositionMin;
-  }
-
-  private void setSpeed(double speed) {
-    leaderMotor.set(speed * speedFactor);
-  }
-
-  private void disableTargetPosition() {
-    targetPosition = -1.0;
-  }
-
-  private boolean targetEnabled() {
-    return targetPosition >= 0;
-  }
-
-  private void setSpeedForTarget() {
-    if (isAtLowerLimit() || isAtUpperLimit()) {
-      stop();
-      return;
+        .configure(leaderMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            != REVLibError.kOk) {
+      throw new IllegalStateException("Climber Leader Motor failed to configure.");
     }
 
-    double position = encoder.getPosition();
-    if (position - targetPosition > POSITION_DELTA) {
-      down();
-    } else if (position - targetPosition < -POSITION_DELTA) {
-      up();
+    SparkMaxConfig followerConfig = new SparkMaxConfig();
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, false);
+
+    if (followerMotor
+        .configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            != REVLibError.kOk) {
+      DriverStation.reportWarning(
+          "WARNING: Climber Follower Motor failed to configure. Running leader only.", false);
+    }
+  }
+
+  private void setPosition(double position) {
+    pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+  }
+
+  private double clampPosition(double position) {
+    if (position > ENCODER_POSITION_MAX) {
+      return ENCODER_POSITION_MAX;
+    } else if (position < ENCODER_POSITION_MIN) {
+      return ENCODER_POSITION_MIN;
     } else {
-      stop();
-      targetPosition = -1.0;
+      return position;
     }
-  }
-
-  /**
-   * Set the maximum speed threshold for the climber.
-   *
-   * @param speed
-   *          the maximum speed. This number should be between 0 and 1.0.
-   */
-  public void setSpeedFactor(double speed) {
-    if (speed > 1.0 || speed < 0.0) {
-      speedFactor = 1.0;
-    } else {
-      speedFactor = speed;
-    }
-  }
-
-  /**
-   * Move the climber up at full speed
-   */
-  public void up() {
-    disableTargetPosition();
-    if (!isAtUpperLimit()) {
-      setSpeed(1.0);
-    } else {
-      stop();
-    }
-  }
-
-  /**
-   * Move the climber down at full speed
-   */
-  public void down() {
-    disableTargetPosition();
-    if (!isAtLowerLimit()) {
-      setSpeed(-1.0);
-    } else {
-      stop();
-    }
-  }
-
-  /**
-   * Stop the climber.
-   */
-  public void stop() {
-    leaderMotor.stopMotor();
   }
 
   /**
    * Set a position for the climber to move to.
    */
   public void setTargetPosition(double position) {
-    double currentPosition = encoder.getPosition();
-    if (Math.abs(currentPosition - position) > POSITION_DELTA) {
-      targetPosition = position;
-    }
+    setPosition(clampPosition(position));
+  }
+
+  /**
+   * Move the climber up at full speed
+   */
+  public void up() {
+    abort_homing = true;
+
+    // "up" refers to climber primary moving up, and encoder values change in opposite direction
+    setPosition(ENCODER_POSITION_MIN);
+  }
+
+  /**
+   * Move the climber down at full speed
+   */
+  public void down() {
+    abort_homing = true;
+
+    // "down" refers to climber primary down, and encoder values change in opposite direction
+    setPosition(ENCODER_POSITION_MAX);
+  }
+
+  /**
+   * Stop the climber.
+   */
+  public void stop() {
+    pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
+  }
+
+  /**
+   * Command for stall homing the climber.
+   *
+   * @return The generated command.
+   */
+  public Command homeCommand() {
+    return new Command() {
+      private final Timer stallTimer = new Timer();
+
+      @Override
+      public void initialize() {
+        System.out.println("Climber - stall homing start.");
+
+        stallTimer.stop();
+        stallTimer.reset();
+
+        abort_homing = false;
+      }
+
+      @Override
+      public void execute() {
+        if (abort_homing) {
+          System.out.println("Climber - stall homing aborted.");
+          leaderMotor.stopMotor();
+          return;
+        }
+
+        leaderMotor.set(-HOMING_SPEED);
+
+        boolean stalled = leaderMotor.getOutputCurrent() > STALL_CURRENT_AMPS
+            && Math.abs(encoder.getVelocity()) < STALL_VELOCITY_RPM;
+
+        if (stalled) {
+          if (!stallTimer.isRunning()) {
+            stallTimer.start();
+            System.out.println("Climber - stalled.");
+          }
+        } else {
+          stallTimer.stop();
+          stallTimer.reset();
+        }
+      }
+
+      @Override
+      public boolean isFinished() {
+        return abort_homing || stallTimer.hasElapsed(STALL_TIME_SEC);
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        if (abort_homing) return;
+        stop();
+        encoder.setPosition(ENCODER_POSITION_MIN);
+      }
+    }.withName("ClimberHome");
   }
 
   @Override
   public void periodic() {
-    if (targetEnabled()) {
-      setSpeedForTarget();
-    }
+    /* currently unused */
   }
 
   public double getEncoderPosition() {
