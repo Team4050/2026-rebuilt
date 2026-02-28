@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -12,51 +15,98 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
+  // default units are rotations
+  private double encoderPositionMin = 0.0;
+  private double encoderPositionMax = 10.0;
+
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
-  // private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
-  // SparkMax.MotorType.kBrushless);
+  private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
+      SparkMax.MotorType.kBrushless);
+
+  private final RelativeEncoder encoder = intakeDeploy.getEncoder();
+  private final SparkClosedLoopController controller = intakeDeploy.getClosedLoopController();
 
   public Intake() {
     SparkMaxConfig mainConfig = new SparkMaxConfig();
+    SparkMaxConfig pidConfig = new SparkMaxConfig();
 
     mainConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+    pidConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+
+    pidConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.5, 0.5);
+    pidConfig.softLimit
+        .forwardSoftLimit(encoderPositionMax)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimit(encoderPositionMin)
+        .reverseSoftLimitEnabled(true);
 
     if (intake
         .configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       throw new IllegalStateException("Error configuring Intake Motor");
     }
+
+    if (intakeDeploy
+        .configure(pidConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+      throw new IllegalStateException("Error configuring Intake Deploy Motor");
+    }
+
+    // on startup, assume climber is in the "down" position
+    encoder.setPosition(encoderPositionMin);
+  }
+
+  private void setPosition(double position) {
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+  }
+
+  private double clampPosition(double position) {
+    if (position > encoderPositionMax) {
+      return encoderPositionMax;
+    } else if (position < encoderPositionMin) {
+      return encoderPositionMin;
+    } else {
+      return position;
+    }
+  }
+
+  /**
+   * Set a position for the climber to move to.
+   */
+  public void setTargetPosition(double position) {
+    setPosition(clampPosition(position));
   }
 
   public void stop() {
     intakeStop();
-    // deployStop();
+    deployStop();
+  }
+
+  public void intakeStop() {
+    intake.set(0.0);
   }
 
   public void intakeForward() {
     intake.set(0.25);
   }
 
-  public void intakeStop() {
-    intake.set(0);
-  }
-
   public void intakeReverse() {
     intake.set(-0.25);
   }
 
-  // public void deployOut() {
-  //     intakeDeploy.set(0.5);
-  // }
+  public void deployOut() {
+    setPosition(encoderPositionMax);
+  }
 
-  // public void deployStop() {
-  //     intakeDeploy.set(0);
-  // }
+  /**
+   * Move the climber down at full speed
+   */
+  public void deployIn() {
+    setPosition(encoderPositionMin);
+  }
 
-  // public void deployIn() {
-  //     intakeDeploy.set(-0.5);
-  // }
-
-  public double getSpeed() {
-    return intake.get();
+  /**
+   * Stop the climber.
+   */
+  public void deployStop() {
+    controller.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 }
