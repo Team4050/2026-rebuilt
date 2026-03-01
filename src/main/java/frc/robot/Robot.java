@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.revrobotics.util.StatusLogger;
 
 import edu.wpi.first.epilogue.Epilogue;
@@ -42,6 +44,10 @@ public class Robot extends TimedRobot {
 
     configureLogging();
     configureLimeLight();
+
+    // Warm up PathPlanner to avoid first-run lag during auto
+    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 
     robotContainer = new RobotContainer();
   }
