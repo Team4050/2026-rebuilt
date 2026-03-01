@@ -54,3 +54,12 @@ Two-file architecture built on CTRE Phoenix 6:
 ## 2026 Game Mechanics
 
 Teleop has alternating alliance scoring shifts (4 shifts of 25s each, starting at 130s remaining). `RobotState` tracks which shift is active and whether it's our scoring period via game-specific message data from the FMS.
+
+## Documentation
+
+Prefer online JavaDoc documentation over dumping individual dependency Jar files or inefficient searches. Some useful documentation sources:
+
+- WPILib: https://github.wpilib.org/allwpilib/docs/release/java/index.html
+- CTRE/Phoenix: https://api.ctr-electronics.com/phoenix6/stable/java/
+- RevRobotics: https://codedocs.revrobotics.com/java/
+
