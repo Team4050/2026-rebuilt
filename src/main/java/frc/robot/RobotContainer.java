@@ -12,8 +12,15 @@ import java.util.Set;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,9 +52,14 @@ public class RobotContainer {
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
+  private final SendableChooser<Command> autoChooser;
+
   public RobotContainer() {
+    registerNamedCommands();
     initRobotState();
     configureBindings();
+    autoChooser = buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   private void initRobotState() {
@@ -110,8 +122,75 @@ public class RobotContainer {
     joystickSecondary.povRight().onTrue(new RunCommand(() -> climber.setTargetPosition(5.0), climber));
   }
 
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("intake", intakeSub.run(intakeSub::intakeForward));
+    NamedCommands.registerCommand("outtake", intakeSub.run(intakeSub::intakeReverse));
+  }
+
+  private SendableChooser<Command> buildAutoChooser() {
+    SendableChooser<Command> chooser = AutoBuilder.buildAutoChooser();
+    chooser.addOption("Drive 6ft Straight", drive6ftStraight());
+    chooser.addOption("Drive 6ft, Turn 90, Return", drive6ftTurn90Return());
+    chooser.addOption("Vision Navigate to Fixed Pose", visionNavigateToFixedPose());
+    return chooser;
+  }
+
+  // ===================== Autonomous Routines =====================
+
+  private static final PathConstraints slowConstraints = new PathConstraints(1.0, 1.0, Math.toRadians(540),
+      Math.toRadians(720));
+
+  private Command drive6ftStraight() {
+    return Commands.defer(() -> {
+      Pose2d currentPose = drivetrain.getPose();
+      Rotation2d heading = currentPose.getRotation();
+      // 6ft = 1.8288m forward from current pose
+      Translation2d forward = new Translation2d(1.8288, heading);
+      Pose2d endPose = new Pose2d(currentPose.getTranslation().plus(forward), heading);
+
+      var waypoints = PathPlannerPath.waypointsFromPoses(currentPose, endPose);
+      PathPlannerPath path = new PathPlannerPath(waypoints, slowConstraints, null, new GoalEndState(0.0, heading));
+      path.preventFlipping = true;
+
+      return AutoBuilder.followPath(path);
+    }, Set.of(drivetrain)).withName("Drive 6ft Straight");
+  }
+
+  private Command drive6ftTurn90Return() {
+    return Commands.defer(() -> {
+      Pose2d startPose = drivetrain.getPose();
+      Rotation2d heading = startPose.getRotation();
+      Translation2d forward = new Translation2d(1.8288, heading);
+      Pose2d midPose = new Pose2d(startPose.getTranslation().plus(forward), heading);
+
+      // Path 1: drive 6ft forward
+      var waypoints1 = PathPlannerPath.waypointsFromPoses(startPose, midPose);
+      PathPlannerPath path1 = new PathPlannerPath(waypoints1, slowConstraints, null, new GoalEndState(0.0, heading));
+      path1.preventFlipping = true;
+
+      // Path 2: turn 90 degrees and drive back to start
+      Rotation2d turnedHeading = heading.plus(Rotation2d.fromDegrees(90));
+      Rotation2d returnTravelHeading = heading.plus(Rotation2d.fromDegrees(180));
+      Pose2d midForReturn = new Pose2d(midPose.getTranslation(), returnTravelHeading);
+      Pose2d endPose = new Pose2d(startPose.getTranslation(), returnTravelHeading);
+
+      var waypoints2 = PathPlannerPath.waypointsFromPoses(midForReturn, endPose);
+      PathPlannerPath path2 = new PathPlannerPath(waypoints2, slowConstraints, null,
+          new GoalEndState(0.0, turnedHeading));
+      path2.preventFlipping = true;
+
+      return AutoBuilder.followPath(path1).andThen(AutoBuilder.followPath(path2));
+    }, Set.of(drivetrain)).withName("Drive 6ft, Turn 90, Return");
+  }
+
+  private Command visionNavigateToFixedPose() {
+    // Placeholder target: center field. Update coordinates for your actual target.
+    Pose2d targetPose = new Pose2d(8.27, 4.01, Rotation2d.fromDegrees(0));
+    PathConstraints constraints = new PathConstraints(2.0, 2.0, Math.toRadians(540), Math.toRadians(720));
+    return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0).withName("Vision Navigate to Fixed Pose");
+  }
+
   public Command getAutonomousCommand() {
-    // TODO: Autonomous code
-    return null;
+    return autoChooser.getSelected();
   }
 }
