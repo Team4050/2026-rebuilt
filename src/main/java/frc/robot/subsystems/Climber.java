@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,8 +45,10 @@ public class Climber extends SubsystemBase {
     leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.1, 0.1);
 
     if (leaderMotor
-        .configure(leaderMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-            != REVLibError.kOk) {
+        .configure(
+            leaderMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters) != REVLibError.kOk) {
       throw new IllegalStateException("Climber Leader Motor failed to configure.");
     }
 
@@ -52,10 +56,8 @@ public class Climber extends SubsystemBase {
     followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, false);
 
     if (followerMotor
-        .configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-            != REVLibError.kOk) {
-      DriverStation.reportWarning(
-          "WARNING: Climber Follower Motor failed to configure. Running leader only.", false);
+        .configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+      DriverStation.reportWarning("WARNING: Climber Follower Motor failed to configure. Running leader only.", false);
     }
   }
 
@@ -63,21 +65,11 @@ public class Climber extends SubsystemBase {
     pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
-  private double clampPosition(double position) {
-    if (position > ENCODER_POSITION_MAX) {
-      return ENCODER_POSITION_MAX;
-    } else if (position < ENCODER_POSITION_MIN) {
-      return ENCODER_POSITION_MIN;
-    } else {
-      return position;
-    }
-  }
-
   /**
    * Set a position for the climber to move to.
    */
   public void setTargetPosition(double position) {
-    setPosition(clampPosition(position));
+    setPosition(MathUtil.clamp(position, ENCODER_POSITION_MIN, ENCODER_POSITION_MAX));
   }
 
   /**
@@ -157,7 +149,8 @@ public class Climber extends SubsystemBase {
 
       @Override
       public void end(boolean interrupted) {
-        if (abort_homing) return;
+        if (abort_homing)
+          return;
         stop();
         encoder.setPosition(ENCODER_POSITION_MIN);
       }
