@@ -57,9 +57,19 @@ Teleop has alternating alliance scoring shifts (4 shifts of 25s each, starting a
 
 ## Documentation
 
+### High Level Libraries and Frameworks
+
+- WPILib: https://docs.wpilib.org/en/stable/index.html
+- CTRE/Phoenix: https://v6.docs.ctr-electronics.com/en/stable/
+- RevRobotics: https://docs.revrobotics.com/docs/ion/
+- PathPlanner: https://pathplanner.dev/
+
+### JavaDoc
+
 Prefer online JavaDoc documentation over dumping individual dependency Jar files or inefficient searches. Some useful documentation sources:
 
 - WPILib: https://github.wpilib.org/allwpilib/docs/release/java/index.html
 - CTRE/Phoenix: https://api.ctr-electronics.com/phoenix6/stable/java/
 - RevRobotics: https://codedocs.revrobotics.com/java/
+- PathPlanner: https://pathplanner.dev/api/java/
 
