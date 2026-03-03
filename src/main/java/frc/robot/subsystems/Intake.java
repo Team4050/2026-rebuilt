@@ -20,6 +20,8 @@ public class Intake extends SubsystemBase {
   // default units are rotations
   private double encoderPositionMin = 0.0;
   private double encoderPositionMax = 140;
+  // This stets the deploy override position.
+  private double deployPosition = 0.0;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
@@ -75,9 +77,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  /**
-   * Set a position for the climber to move to.
-   */
+  //Set a position for the intake to move to.
   public void setTargetPosition(double position) {
     setPosition(clampPosition(position));
   }
@@ -87,7 +87,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeStop() {
-    intake.set(0.0);
+    intake.set(0.0); // Shod not be set to enneything other than 0.0 or the intake will keep movining after button release.
   }
 
   public void intakeForward() {
@@ -102,27 +102,20 @@ public class Intake extends SubsystemBase {
     setPosition(encoderPositionMax);
   }
 
-  /**
-   *
-   */
   public void deployIn() {
     setPosition(encoderPositionMin);
-  }
-
-  /**
-   * Stop the climber.
-   */
-  public void deployStop() {
-    controller.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 
   public double getPosition() {
     return encoder.getPosition();
   }
 
-  private double deployPosition = 0.0;
-
-  public void deployForward() {
+  // These methods are alternit/override controls for deplyment and are used to  manuly set the defalt deploy position.
+  public void doverrideOut() {
     setPosition(deployPosition += 1);
+  }
+
+  public void doverrideIn() {
+    setPosition(deployPosition -= 1);
   }
 }
