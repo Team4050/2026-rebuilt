@@ -31,6 +31,18 @@ public class Climber extends SubsystemBase {
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
+  public enum Level {
+    GROUND("Ground"), L1("Level 1"), L2("Level 2"), L3("Level 3");
+
+    private String levelString;
+
+    Level(String levelString) {
+      this.levelString = levelString;
+    }
+  }
+
+  private Level climberLevel = Level.GROUND;
+
   // stall homing constants
   private static final double HOMING_SPEED = 0.1;
   private static final double STALL_CURRENT_AMPS = 10.0;
@@ -157,12 +169,16 @@ public class Climber extends SubsystemBase {
     }.withName("ClimberHome");
   }
 
+  public double getEncoderPosition() {
+    return encoder.getPosition();
+  }
+
+  public String getClimberLevelString() {
+    return climberLevel.levelString;
+  }
+
   @Override
   public void periodic() {
     /* currently unused */
-  }
-
-  public double getEncoderPosition() {
-    return encoder.getPosition();
   }
 }
