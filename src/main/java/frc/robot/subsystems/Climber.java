@@ -60,7 +60,7 @@ public class Climber extends SubsystemBase implements Homeable {
    * Set a position for the climber to move to.
    */
   public void setTargetPosition(double position) {
-    setPosition(MathUtil.clamp(position, ENCODER_POSITION_MIN, ENCODER_POSITION_MAX));
+    setPosition(MathUtil.clamp(position, ENCODER_POSITION_TOP, ENCODER_POSITION_BOTTOM));
   }
 
   /**
@@ -68,7 +68,7 @@ public class Climber extends SubsystemBase implements Homeable {
    */
   private void up() {
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MIN);
+    setPosition(ENCODER_POSITION_TOP);
   }
 
   /**
@@ -76,7 +76,7 @@ public class Climber extends SubsystemBase implements Homeable {
    */
   private void down() {
     // "down" refers to climber primary down, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MAX);
+    setPosition(ENCODER_POSITION_BOTTOM);
   }
 
   /**
