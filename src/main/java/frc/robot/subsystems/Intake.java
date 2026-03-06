@@ -111,7 +111,7 @@ public class Intake extends SubsystemBase {
     setPosition(deployOverrideCurrentPosition -= 1);
   }
 
-  public void doverrideIn() {
-    setPosition(deployPosition -= 1);
+  public void deployOverrideIn() {
+    setPosition(deployOverrideCurrentPosition -= 1);
   }
 }
