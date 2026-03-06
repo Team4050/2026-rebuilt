@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,69 +26,71 @@ public class Intake extends SubsystemBase {
   // This stets the deploy override position.
   private double deployOverrideCurrentPosition = 0.0;
 
-  private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
-  private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
-      SparkMax.MotorType.kBrushless);
+  private final SparkMax rollers = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
+  private final SparkMax deploy = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
 
-  private final AbsoluteEncoder deployEncoder = intakeDeploy.getAbsoluteEncoder();
-  private final SparkClosedLoopController deployController = intakeDeploy.getClosedLoopController();
+  private final AbsoluteEncoder deployEncoder = deploy.getAbsoluteEncoder();
+  private final SparkClosedLoopController deployController = deploy.getClosedLoopController();
 
   public Intake() {
-    SparkMaxConfig intakeConfig = new SparkMaxConfig();
+    SparkMaxConfig rollersConfig = new SparkMaxConfig();
+    rollersConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+
+    if (rollers
+        .configure(rollersConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+      DriverStation.reportWarning("Error configuring Intake Motor", false);
+    }
+
     SparkMaxConfig deployConfig = new SparkMaxConfig();
-
-    intakeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
-    deployConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40);
-
     deployConfig.closedLoop
         .pid(0.008, 0.0, 0.001, ClosedLoopSlot.kSlot0)
         .outputRange(-0.5, 0.5)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+
     deployConfig.softLimit
         .forwardSoftLimit(encoderPositionMax)
         .forwardSoftLimitEnabled(true)
         .reverseSoftLimit(encoderPositionMin)
         .reverseSoftLimitEnabled(true);
+
     deployConfig.absoluteEncoder
         .setSparkMaxDataPortConfig()
         .positionConversionFactor(360)
         .inverted(true)
         .zeroOffset(0.508333333);
 
-    if (intake
-        .configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      DriverStation.reportWarning("Error configuring Intake Motor", false);
-    }
-
-    if (intakeDeploy
+    if (deploy
         .configure(deployConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Intake Deploy Motor", false);
     }
   }
 
+  // ===== Rollers =====
+
+  private void stop() {
+    rollers.stopMotor();
+  }
+
+  public Command stopCommand() {
+    return runOnce(this::stop).withName("Intake: Stop");
+  }
+
+  public void intakeForward() {
+    rollers.set(0.25);
+  }
+
+  public void intakeReverse() {
+    rollers.set(-0.25);
+  }
+
+  // ===== Deploy =====
+
   private void setPosition(double position) {
     deployController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
-  //Set a position for the intake to move to.
   public void setTargetPosition(double position) {
     setPosition(MathUtil.clamp(position, encoderPositionMin, encoderPositionMax));
-  }
-
-  public void stop() {
-    intakeStop();
-  }
-
-  public void intakeStop() {
-    intake.set(0.0); // Shod not be set to enneything other than 0.0 or the intake will keep movining after button release.
-  }
-
-  public void intakeForward() {
-    intake.set(0.25);
-  }
-
-  public void intakeReverse() {
-    intake.set(-0.25);
   }
 
   public void deployOut() {

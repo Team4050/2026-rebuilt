@@ -95,8 +95,18 @@ public class Climber extends SubsystemBase {
   /**
    * Stop the climber.
    */
-  public void stop() {
-    pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
+  private void stop() {
+    leaderMotor.stopMotor();
+
+    // TODO: Determine if we need to use the setpoint for stopping.
+    // - One reason not to use it is that it will keep the PID loop running, sending power to the motor and eating up CPU
+    // - One reason to use it is that it will hold the climber in place when stopped, using the motor's power. This can
+    //   can partially be negated with brake mode.
+    // pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
+  }
+
+  public Command stopCommand() {
+    return runOnce(this::stop).withName("Climber: Stop");
   }
 
   /**
@@ -154,7 +164,7 @@ public class Climber extends SubsystemBase {
         stop();
         encoder.setPosition(ENCODER_POSITION_MIN);
       }
-    }.withName("ClimberHome");
+    }.withName("Climber: Home");
   }
 
   @Override
