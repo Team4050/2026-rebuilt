@@ -20,10 +20,10 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   // default units are rotations
-  private final double ENCODER_POSITION_MIN = 0.0;
+  private final double ENCODER_POSITION_TOP = 0.0;
 
   // manually calibrated 2/26/2026 for climber rev. 2
-  private final double ENCODER_POSITION_MAX = 54.5;
+  private final double ENCODER_POSITION_BOTTOM = 54.5;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
   private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
@@ -77,11 +77,19 @@ public class Climber extends SubsystemBase {
     pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
+  private boolean climberAtUpperLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < 0.1;
+  }
+
+  private boolean climberAtLowerLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < 0.1;
+  }
+
   /**
    * Set a position for the climber to move to.
    */
   public void setTargetPosition(double position) {
-    setPosition(MathUtil.clamp(position, ENCODER_POSITION_MIN, ENCODER_POSITION_MAX));
+    setPosition(MathUtil.clamp(position, ENCODER_POSITION_TOP, ENCODER_POSITION_BOTTOM));
   }
 
   /**
@@ -91,7 +99,7 @@ public class Climber extends SubsystemBase {
     abort_homing = true;
 
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MIN);
+    setPosition(ENCODER_POSITION_TOP);
   }
 
   /**
@@ -101,7 +109,7 @@ public class Climber extends SubsystemBase {
     abort_homing = true;
 
     // "down" refers to climber primary down, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MAX);
+    setPosition(ENCODER_POSITION_BOTTOM);
   }
 
   /**
@@ -109,6 +117,12 @@ public class Climber extends SubsystemBase {
    */
   public void stop() {
     pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
+  }
+
+  /**
+   * Automatically climb to L3.
+   */
+  public void climb() {
   }
 
   /**
@@ -164,7 +178,7 @@ public class Climber extends SubsystemBase {
         if (abort_homing)
           return;
         stop();
-        encoder.setPosition(ENCODER_POSITION_MIN);
+        encoder.setPosition(ENCODER_POSITION_TOP);
       }
     }.withName("ClimberHome");
   }
