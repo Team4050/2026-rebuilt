@@ -49,7 +49,7 @@ public class Climber extends SubsystemBase {
             leaderMotorConfig,
             ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters) != REVLibError.kOk) {
-      throw new IllegalStateException("Climber Leader Motor failed to configure.");
+      DriverStation.reportWarning("WARNING: Climber Leader Motor failed to configure. Climber may not work.", false);
     }
 
     SparkMaxConfig followerConfig = new SparkMaxConfig();
