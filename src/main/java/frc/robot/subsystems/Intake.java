@@ -21,7 +21,8 @@ public class Intake extends SubsystemBase {
   // default units are rotations
   private double encoderPositionMin = 0.0;
   private double encoderPositionMax = 140;
-
+  private double deployPositionIn = 0.0; // set the posintion you wont for intake "deployPositionIn" here.
+  private double deployPositionOut = 0.0;// set the posintion you wont for intake "deployPositionout" here.
   // This stets the deploy override position.
   private double deployOverrideCurrentPosition = 0.0;
 
@@ -91,11 +92,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void deployOut() {
-    setPosition(encoderPositionMax);
+    setPosition(deployPositionIn);
   }
 
   public void deployIn() {
-    setPosition(encoderPositionMin);
+    setPosition(deployPositionOut);
   }
 
   public double getPosition() {
