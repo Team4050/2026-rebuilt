@@ -173,6 +173,38 @@ public class RobotState {
     return intakeRollers.motorCurrent();
   }
 
+  // ===================== Tower Alignment =====================
+
+  @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
+  public record TowerAlignmentState(boolean tagVisible, boolean aligned, int activeTagId, double txError,
+      double distance, double lateralOffset, double fwdOutput, double strafeOutput, double rotOutput) {
+    public static final TowerAlignmentState EMPTY = new TowerAlignmentState(false, false, -1, 0, 0, 0, 0, 0, 0);
+  }
+
+  @SuppressWarnings("unused") // Logged by Epilogue
+  private TowerAlignmentState towerAlignment = TowerAlignmentState.EMPTY;
+
+  public int getTowerPrimaryTagID() {
+    if (alliance == null) {
+      return Constants.Tower.BLUE_PRIMARY_TAG_ID;
+    }
+
+    return alliance == DriverStation.Alliance.Red ? Constants.Tower.RED_PRIMARY_TAG_ID
+        : Constants.Tower.BLUE_PRIMARY_TAG_ID;
+  }
+
+  public boolean isTowerAligned() {
+    return towerAlignment.aligned();
+  }
+
+  public void setTowerAlignment(TowerAlignmentState state) {
+    this.towerAlignment = state;
+  }
+
+  public void clearTowerAlignment() {
+    this.towerAlignment = TowerAlignmentState.EMPTY;
+  }
+
   // ===================== Vision =====================
 
   private Pose2d visionPose = new Pose2d();
