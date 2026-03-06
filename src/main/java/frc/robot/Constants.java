@@ -45,6 +45,17 @@ public final class Constants {
   public final class Vision {
     public static final boolean VISION_ENABLED = true;
     public static final String LIMELIGHT_NAME = "limelight";
+
+    // Camera position relative to robot center (meters and degrees).
+    // Measure from the robot center (floor level, between the 4 swerve modules)
+    // to the camera lens center.
+    // +X = forward, +Y = left, +Z = up
+    public static final double CAMERA_FORWARD = 0.0; // TODO: measure on robot
+    public static final double CAMERA_SIDE = 0.0; // TODO: measure on robot
+    public static final double CAMERA_UP = 0.0; // TODO: measure on robot
+    public static final double CAMERA_ROLL = 0.0; // degrees, typically 0
+    public static final double CAMERA_PITCH = 0.0; // degrees, positive = tilted up
+    public static final double CAMERA_YAW = 0.0; // degrees, 0 = facing forward
   }
 
   public final class Tower {
