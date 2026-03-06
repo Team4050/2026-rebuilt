@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,15 +21,16 @@ public class Intake extends SubsystemBase {
   // default units are rotations
   private double encoderPositionMin = 0.0;
   private double encoderPositionMax = 140;
+
   // This stets the deploy override position.
-  private double deployPosition = 0.0;
+  private double deployOverrideCurrentPosition = 0.0;
 
   private final SparkMax intake = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
   private final SparkMax intakeDeploy = new SparkMax(Constants.Subsystems.intakeDeployId,
       SparkMax.MotorType.kBrushless);
 
-  private final AbsoluteEncoder encoder = intakeDeploy.getAbsoluteEncoder();
-  private final SparkClosedLoopController controller = intakeDeploy.getClosedLoopController();
+  private final AbsoluteEncoder deployEncoder = intakeDeploy.getAbsoluteEncoder();
+  private final SparkClosedLoopController deployController = intakeDeploy.getClosedLoopController();
 
   public Intake() {
     SparkMaxConfig intakeConfig = new SparkMaxConfig();
@@ -64,22 +66,12 @@ public class Intake extends SubsystemBase {
   }
 
   private void setPosition(double position) {
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
-  }
-
-  private double clampPosition(double position) {
-    if (position > encoderPositionMax) {
-      return encoderPositionMax;
-    } else if (position < encoderPositionMin) {
-      return encoderPositionMin;
-    } else {
-      return position;
-    }
+    deployController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   //Set a position for the intake to move to.
   public void setTargetPosition(double position) {
-    setPosition(clampPosition(position));
+    setPosition(MathUtil.clamp(position, encoderPositionMin, encoderPositionMax));
   }
 
   public void stop() {
@@ -107,15 +99,15 @@ public class Intake extends SubsystemBase {
   }
 
   public double getPosition() {
-    return encoder.getPosition();
+    return deployEncoder.getPosition();
   }
 
   // These methods are alternit/override controls for deplyment and are used to  manuly set the defalt deploy position.
-  public void doverrideOut() {
-    setPosition(deployPosition += 1);
+  public void deployOverrideOut() {
+    setPosition(deployOverrideCurrentPosition += 1);
   }
 
-  public void doverrideIn() {
-    setPosition(deployPosition -= 1);
+  public void deployOverrideIn() {
+    setPosition(deployOverrideCurrentPosition -= 1);
   }
 }
