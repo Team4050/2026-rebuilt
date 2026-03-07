@@ -12,7 +12,6 @@ import com.revrobotics.util.StatusLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,26 +52,19 @@ public class Robot extends TimedRobot {
   }
 
   private void configureLimeLight() {
-    // Set IMU mode to mode 2, to use pose data from drivetrain IMU (using SetRobotOrientation)
-    LimelightHelpers.SetIMUMode(Constants.Vision.LIMELIGHT_NAME, 2);
+    LimelightHelpers.SetIMUMode(Constants.Vision.LIMELIGHT_NAME, Constants.Vision.IMU_MODE);
 
     // All pose measurements are in the robot's coordinate space, with the origin at
     // the center of the robot, +X forward, +Y left, and +Z up. Height is measured from the ground.
     LimelightHelpers
         .setCameraPose_RobotSpace(
             Constants.Vision.LIMELIGHT_NAME,
-            // Forward: Negative since LL is on back of robot
-            Units.inchesToMeters(-8.25),
-            // Side: LL is centered
-            Units.inchesToMeters(0),
-            // Up
-            Units.inchesToMeters(8),
-            // Roll
-            180,
-            // Pitch: LL is tilted up slightly
-            15,
-            // Yaw: LL is pointed backwards, so 180 degrees
-            180);
+            Constants.Vision.CAMERA_FORWARD,
+            Constants.Vision.CAMERA_SIDE,
+            Constants.Vision.CAMERA_UP,
+            Constants.Vision.CAMERA_ROLL,
+            Constants.Vision.CAMERA_PITCH,
+            Constants.Vision.CAMERA_YAW);
   }
 
   private void configureLogging() {
