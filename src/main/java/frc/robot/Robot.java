@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.revrobotics.util.StatusLogger;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -39,10 +40,10 @@ public class Robot extends TimedRobot {
       Elastic.selectTab("Diagnostics");
     }
 
-    robotContainer = new RobotContainer();
-
     configureLogging();
     configureLimeLight();
+
+    robotContainer = new RobotContainer();
   }
 
   private void configureLimeLight() {
@@ -69,6 +70,9 @@ public class Robot extends TimedRobot {
   }
 
   private void configureLogging() {
+    // Disable Rev logs
+    StatusLogger.disableAutoLogging();
+
     // Silence joystick warnings in development (overridden when connected to FMS)
     DriverStation.silenceJoystickConnectionWarning(true);
 
