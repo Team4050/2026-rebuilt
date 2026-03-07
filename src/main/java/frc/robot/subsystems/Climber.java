@@ -72,7 +72,7 @@ public class Climber extends SubsystemBase implements Homeable {
 
     if (primaryAtUpperLimit()) {
       /* TODO maybe pause here to settle before running stage 1 again */
-      levelsClimbed++;
+      numLevelsClimbed++;
       climbStage = ClimbStage.STAGE_1;
     } else {
       primaryDown();
