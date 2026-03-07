@@ -22,15 +22,16 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeDeploy;
+import frc.robot.subsystems.IntakeRollers;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  public final Intake intake = new Intake();
-  public final Climber climber = new Climber();
+  public final IntakeRollers intakeRollers = new IntakeRollers();
+  public final IntakeDeploy intakeDeploy = new IntakeDeploy();
+  // public final Climber climber = new Climber();
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
@@ -43,8 +44,9 @@ public class RobotContainer {
   private void initRobotState() {
     RobotState rs = RobotState.getInstance();
     rs.addDrivetrain(drivetrain);
-    rs.addIntake(intake);
-    rs.addClimber(climber);
+    rs.addIntakeDeploy(intakeDeploy);
+    rs.addIntakeRollers(intakeRollers);
+    // rs.addClimber(climber);
   }
 
   private void configureBindings() {
@@ -60,12 +62,12 @@ public class RobotContainer {
         .povUp()
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
-    SmartDashboard.putData("Climber: Home", climber.homeCommand());
+    // SmartDashboard.putData("Climber: Home", climber.homeCommand());
   }
 
   private void configureDefaultCommands() {
-    intake.setDefaultCommand(intake.stopCommand());
-    climber.setDefaultCommand(climber.stopCommand());
+    intakeRollers.setDefaultCommand(intakeRollers.stopCommand());
+    // climber.setDefaultCommand(climber.stopCommand());
   }
 
   private void configurePrimaryBindings() {
@@ -89,9 +91,9 @@ public class RobotContainer {
     var isRobotCentric = new AtomicBoolean(false);
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
-      double vx = -joystickPrimary.getLeftY() * maxSpeed;
-      double vy = -joystickPrimary.getLeftX() * maxSpeed;
-      double rot = -joystickPrimary.getRightX() * maxAngularRate;
+      var vx = -joystickPrimary.getLeftY() * maxSpeed;
+      var vy = -joystickPrimary.getLeftX() * maxSpeed;
+      var rot = -joystickPrimary.getRightX() * maxAngularRate;
       if (isRobotCentric.get()) {
         return robotCentricSwerveRequest.withVelocityX(vx).withVelocityY(vy).withRotationalRate(rot);
       }
@@ -118,26 +120,30 @@ public class RobotContainer {
 
     // ===== Misc =====
 
-    joystickPrimary.leftTrigger().whileTrue(new RunCommand(intake::intakeReverse, intake).withName("Intake: Reverse"));
-    joystickPrimary.rightTrigger().whileTrue(new RunCommand(intake::intakeForward, intake).withName("Intake: Forward"));
+    joystickPrimary
+        .leftTrigger()
+        .whileTrue(new RunCommand(intakeRollers::intakeReverse, intakeRollers).withName("Intake: Reverse"));
+    joystickPrimary
+        .rightTrigger()
+        .whileTrue(new RunCommand(intakeRollers::intakeForward, intakeRollers).withName("Intake: Forward"));
 
   }
 
   private void configureSecondaryBindings() {
     // TODO: Technically up and down are misleading. We should consider different names
-    joystickSecondary.leftTrigger().whileTrue(new RunCommand(climber::up, climber).withName("Climber: Up"));
-    joystickSecondary.rightTrigger().whileTrue(new RunCommand(climber::down, climber).withName("Climber: Down"));
+    // joystickSecondary.leftBumper().whileTrue(new RunCommand(climber::up, climber).withName("Climber: Up"));
+    // joystickSecondary.rightBumper().whileTrue(new RunCommand(climber::down, climber).withName("Climber: Down"));
     // TODO: Climber deploy
     // joystickSecondary.povUp()
     // joystickSecondary.povDown()
 
-    joystickSecondary.leftBumper().toggleOnTrue(intake.run(intake::intakeForward));
-    joystickSecondary.rightBumper().toggleOnTrue(intake.run(intake::intakeReverse));
-    joystickSecondary.x().toggleOnTrue(intake.run(intake::deployOut));
-    joystickSecondary.b().toggleOnTrue(intake.run(intake::deployIn));
+    joystickSecondary.leftTrigger().whileTrue(intakeRollers.run(intakeRollers::intakeReverse));
+    joystickSecondary.rightTrigger().whileTrue(intakeRollers.run(intakeRollers::intakeForward));
 
-    joystickSecondary.a().whileTrue(intake.run(intake::deployOverrideOut));
-    joystickSecondary.y().whileTrue(intake.run(intake::deployOverrideIn));
+    // joystickSecondary.x().onTrue(intakeDeploy.runOnce(intakeDeploy::deploy));
+    // joystickSecondary.b().onTrue(intakeDeploy.runOnce(intakeDeploy::retract));
+    // joystickSecondary.a().whileTrue(intakeDeploy.deployOverrideCommand(false));
+    // joystickSecondary.y().whileTrue(intakeDeploy.deployOverrideCommand(true));
   }
 
   private void configureRobotTriggers() {
