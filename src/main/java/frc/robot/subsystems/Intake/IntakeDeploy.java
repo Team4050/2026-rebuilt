@@ -1,4 +1,4 @@
-package frc.robot.subsystems.IntakeSubsystems;
+package frc.robot.subsystems.Intake;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;

@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeDeploy;
-import frc.robot.subsystems.IntakeRollers;
+import frc.robot.subsystems.Intake.IntakeDeploy;
+import frc.robot.subsystems.Intake.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)

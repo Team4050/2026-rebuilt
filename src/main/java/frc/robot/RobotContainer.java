@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeDeploy;
-import frc.robot.subsystems.IntakeRollers;
+import frc.robot.subsystems.Intake.IntakeDeploy;
+import frc.robot.subsystems.Intake.IntakeRollers;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
