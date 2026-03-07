@@ -194,12 +194,11 @@ public class RobotState {
       return;
     }
 
-    String ll = Constants.Vision.LIMELIGHT_NAME;
+    var ll = Constants.Vision.LIMELIGHT_NAME;
 
-    // Provide gyro heading for MegaTag2 localization
     LimelightHelpers.SetRobotOrientation(ll, drivetrain.getHeading().getDegrees(), 0, 0, 0, 0, 0);
 
-    LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(ll);
+    var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(ll);
 
     if (!LimelightHelpers.validPoseEstimate(estimate)) {
       visionValid = false;
