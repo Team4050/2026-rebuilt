@@ -49,7 +49,7 @@
           },
           {
             "title": "Field",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 0.0,
             "width": 768.0,
             "height": 384.0,
@@ -70,7 +70,7 @@
           },
           {
             "title": "Swerve Drive",
-            "x": 640.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 384.0,
             "height": 384.0,
@@ -86,7 +86,7 @@
             "title": "Command Scheduler",
             "x": 384.0,
             "y": 0.0,
-            "width": 256.0,
+            "width": 384.0,
             "height": 384.0,
             "type": "Scheduler",
             "properties": {
@@ -98,7 +98,7 @@
             "title": "SysId Routine",
             "x": 384.0,
             "y": 384.0,
-            "width": 256.0,
+            "width": 384.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
@@ -109,7 +109,7 @@
           },
           {
             "title": "Intake Position",
-            "x": 640.0,
+            "x": 768.0,
             "y": 384.0,
             "width": 128.0,
             "height": 128.0,
@@ -123,7 +123,7 @@
           },
           {
             "title": "Climber Position",
-            "x": 768.0,
+            "x": 896.0,
             "y": 384.0,
             "width": 128.0,
             "height": 128.0,
