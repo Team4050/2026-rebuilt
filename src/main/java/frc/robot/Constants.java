@@ -45,7 +45,8 @@ public final class Constants {
 
     public static final int climberPrimaryId = 53;
     public static final int climberFollowerId = 54;
-    public static final int outakeRollerId = 60;
+    public static final int outtakeLeftId = 60;
+    public static final int outtakeRightId = 61;
   }
 
   public final class Vision {
