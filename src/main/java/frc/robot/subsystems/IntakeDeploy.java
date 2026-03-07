@@ -4,14 +4,12 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -28,12 +26,15 @@ public class IntakeDeploy extends SubsystemBase {
   private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder();
   private final SparkClosedLoopController controller = motor.getClosedLoopController();
 
-  private final double deployPositionMin = 130;
-  private final double deployPositionMax = 258;
+  private final double mechanismMinAngle = 48;
+  private final double mechanismMaxAngle = 180;
 
-  private final double deployPositionRetracted = 250;
-  private final double deployPositionDeployed = 135;
+  private final double retractedAngle = 50;
+  private final double deployedAngle = 175;
 
+  // Note: We should potentially avoid using zero offset. Using zero as our resting position (or close to it) at
+  // either end of the mechanism opens the door to potentially rolling over (past 0), confusing the control logic.
+  //
   // How to calibrate zero offset:
   // 1. Set zero offset to 0
   // 2. Manually move the intake to the desired "retracted" position
@@ -41,22 +42,30 @@ public class IntakeDeploy extends SubsystemBase {
   private final double zeroOffset = 0;
   private final double conversionFactor = 360;
 
-  // Must be a value between 0 and 1.
-  private final double maxOutput = 0.75;
+  // The maximum output speed (percentage). Must be between 0 and 1.
+  private final double maxOutput = 0.3;
 
   public IntakeDeploy() {
     final SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true);
 
     config.closedLoop
-        .pid(0.008, 0.0, 0.001, ClosedLoopSlot.kSlot0)
-        .outputRange(maxOutput * -1, maxOutput)
+        .pid(
+            // P: Proportional gain, how aggressively the controller responds.
+            0.005,
+            // I: Integral gain, how much the controller responds based on accumulated error over time.
+            // Should likely remain 0 for the current mechanism, since there is some slop in the gearing.
+            0.0,
+            // D: Derivative gain, how much the controller responds based on the rate of change of the error.
+            // Can help reduce overshoot and improve stability.
+            0.001)
+        .outputRange(-maxOutput, maxOutput)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     config.softLimit
-        .forwardSoftLimit(deployPositionMax)
+        .forwardSoftLimit(mechanismMaxAngle)
         .forwardSoftLimitEnabled(true)
-        .reverseSoftLimit(deployPositionMin)
+        .reverseSoftLimit(mechanismMinAngle)
         .reverseSoftLimitEnabled(true);
 
     config.absoluteEncoder
@@ -74,57 +83,40 @@ public class IntakeDeploy extends SubsystemBase {
   }
 
   private void setPosition(double position) {
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
   public void deploy() {
-    setPosition(deployPositionDeployed);
+    setPosition(deployedAngle);
   }
 
   public void retract() {
-    setPosition(deployPositionRetracted);
+    setPosition(retractedAngle);
+  }
+
+  private double deployOverrideCurrentPosition = 0;
+
+  public Command deployOverrideCommand(boolean out) {
+    return new FunctionalCommand(() -> {
+      motor.configure(softLimitsDisabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+      deployOverrideCurrentPosition = getPosition();
+    }, () -> {
+      deployOverrideCurrentPosition += out ? -1 : 1;
+      controller.setSetpoint(deployOverrideCurrentPosition, SparkMax.ControlType.kPosition);
+    }, interrupted -> {
+      motor.configure(softLimitsEnabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    }, () -> false, this).withName("Intake Deploy: Override " + (out ? "Out" : "In"));
   }
 
   public double getPosition() {
     return encoder.getPosition();
   }
 
-  // Safe bounds for override — well away from the 0°/360° wrap point
-  private final double overrideMin = 2;
-  private final double overrideMax = 350;
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
 
-  private double deployOverrideCurrentPosition = 0;
-  private double deployOverridePreviousPosition = 0;
-  private boolean deployOverrideRollover = false;
-
-  public Command deployOverrideCommand(boolean out) {
-    return new FunctionalCommand(
-        // Init
-        () -> {
-          motor.configure(softLimitsDisabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-          deployOverrideCurrentPosition = getPosition();
-          deployOverridePreviousPosition = deployOverrideCurrentPosition;
-          deployOverrideRollover = false;
-        },
-        // Execute
-        () -> {
-          // Detect rollover: a large sudden jump means the encoder wrapped
-          double currentPosition = getPosition();
-          if (Math.abs(currentPosition - deployOverridePreviousPosition) > 180) {
-            deployOverrideRollover = true;
-            motor.stopMotor();
-            DriverStation.reportWarning("Intake deploy override: encoder rollover detected, stopping", false);
-            return;
-          }
-          deployOverridePreviousPosition = currentPosition;
-
-          deployOverrideCurrentPosition += out ? -1 : 1;
-          deployOverrideCurrentPosition = MathUtil.clamp(deployOverrideCurrentPosition, overrideMin, overrideMax);
-          setPosition(deployOverrideCurrentPosition);
-        },
-        // End
-        interrupted -> {
-          motor.configure(softLimitsEnabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-        }, () -> deployOverrideRollover, this).withName("Intake Deploy: Override " + (out ? "Out" : "In"));
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
   }
 }

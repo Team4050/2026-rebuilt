@@ -140,8 +140,10 @@ public class RobotContainer {
     joystickSecondary.leftTrigger().whileTrue(intakeRollers.run(intakeRollers::intakeReverse));
     joystickSecondary.rightTrigger().whileTrue(intakeRollers.run(intakeRollers::intakeForward));
 
-    // joystickSecondary.x().onTrue(intakeDeploy.runOnce(intakeDeploy::deploy));
-    // joystickSecondary.b().onTrue(intakeDeploy.runOnce(intakeDeploy::retract));
+    joystickSecondary.x().onTrue(intakeDeploy.runOnce(intakeDeploy::deploy));
+    joystickSecondary.b().onTrue(intakeDeploy.runOnce(intakeDeploy::retract));
+
+    // TODO: If it can be avoided, we should not have override commands on the secondary driver's joystick
     joystickSecondary.a().whileTrue(intakeDeploy.deployOverrideCommand(false));
     joystickSecondary.y().whileTrue(intakeDeploy.deployOverrideCommand(true));
   }

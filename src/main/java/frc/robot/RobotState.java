@@ -146,6 +146,20 @@ public class RobotState {
     return intakeDeploy.getPosition();
   }
 
+  public double getIntakeDeployCurrent() {
+    if (intakeDeploy == null) {
+      return 0.0;
+    }
+    return intakeDeploy.getOutputCurrent();
+  }
+
+  public double getIntakeDeployAppliedOutput() {
+    if (intakeDeploy == null) {
+      return 0.0;
+    }
+    return intakeDeploy.getAppliedOutput();
+  }
+
   private IntakeRollers intakeRollers;
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
