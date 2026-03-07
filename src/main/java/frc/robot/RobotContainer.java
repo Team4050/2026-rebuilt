@@ -40,7 +40,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-    registerNamedCommands();
     initRobotState();
     configureBindings();
     autoChooser = buildAutoChooser();
