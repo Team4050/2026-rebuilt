@@ -27,9 +27,9 @@ public class Outtake extends SubsystemBase {
   private SparkMax motor;
   private OuttakeMode outtakeMode;
 
-  private final double outtakeSpeed = 0.7;
-  private final double shooterSpeed = 1;
-  private final double outtakeRevSpeed = -0.5;
+  private final double outtakeSpeed = -0.7;
+  private final double shooterSpeed = -1;
+  private final double outtakeRevSpeed = 0.5;
 
   public Outtake(int motorId, OuttakeMode mode) {
     outtakeMode = mode;
