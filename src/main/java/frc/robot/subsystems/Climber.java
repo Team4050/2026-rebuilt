@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
   }
 
   private ClimbStage climbStage = ClimbStage.STAGE_1;
-  private int levelsClimbed = 0;
+  private int numLevelsClimbed = 0;
 
   // stall homing constants
   private static final double HOMING_SPEED = 0.1;
@@ -103,7 +103,7 @@ public class Climber extends SubsystemBase {
 
     if (primaryAtUpperLimit()) {
       /* TODO maybe pause here to settle before running stage 1 again */
-      levelsClimbed++;
+      numLevelsClimbed++;
       climbStage = ClimbStage.STAGE_1;
     } else {
       primaryDown();
@@ -148,7 +148,7 @@ public class Climber extends SubsystemBase {
    * Automatically climb to L3.
    */
   public void climb() {
-    if (levelsClimbed == 3) {
+    if (numLevelsClimbed == 3) {
       return;
     }
 
@@ -229,8 +229,8 @@ public class Climber extends SubsystemBase {
     return climbStage.climbStageString;
   }
 
-  public int getLevelsClimbed() {
-    return levelsClimbed;
+  public int getNumLevelsClimbed() {
+    return numLevelsClimbed;
   }
 
   @Override
