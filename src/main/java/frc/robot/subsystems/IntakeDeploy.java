@@ -40,7 +40,9 @@ public class IntakeDeploy extends SubsystemBase {
   // 3. Read the absolute encoder position from the dashboard and set that as the zero offset
   private final double zeroOffset = 0;
   private final double conversionFactor = 360;
-  private final double maxOutput = 0.5;
+
+  // Must be a value between 0 and 1.
+  private final double maxOutput = 0.75;
 
   public IntakeDeploy() {
     final SparkMaxConfig config = new SparkMaxConfig();

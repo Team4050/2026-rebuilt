@@ -118,7 +118,7 @@ public class RobotContainer {
         .start()
         .onTrue(drivetrain.runOnce(() -> isRobotCentric.set(false)).withName("DT: Toggle Field Centric"));
 
-    // ===== Misc =====
+    // ===== Mechanisms =====
 
     joystickPrimary
         .leftTrigger()
@@ -142,8 +142,8 @@ public class RobotContainer {
 
     // joystickSecondary.x().onTrue(intakeDeploy.runOnce(intakeDeploy::deploy));
     // joystickSecondary.b().onTrue(intakeDeploy.runOnce(intakeDeploy::retract));
-    // joystickSecondary.a().whileTrue(intakeDeploy.deployOverrideCommand(false));
-    // joystickSecondary.y().whileTrue(intakeDeploy.deployOverrideCommand(true));
+    joystickSecondary.a().whileTrue(intakeDeploy.deployOverrideCommand(false));
+    joystickSecondary.y().whileTrue(intakeDeploy.deployOverrideCommand(true));
   }
 
   private void configureRobotTriggers() {
