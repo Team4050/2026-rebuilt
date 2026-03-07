@@ -88,10 +88,6 @@ public class Climber extends SubsystemBase {
   }
 
   private void handleClimbStage1() {
-    if (levelsClimbed == 3) {
-      return;
-    }
-
     /* TODO make sure auto is handeled (do not pass L1) */
 
     if (primaryAtUpperLimit()) {
@@ -103,16 +99,12 @@ public class Climber extends SubsystemBase {
   }
 
   private void handleClimbStage2() {
-    if (levelsClimbed == 3) {
-      return;
-    }
-
     /* TODO make sure auto is handeled (do not pass L1) */
 
     if (primaryAtUpperLimit()) {
       /* TODO maybe pause here to settle before running stage 1 again */
+      levelsClimbed++;
       climbStage = ClimbStage.STAGE_1;
-
     } else {
       primaryDown();
     }
@@ -156,7 +148,15 @@ public class Climber extends SubsystemBase {
    * Automatically climb to L3.
    */
   public void climb() {
+    if (levelsClimbed == 3) {
+      return;
+    }
 
+    if (climbStage == ClimbStage.STAGE_1) {
+      handleClimbStage1();
+    } else if (climbStage == ClimbStage.STAGE_2) {
+      handleClimbStage2();
+    }
   }
 
   /**
