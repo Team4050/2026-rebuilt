@@ -56,6 +56,37 @@ public class Climber extends SubsystemBase implements Homeable {
     pidController.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
+  private void handleClimbStage1() {
+    if (levelsClimbed == 3) {
+      return;
+    }
+
+    /* TODO make sure auto is handeled (do not pass L1) */
+
+    if (primaryAtUpperLimit()) {
+      /* TODO maybe pause here to settle before running stage 2 */
+      climbStage = ClimbStage.STAGE_2;
+    } else {
+      primaryUp();
+    }
+  }
+
+  private void handleClimbStage2() {
+    if (levelsClimbed == 3) {
+      return;
+    }
+
+    /* TODO make sure auto is handeled (do not pass L1) */
+
+    if (primaryAtUpperLimit()) {
+      /* TODO maybe pause here to settle before running stage 1 again */
+      climbStage = ClimbStage.STAGE_1;
+
+    } else {
+      primaryDown();
+    }
+  }
+
   /**
    * Set a position for the climber to move to.
    */
@@ -64,7 +95,7 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   /**
-   * Move the climber up at full speed
+   * Manually move the primary climber up at full speed
    */
   private void up() {
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
@@ -72,7 +103,7 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   /**
-   * Move the climber down at full speed
+   * Manually ove the primary climber down at full speed
    */
   private void down() {
     // "down" refers to climber primary down, and encoder values change in opposite direction
