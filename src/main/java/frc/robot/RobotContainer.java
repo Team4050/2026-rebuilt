@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.Outtake.OuttakeMode;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
 
@@ -31,6 +33,9 @@ public class RobotContainer {
 
   public final IntakeRollers intakeRollers = new IntakeRollers();
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
+  public final Outtake outtakeRight = new Outtake(Constants.Subsystems.outtakeRightId, OuttakeMode.Outtake);
+  public final Outtake outtakeLeft = new Outtake(Constants.Subsystems.outtakeLeftId, OuttakeMode.Outtake);
+
   public final Climber climber = new Climber();
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
@@ -47,6 +52,7 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
+    //rs.addOuttake
   }
 
   private void configureBindings() {
