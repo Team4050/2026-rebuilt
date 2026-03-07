@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeDeploy;
+import frc.robot.subsystems.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
@@ -132,17 +133,44 @@ public class RobotState {
 
   // ===================== Intake =====================
 
-  private Intake intake;
+  private IntakeDeploy intakeDeploy;
 
-  public void addIntake(Intake intake) {
-    this.intake = intake;
+  public void addIntakeDeploy(IntakeDeploy intakeDeploy) {
+    this.intakeDeploy = intakeDeploy;
   }
 
   public double getIntakePosition() {
-    if (intake == null) {
+    if (intakeDeploy == null) {
       return 0.0;
     }
-    return intake.getPosition();
+    return intakeDeploy.getPosition();
+  }
+
+  public double getIntakeDeployCurrent() {
+    if (intakeDeploy == null) {
+      return 0.0;
+    }
+    return intakeDeploy.getOutputCurrent();
+  }
+
+  public double getIntakeDeployAppliedOutput() {
+    if (intakeDeploy == null) {
+      return 0.0;
+    }
+    return intakeDeploy.getAppliedOutput();
+  }
+
+  private IntakeRollers intakeRollers;
+
+  public void addIntakeRollers(IntakeRollers intakeRollers) {
+    this.intakeRollers = intakeRollers;
+  }
+
+  public double getIntakeCurrent() {
+    if (intakeRollers == null) {
+      return 0.0;
+    }
+    return intakeRollers.motorCurrent();
   }
 
   // ===================== Vision =====================
