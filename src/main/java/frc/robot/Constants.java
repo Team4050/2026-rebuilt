@@ -1,6 +1,11 @@
 package frc.robot;
 
+import frc.robot.generated.BuildConstants;
+
 public final class Constants {
+
+  public static final boolean DEV_MODE = !BuildConstants.GIT_BRANCH.equals("main")
+      && !BuildConstants.GIT_BRANCH.startsWith("event/");
 
   public static final String canivoreCanBusName = "Drivetrain";
 

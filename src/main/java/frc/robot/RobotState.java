@@ -36,7 +36,9 @@ public class RobotState {
   }
 
   private RobotState() {
-    SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
+    if (Constants.DEV_MODE) {
+      SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
+    }
   }
 
   public void periodic() {
@@ -58,20 +60,22 @@ public class RobotState {
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
-    SmartDashboard.putData("Field", drivetrain.getFieldPosition());
-    SmartDashboard.putData("Swerve Drive", (SendableBuilder builder) -> {
-      builder.setSmartDashboardType("SwerveDrive");
-      builder.addDoubleProperty("Front Left Angle", () -> cachedModuleStates[0].angle.getRadians(), null);
-      builder.addDoubleProperty("Front Left Velocity", () -> cachedModuleStates[0].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Front Right Angle", () -> cachedModuleStates[1].angle.getRadians(), null);
-      builder.addDoubleProperty("Front Right Velocity", () -> cachedModuleStates[1].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Left Angle", () -> cachedModuleStates[2].angle.getRadians(), null);
-      builder.addDoubleProperty("Back Left Velocity", () -> cachedModuleStates[2].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Right Angle", () -> cachedModuleStates[3].angle.getRadians(), null);
-      builder.addDoubleProperty("Back Right Velocity", () -> cachedModuleStates[3].speedMetersPerSecond, null);
-      builder.addDoubleProperty("Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
-    });
+    if (Constants.DEV_MODE) {
+      // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
+      SmartDashboard.putData("Field", drivetrain.getFieldPosition());
+      SmartDashboard.putData("Swerve Drive", (SendableBuilder builder) -> {
+        builder.setSmartDashboardType("SwerveDrive");
+        builder.addDoubleProperty("Front Left Angle", () -> cachedModuleStates[0].angle.getRadians(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> cachedModuleStates[0].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Front Right Angle", () -> cachedModuleStates[1].angle.getRadians(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> cachedModuleStates[1].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Back Left Angle", () -> cachedModuleStates[2].angle.getRadians(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> cachedModuleStates[2].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Back Right Angle", () -> cachedModuleStates[3].angle.getRadians(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> cachedModuleStates[3].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Robot Angle", () -> drivetrain.getHeading().getRadians(), null);
+      });
+    }
   }
 
   private void updateDrivetrainPeriodic() {

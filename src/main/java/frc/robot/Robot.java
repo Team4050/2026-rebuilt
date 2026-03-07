@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.generated.BuildConstants;
 import frc.robot.util.Elastic;
 import frc.robot.util.LimelightHelpers;
 
@@ -36,7 +35,7 @@ public class Robot extends TimedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Default dashboard to diagnostics tab when not on main or event branch
-    if (!BuildConstants.GIT_BRANCH.equals("main") && !BuildConstants.GIT_BRANCH.startsWith("event/")) {
+    if (Constants.DEV_MODE) {
       Elastic.selectTab("Diagnostics");
     }
 
