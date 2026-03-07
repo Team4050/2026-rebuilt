@@ -31,17 +31,19 @@ public class Climber extends SubsystemBase {
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
-  public enum Level {
-    GROUND("Ground"), L1("Level 1"), L2("Level 2"), L3("Level 3");
+  public enum ClimbStage {
 
-    private String levelString;
+    STAGE_1("Stage 1 (Primary Climber Extending)"), STAGE_2("Stage 2 (Secondary Climber Returning)");
 
-    Level(String levelString) {
-      this.levelString = levelString;
+    private String climbStageString;
+
+    ClimbStage(String climbStageString) {
+      this.climbStageString = climbStageString;
     }
   }
 
-  private Level climberLevel = Level.GROUND;
+  private ClimbStage climbStage = ClimbStage.STAGE_1;
+  private int levelsClimbed = 0;
 
   // stall homing constants
   private static final double HOMING_SPEED = 0.1;
@@ -77,12 +79,43 @@ public class Climber extends SubsystemBase {
     pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
-  private boolean climberAtUpperLimit() {
+  private boolean primaryAtUpperLimit() {
     return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < 0.1;
   }
 
-  private boolean climberAtLowerLimit() {
+  private boolean primaryAtLowerLimit() {
     return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < 0.1;
+  }
+
+  private void handleClimbStage1() {
+    if (levelsClimbed == 3) {
+      return;
+    }
+
+    /* TODO make sure auto is handeled (do not pass L1) */
+
+    if (primaryAtUpperLimit()) {
+      /* TODO maybe pause here to settle before running stage 2 */
+      climbStage = ClimbStage.STAGE_2;
+    } else {
+      primaryUp();
+    }
+  }
+
+  private void handleClimbStage2() {
+    if (levelsClimbed == 3) {
+      return;
+    }
+
+    /* TODO make sure auto is handeled (do not pass L1) */
+
+    if (primaryAtUpperLimit()) {
+      /* TODO maybe pause here to settle before running stage 1 again */
+      climbStage = ClimbStage.STAGE_1;
+
+    } else {
+      primaryDown();
+    }
   }
 
   /**
@@ -93,9 +126,9 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Move the climber up at full speed
+   * Manually move the primary climber up at full speed
    */
-  public void up() {
+  public void primaryUp() {
     abort_homing = true;
 
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
@@ -103,9 +136,9 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Move the climber down at full speed
+   * Manually ove the primary climber down at full speed
    */
-  public void down() {
+  public void primaryDown() {
     abort_homing = true;
 
     // "down" refers to climber primary down, and encoder values change in opposite direction
@@ -123,6 +156,7 @@ public class Climber extends SubsystemBase {
    * Automatically climb to L3.
    */
   public void climb() {
+
   }
 
   /**
@@ -187,8 +221,16 @@ public class Climber extends SubsystemBase {
     return encoder.getPosition();
   }
 
-  public String getClimberLevelString() {
-    return climberLevel.levelString;
+  public double getVelocity() {
+    return encoder.getVelocity();
+  }
+
+  public String getClimberStateString() {
+    return climbStage.climbStageString;
+  }
+
+  public int getLevelsClimbed() {
+    return levelsClimbed;
   }
 
   @Override

@@ -100,8 +100,8 @@ public class RobotContainer {
     joystickSecondary.b().whileTrue(intakeSub.run(intakeSub::deployOverrideOut));
     joystickSecondary.x().whileTrue(intakeSub.run(intakeSub::deployOverrideIn));
 
-    joystickSecondary.povUp().whileTrue(new RunCommand(climber::up, climber));
-    joystickSecondary.povDown().whileTrue(new RunCommand(climber::down, climber));
+    joystickSecondary.povUp().whileTrue(new RunCommand(climber::primaryUp, climber));
+    joystickSecondary.povDown().whileTrue(new RunCommand(climber::primaryDown, climber));
     joystickSecondary
         .povUp()
         .negate()
