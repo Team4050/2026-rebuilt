@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.IntakeSubsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
