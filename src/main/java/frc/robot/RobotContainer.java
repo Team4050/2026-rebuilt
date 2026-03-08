@@ -33,8 +33,10 @@ public class RobotContainer {
 
   public final IntakeRollers intakeRollers = new IntakeRollers();
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
-  public final Outtake outtakeRight = new Outtake(Constants.Subsystems.outtakeRightId, OuttakeMode.Unloader);
-  public final Outtake outtakeLeft = new Outtake(Constants.Subsystems.outtakeLeftId, OuttakeMode.Unloader);
+  public final Outtake outtakeRight = new Outtake(Constants.Subsystems.outtakeRightId,
+      Constants.Subsystems.shooterRightId, OuttakeMode.Unloader);
+  public final Outtake outtakeLeft = new Outtake(Constants.Subsystems.outtakeLeftId, Constants.Subsystems.shooterLeftId,
+      OuttakeMode.Unloader);
 
   public final Climber climber = new Climber();
 

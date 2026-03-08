@@ -25,14 +25,16 @@ public class Outtake extends SubsystemBase {
   }
 
   private SparkMax motor;
+  private SparkMax motor2; // moter2  is the shooter motor
   private OuttakeMode outtakeMode;
   private int motorId;
+  private int motorId2;
 
   private final double outtakeSpeed = -0.7;
   private final double shooterSpeed = -1;
   private final double outtakeRevSpeed = 0.5;
 
-  public Outtake(int motorId, OuttakeMode mode) {
+  public Outtake(int motorId, int motorId2, OuttakeMode mode) {
     //outtakeMode = OuttakeMode.Outtake;
     outtakeMode = mode;
     this.motorId = motorId;
@@ -43,6 +45,20 @@ public class Outtake extends SubsystemBase {
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Outtake motor " + motorId, false);
+    }
+
+    if (outtakeMode == OuttakeMode.Shooter) {
+      this.motorId2 = motorId2;
+
+      motor2 = new SparkMax(motorId2, SparkMax.MotorType.kBrushless);
+
+      final SparkMaxConfig config2 = new SparkMaxConfig();
+      config2.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
+
+      if (motor2
+          .configure(config2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
+        DriverStation.reportWarning("Error configuring Outtake motor " + motorId2, false);
+      }
     }
   }
 

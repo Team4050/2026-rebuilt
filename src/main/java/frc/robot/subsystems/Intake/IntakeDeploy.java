@@ -86,7 +86,7 @@ public class IntakeDeploy extends SubsystemBase {
 
   private void setPosition(double position) {
     controller.setSetpoint(position, SparkMax.ControlType.kPosition);
-    if (Math.abs(getPosition() - position) < 3) {  // If we're close enough to the target position, stop the motor to prevent oscillation.
+    if (Math.abs(getPosition() - position) < 3) { // If we're close enough to the target position, stop the motor to prevent oscillation.
       motor.stopMotor();
     }
   }

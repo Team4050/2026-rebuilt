@@ -205,7 +205,6 @@ public class RobotState {
     return outtakeRight.motorCurrent();
   }
 
-
   // ===================== Vision =====================
 
   private Pose2d visionPose = new Pose2d();
