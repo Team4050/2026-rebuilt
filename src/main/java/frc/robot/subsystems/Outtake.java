@@ -39,7 +39,7 @@ public class Outtake extends SubsystemBase {
     motor = new SparkMax(motorId, SparkMax.MotorType.kBrushless);
 
     final SparkMaxConfig config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
+    config.idleMode(IdleMode.kCoast).smartCurrentLimit(50); //TODO: Do we want to set different current limits for shooter vs unloader mode?
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Outtake motor " + motorId, false);
