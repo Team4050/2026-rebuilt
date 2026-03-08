@@ -52,7 +52,8 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
-    //rs.addOuttake
+    rs.addOuttakeLeft(outtakeLeft);
+    rs.addOuttakeRight(outtakeRight);
   }
 
   private void configureBindings() {
@@ -68,6 +69,9 @@ public class RobotContainer {
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
+
+    outtakeLeft.setDefaultCommand(outtakeLeft.stopCommand());
+    outtakeRight.setDefaultCommand(outtakeRight.stopCommand());
   }
 
   private void configurePrimaryBindings() {

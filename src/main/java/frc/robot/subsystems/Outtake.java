@@ -26,20 +26,23 @@ public class Outtake extends SubsystemBase {
 
   private SparkMax motor;
   private OuttakeMode outtakeMode;
+  private int motorId;
 
   private final double outtakeSpeed = -0.7;
   private final double shooterSpeed = -1;
   private final double outtakeRevSpeed = 0.5;
 
   public Outtake(int motorId, OuttakeMode mode) {
+    //outtakeMode = OuttakeMode.Outtake;
     outtakeMode = mode;
+    this.motorId = motorId;
     motor = new SparkMax(motorId, SparkMax.MotorType.kBrushless);
 
     final SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
-      DriverStation.reportWarning("Error configuring Outtake Motor " + motorId, false);
+      DriverStation.reportWarning("Error configuring Outtake motor " + motorId, false);
     }
   }
 
@@ -47,12 +50,17 @@ public class Outtake extends SubsystemBase {
     outtakeMode = mode;
   }
 
+  public Command setOuttakeModeCommand(OuttakeMode mode) {
+    return runOnce(() -> setOuttakeMode(mode))
+        .withName("Set outtake " + motorId + " mode to " + mode.outtakeModeString);
+  }
+
   private void stop() {
     motor.stopMotor();
   }
 
   public Command stopCommand() {
-    return runOnce(this::stop).withName("Outtake: Stop");
+    return runOnce(this::stop).withName("Outtake motor " + motorId + " stopped");
   }
 
   public void Forward() {
