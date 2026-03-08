@@ -15,7 +15,7 @@ public class Outtake extends SubsystemBase {
 
   public enum OuttakeMode {
 
-    Outtake("Outtake Mode"), Shooter("Shooter Mode");
+    Unloader("Unloader Mode"), Shooter("Shooter Mode");
 
     private String outtakeModeString;
 
@@ -64,7 +64,7 @@ public class Outtake extends SubsystemBase {
   }
 
   public void Forward() {
-    if (outtakeMode == OuttakeMode.Outtake) {
+    if (outtakeMode == OuttakeMode.Unloader) {
       motor.set(outtakeSpeed);
     } else if (outtakeMode == OuttakeMode.Shooter) {
       motor.set(shooterSpeed);
