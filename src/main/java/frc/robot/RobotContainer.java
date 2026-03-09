@@ -25,6 +25,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.Outtake.OuttakeMode;
+import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
 
@@ -39,6 +40,11 @@ public class RobotContainer {
       OuttakeMode.Unloader);
 
   public final Climber climber = new Climber();
+
+  // ===== \/ Just an example \/ =====
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeLeftId);
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeRightId, 999); // 999 is just an example ID for a shooter motor
+  // ===== /\ Just an example /\ =====
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
