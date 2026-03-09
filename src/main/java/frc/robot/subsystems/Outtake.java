@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
+// For configuration
+import com.revrobotics.RelativeEncoder; // For getting positions/velocities
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -24,8 +26,9 @@ public class Outtake extends SubsystemBase {
     }
   }
 
-  private SparkMax motor;
-  private SparkMax motor2; // moter2  is the shooter motor
+  private SparkMax motor; // motor is the unloader motor
+  private SparkMax motor2; // motor2  is the shooter motor
+  private RelativeEncoder encoder2; // encoder for the shooter motor
   private OuttakeMode outtakeMode;
   private int motorId;
   private int motorId2;
@@ -41,7 +44,7 @@ public class Outtake extends SubsystemBase {
     motor = new SparkMax(motorId, SparkMax.MotorType.kBrushless);
 
     final SparkMaxConfig config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kCoast).smartCurrentLimit(50); //TODO: Do we want to set different current limits for shooter vs unloader mode?
+    config.idleMode(IdleMode.kCoast).smartCurrentLimit(20);
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Outtake motor " + motorId, false);
@@ -52,8 +55,10 @@ public class Outtake extends SubsystemBase {
 
       motor2 = new SparkMax(motorId2, SparkMax.MotorType.kBrushless);
 
+      encoder2 = motor2.getEncoder();
+
       final SparkMaxConfig config2 = new SparkMaxConfig();
-      config2.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
+      config2.idleMode(IdleMode.kCoast).smartCurrentLimit(20);
 
       if (motor2
           .configure(config2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -72,7 +77,12 @@ public class Outtake extends SubsystemBase {
   }
 
   private void stop() {
-    motor.stopMotor();
+    if (outtakeMode == OuttakeMode.Shooter) {
+      motor2.stopMotor();
+      motor.stopMotor();
+    } else if (outtakeMode == OuttakeMode.Unloader) {
+      motor.stopMotor();
+    }
   }
 
   public Command stopCommand() {
@@ -83,12 +93,19 @@ public class Outtake extends SubsystemBase {
     if (outtakeMode == OuttakeMode.Unloader) {
       motor.set(outtakeSpeed);
     } else if (outtakeMode == OuttakeMode.Shooter) {
-      motor.set(shooterSpeed);
+      Shooting();
     }
   }
 
   public void Reverse() {
     motor.set(outtakeRevSpeed);
+  }
+
+  public void Shooting() {
+    motor2.set(shooterSpeed);
+    if (encoder2.getVelocity() > 2000.0) {
+      motor.set(shooterSpeed);
+    }
   }
 
   public double motorCurrent() {
