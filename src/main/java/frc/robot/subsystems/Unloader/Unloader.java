@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Unloader;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
@@ -67,19 +67,20 @@ public class Unloader extends SubsystemBase {
     return shooterMotor != null;
   }
 
-  private void shoot() {
-    shooterMotor.set(SHOOTER_SPEED);
+  public void primeShooter() {
+    if (hasShooter()) {
+      shooterMotor.set(SHOOTER_SPEED);
+    }
+  }
+
+  public void shoot() {
     if (shooterEncoder.getVelocity() > 2000.0) {
       kickerMotor.set(SHOOTER_SPEED);
     }
   }
 
-  public void go() {
-    if (hasShooter()) {
-      shoot();
-    } else {
-      kickerMotor.set(OUTTAKE_SPEED);
-    }
+  public void runOuttake() {
+    kickerMotor.set(OUTTAKE_SPEED);
   }
 
   public void reverse() {

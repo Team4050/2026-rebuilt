@@ -1,0 +1,67 @@
+package frc.robot.subsystems.Unloader;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+
+public class UnloadCommand {
+  private final Unloader unloaderLeft;
+  private final Unloader unloaderRight;
+
+  public UnloadCommand(Unloader unloaderLeft, Unloader unloaderRight) {
+    this.unloaderLeft = unloaderLeft;
+    this.unloaderRight = unloaderRight;
+  }
+
+  private void primeShooter() {
+    unloaderLeft.primeShooter();
+    unloaderRight.primeShooter();
+  }
+
+  private void shoot() {
+    if (!unloaderLeft.hasShooter() && !unloaderRight.hasShooter()) {
+      return;
+    }
+
+    if (unloaderLeft.hasShooter()) {
+      unloaderLeft.shoot();
+    } else {
+      unloaderLeft.reverse();
+    }
+
+    if (unloaderRight.hasShooter()) {
+      unloaderRight.shoot();
+    } else {
+      unloaderRight.reverse();
+    }
+  }
+
+  private void outtake() {
+    if (unloaderLeft.hasShooter() && unloaderRight.hasShooter()) {
+      return;
+    }
+
+    if (!unloaderLeft.hasShooter()) {
+      unloaderLeft.runOuttake();
+    } else {
+      unloaderLeft.reverse();
+    }
+
+    if (!unloaderRight.hasShooter()) {
+      unloaderRight.runOuttake();
+    } else {
+      unloaderRight.reverse();
+    }
+  }
+
+  public Command primeCommand() {
+    return new RunCommand(this::primeShooter, unloaderLeft, unloaderRight);
+  }
+
+  public Command shootCommand() {
+    return new RunCommand(this::shoot, unloaderLeft, unloaderRight);
+  }
+
+  public Command outtakeCommand() {
+    return new RunCommand(this::outtake, unloaderLeft, unloaderRight);
+  }
+}

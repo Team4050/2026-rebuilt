@@ -23,9 +23,10 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
+import frc.robot.subsystems.Unloader.UnloadCommand;
+import frc.robot.subsystems.Unloader.Unloader;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -35,10 +36,13 @@ public class RobotContainer {
 
   public final Climber climber = new Climber();
 
-  // TODO look at theses when ready to test unloaders
-  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeLeftId);
   // TODO remove hard-coded shooter motor ID
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeRightId, 57);
+
+  // TODO look at these when ready to test unloaders
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeLeftId);
+
+  public final UnloadCommand unloadCommand = new UnloadCommand(unloaderLeft, unloaderRight);
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
