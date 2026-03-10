@@ -71,6 +71,9 @@ public class RobotContainer {
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
+
+    unloaderLeft.setDefaultCommand(unloaderLeft.stopCommand());
+    unloaderRight.setDefaultCommand(unloaderRight.stopCommand());
   }
 
   private void configurePrimaryBindings() {
