@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
@@ -180,30 +180,10 @@ public class RobotState {
 
   // ===================== Outtake =====================
 
-  private Outtake outtakeLeft;
-  private Outtake outtakeRight;
+  private Unloader unloaderLeft;
+  private Unloader unloaderRight;
 
-  public void addOuttakeLeft(Outtake outtakeLeft) {
-    this.outtakeLeft = outtakeLeft;
-  }
-
-  public void addOuttakeRight(Outtake outtakeRight) {
-    this.outtakeRight = outtakeRight;
-  }
-
-  public double getOuttakeLeftCurrent() {
-    if (outtakeLeft == null) {
-      return 0.0;
-    }
-    return outtakeLeft.motorCurrent();
-  }
-
-  public double getOuttakeRightCurrent() {
-    if (outtakeRight == null) {
-      return 0.0;
-    }
-    return outtakeRight.motorCurrent();
-  }
+  // TODO reimplement unloader logging
 
   // ===================== Vision =====================
 

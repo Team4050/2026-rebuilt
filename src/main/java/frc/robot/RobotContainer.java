@@ -23,8 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Outtake;
-import frc.robot.subsystems.Outtake.OuttakeMode;
 import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
@@ -34,17 +32,13 @@ public class RobotContainer {
 
   public final IntakeRollers intakeRollers = new IntakeRollers();
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
-  public final Outtake outtakeRight = new Outtake(Constants.Subsystems.outtakeRightId,
-      Constants.Subsystems.shooterRightId, OuttakeMode.Unloader);
-  public final Outtake outtakeLeft = new Outtake(Constants.Subsystems.outtakeLeftId, Constants.Subsystems.shooterLeftId,
-      OuttakeMode.Unloader);
 
   public final Climber climber = new Climber();
 
-  // ===== \/ Just an example \/ =====
+  // TODO look at theses when ready to test unloaders
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeLeftId);
-  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeRightId, 999); // 999 is just an example ID for a shooter motor
-  // ===== /\ Just an example /\ =====
+  // TODO remove hard-coded shooter motor ID
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeRightId, 57);
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
@@ -60,8 +54,8 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
-    rs.addOuttakeLeft(outtakeLeft);
-    rs.addOuttakeRight(outtakeRight);
+
+    // TODO add unloaders to robot state
   }
 
   private void configureBindings() {
@@ -77,9 +71,6 @@ public class RobotContainer {
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
-
-    outtakeLeft.setDefaultCommand(outtakeLeft.stopCommand());
-    outtakeRight.setDefaultCommand(outtakeRight.stopCommand());
   }
 
   private void configurePrimaryBindings() {
