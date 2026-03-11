@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Unloader extends SubsystemBase {
-  private SparkMax kickerMotor;
-  private SparkMax shooterMotor = null;
-  private RelativeEncoder shooterEncoder = null;
+  private final SparkMax kickerMotor;
+  private SparkMax shooterMotor;
+  private RelativeEncoder shooterEncoder;
 
   private final int KICKER_CURRENT_LIMIT = 20;
   private final int SHOOTER_CURRENT_LIMIT = 50;
@@ -40,15 +40,6 @@ public class Unloader extends SubsystemBase {
     this(kickerMotorId);
 
     // Add shooter motor
-    addShooter(shooterMotorId);
-  }
-
-  public void addShooter(int shooterMotorId) {
-    if (shooterMotor != null) {
-      // No-op if shooter is already configured
-      return;
-    }
-
     shooterMotor = new SparkMax(shooterMotorId, SparkMax.MotorType.kBrushless);
 
     var config = new SparkMaxConfig();
