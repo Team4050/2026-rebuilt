@@ -18,22 +18,15 @@ import frc.robot.Constants;
 
 public class IntakeDeploy extends SubsystemBase {
 
-  private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
-
-  private final SparkMaxConfig softLimitsEnabled = new SparkMaxConfig();
-  private final SparkMaxConfig softLimitsDisabled = new SparkMaxConfig();
-
-  private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder();
-  private final SparkClosedLoopController controller = motor.getClosedLoopController();
-
   private final double mechanismMinAngle = 48;
   private final double mechanismMaxAngle = 180;
 
   private final double retractedAngle = 50;
   private final double deployedAngle = 175;
 
-  // Note: We should potentially avoid using zero offset. Using zero as our resting position (or close to it) at
-  // either end of the mechanism opens the door to potentially rolling over (past 0), confusing the control logic.
+  // Note: We should not use our zero offset to indicate resting position (either deployed or not).
+  // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
+  // can result in the control loop telling the motor to turn in the opposite direction to get back to the setpoint.
   //
   // How to calibrate zero offset:
   // 1. Set zero offset to 0
@@ -45,8 +38,16 @@ public class IntakeDeploy extends SubsystemBase {
   // The maximum output speed (percentage). Must be between 0 and 1.
   private final double maxOutput = 0.3;
 
+  private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
+
+  private final SparkMaxConfig softLimitsEnabled = new SparkMaxConfig();
+  private final SparkMaxConfig softLimitsDisabled = new SparkMaxConfig();
+
+  private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder();
+  private final SparkClosedLoopController controller = motor.getClosedLoopController();
+
   public IntakeDeploy() {
-    final SparkMaxConfig config = new SparkMaxConfig();
+    var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true);
 
     config.closedLoop
@@ -86,12 +87,26 @@ public class IntakeDeploy extends SubsystemBase {
     controller.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
-  public void deploy() {
+  private boolean deployed = false;
+
+  private void deploy() {
+    deployed = true;
     setPosition(deployedAngle);
   }
 
-  public void retract() {
+  private void retract() {
+    deployed = false;
     setPosition(retractedAngle);
+  }
+
+  public Command toggleDeployCommand() {
+    return runOnce(() -> {
+      if (deployed) {
+        retract();
+      } else {
+        deploy();
+      }
+    }).withName("Intake Deploy: Toggle");
   }
 
   private double deployOverrideCurrentPosition = 0;

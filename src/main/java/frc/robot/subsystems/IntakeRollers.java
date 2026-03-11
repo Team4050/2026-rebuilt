@@ -14,12 +14,12 @@ import frc.robot.Constants;
 
 public class IntakeRollers extends SubsystemBase {
 
-  private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
-
   private final double speed = 0.7;
 
+  private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
+
   public IntakeRollers() {
-    final SparkMaxConfig config = new SparkMaxConfig();
+    var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -31,16 +31,20 @@ public class IntakeRollers extends SubsystemBase {
     motor.stopMotor();
   }
 
-  public Command stopCommand() {
-    return runOnce(this::stop).withName("Intake Rollers: Stop");
-  }
-
-  public void intakeForward() {
+  private void intakeIn() {
     motor.set(speed);
   }
 
-  public void intakeReverse() {
+  private void intakeOut() {
     motor.set(-speed);
+  }
+
+  public Command inCommand() {
+    return startEnd(this::intakeIn, this::stop).withName("Intake: In");
+  }
+
+  public Command outCommand() {
+    return startEnd(this::intakeOut, this::stop).withName("Intake: Out");
   }
 
   public double motorCurrent() {
