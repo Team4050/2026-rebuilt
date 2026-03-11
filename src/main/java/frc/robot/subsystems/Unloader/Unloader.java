@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Unloader extends SubsystemBase {
-  private final SparkMax kickerMotor;
-  private SparkMax shooterMotor;
-  private RelativeEncoder shooterEncoder;
-
   private final int KICKER_CURRENT_LIMIT = 20;
   private final int SHOOTER_CURRENT_LIMIT = 50;
 
   private final double OUTTAKE_SPEED = 0.7;
   private final double REVERSE_SPEED = -0.5;
   private final double SHOOTER_SPEED = 1.0;
+
+  private SparkMax kickerMotor;
+  private SparkMax shooterMotor;
+  private RelativeEncoder shooterEncoder;
 
   public Unloader(int kickerMotorId) {
     kickerMotor = new SparkMax(kickerMotorId, SparkMax.MotorType.kBrushless);

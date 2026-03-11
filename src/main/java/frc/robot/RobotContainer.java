@@ -36,10 +36,8 @@ public class RobotContainer {
 
   public final Climber climber = new Climber();
 
-  // left unloader is set to outtake by omitting shooter ID
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId);
 
-  // right unloader is set to shooter by passing shooter ID
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId,
       Constants.Subsystems.shooterRightId);
 
@@ -64,7 +62,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     configureRobotTriggers();
-    configureDefaultCommands();
     configurePrimaryBindings();
     configureSecondaryBindings();
 
@@ -76,11 +73,6 @@ public class RobotContainer {
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
-  }
-
-  private void configureDefaultCommands() {
-    // intakeRollers.setDefaultCommand(intakeRollers.stopCommand());
-    // climber.setDefaultCommand(climber.stopCommand());
   }
 
   private void configurePrimaryBindings() {
@@ -161,12 +153,11 @@ public class RobotContainer {
     // PovDown (hold): Climb down
     joystickSecondary.povDown().whileTrue(climber.downCommand());
 
+    // TODO: implement climber deploy/retract toggle
     // PovRight (tap): Toggle climber deploy / retract
     joystickSecondary
         .povRight()
         .onTrue(Commands.print("[STUB] Climber: Toggle Deploy").withName("Climber: Toggle Deploy"));
-
-    // TODO: implement climber deploy/retract toggle
 
     // ===== Overrides =====
 
