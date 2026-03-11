@@ -54,14 +54,24 @@ public class UnloadCommand {
   }
 
   public Command primeCommand() {
-    return new RunCommand(this::primeShooter, unloaderLeft, unloaderRight).withName("Unloaders: prime shooter(s)");
+    // this command omits dependencies to avoid the command being canceled (shooter motors are independent)
+    return new RunCommand(this::primeShooter).finallyDo(() -> {
+      unloaderLeft.stopShooter();
+      unloaderRight.stopShooter();
+    }).withName("Unloaders: prime shooter(s)");
   }
 
   public Command shootCommand() {
-    return new RunCommand(this::shoot, unloaderLeft, unloaderRight).withName("Unloaders: shoot");
+    return new RunCommand(this::shoot, unloaderLeft, unloaderRight).finallyDo(() -> {
+      unloaderLeft.stopKicker();
+      unloaderRight.stopKicker();
+    }).withName("Unloaders: shoot");
   }
 
   public Command outtakeCommand() {
-    return new RunCommand(this::outtake, unloaderLeft, unloaderRight).withName("Unloaders: run outtake");
+    return new RunCommand(this::outtake, unloaderLeft, unloaderRight).finallyDo(() -> {
+      unloaderLeft.stopKicker();
+      unloaderRight.stopKicker();
+    }).withName("Unloaders: run outtake");
   }
 }

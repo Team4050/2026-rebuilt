@@ -8,14 +8,11 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -76,9 +73,9 @@ public class RobotContainer {
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
 
-    // TODO: We should avoid using default commands and instead use `.finallyDo()` on the commands that turn things on
-    unloaderLeft.setDefaultCommand(unloaderLeft.stopCommand());
-    unloaderRight.setDefaultCommand(unloaderRight.stopCommand());
+  private void configureDefaultCommands() {
+    // intakeRollers.setDefaultCommand(intakeRollers.stopCommand());
+    // climber.setDefaultCommand(climber.stopCommand());
   }
 
   private void configurePrimaryBindings() {

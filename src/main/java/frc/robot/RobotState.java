@@ -188,16 +188,24 @@ public class RobotState {
     this.unloaderRight = unloaderRight;
   }
 
+  public boolean leftKickerIsRunning() {
+    return unloaderLeft.kickerIsRunning();
+  }
+
   public boolean leftUnloaderIsShooter() {
     return unloaderLeft.hasShooter();
   }
 
-  public boolean rightUnloaderIsShooter() {
-    return unloaderRight.hasShooter();
-  }
-
   public double getShooterLeftRPM() {
     return unloaderLeft.getShooterRPM();
+  }
+
+  public boolean rightKickerIsRunning() {
+    return unloaderRight.kickerIsRunning();
+  }
+
+  public boolean rightUnloaderIsShooter() {
+    return unloaderRight.hasShooter();
   }
 
   public double getShooterRightRPM() {

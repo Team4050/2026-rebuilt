@@ -9,7 +9,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Unloader extends SubsystemBase {
@@ -87,19 +86,19 @@ public class Unloader extends SubsystemBase {
     kickerMotor.set(REVERSE_SPEED);
   }
 
-  private void stop() {
+  public void stopKicker() {
     kickerMotor.stopMotor();
-
-    if (shooterMotor != null) {
-      shooterMotor.stopMotor();
-    }
   }
 
-  public Command stopCommand() {
-    return runOnce(this::stop).withName("Unloader: Stop motors");
+  public void stopShooter() {
+    shooterMotor.stopMotor();
   }
 
   public double getShooterRPM() {
     return hasShooter() ? shooterEncoder.getVelocity() : 0;
+  }
+
+  public boolean kickerIsRunning() {
+    return kickerMotor.getEncoder().getVelocity() > 0.1;
   }
 }
