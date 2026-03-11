@@ -76,6 +76,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
 
+    // TODO: We should avoid using default commands and instead use `.finallyDo()` on the commands that turn things on
     unloaderLeft.setDefaultCommand(unloaderLeft.stopCommand());
     unloaderRight.setDefaultCommand(unloaderRight.stopCommand());
   }
@@ -143,19 +144,12 @@ public class RobotContainer {
     // B: Run intake rollers while held
     joystickSecondary.b().whileTrue(intakeRollers.inCommand());
 
-    // ===== Unloaders (stubbed) =====
+    // ===== Unloaders =====
 
-    // Left trigger (hold): Shoot left unloader
-    joystickSecondary.leftTrigger().whileTrue(Commands.idle().withName("Left Unloader: Shoot")); // TODO: wire to unloader subsystem
+    joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
 
-    // Right trigger (hold): Shoot right unloader
-    joystickSecondary.rightTrigger().whileTrue(Commands.idle().withName("Right Unloader: Shoot")); // TODO: wire to unloader subsystem
-
-    // Left bumper (toggle): Spin up left unloader
-    joystickSecondary.leftBumper().toggleOnTrue(Commands.idle().withName("Left Unloader: Spin Up")); // TODO: wire to unloader subsystem
-
-    // Right bumper (toggle): Spin up right unloader
-    joystickSecondary.rightBumper().toggleOnTrue(Commands.idle().withName("Right Unloader: Spin Up")); // TODO: wire to unloader subsystem
+    joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
+    joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
 
     // ===== Climber =====
 
@@ -169,6 +163,7 @@ public class RobotContainer {
     joystickSecondary
         .povRight()
         .onTrue(Commands.print("[STUB] Climber: Toggle Deploy").withName("Climber: Toggle Deploy"));
+
     // TODO: implement climber deploy/retract toggle
 
     // ===== Overrides =====
