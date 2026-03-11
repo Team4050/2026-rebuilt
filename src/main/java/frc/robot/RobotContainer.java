@@ -37,10 +37,10 @@ public class RobotContainer {
   public final Climber climber = new Climber();
 
   // left unloader is set to outtake by omitting shooter ID
-  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeLeftId);
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId);
 
   // right unloader is set to shooter by passing shooter ID
-  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeRightId,
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId,
       Constants.Subsystems.shooterRightId);
 
   public final UnloadCommand unloadCommand = new UnloadCommand(unloaderLeft, unloaderRight);
