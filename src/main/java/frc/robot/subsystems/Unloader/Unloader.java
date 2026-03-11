@@ -98,4 +98,8 @@ public class Unloader extends SubsystemBase {
   public Command stopCommand() {
     return runOnce(this::stop).withName("Unloader: Stop motors");
   }
+
+  public double getShooterRPM() {
+    return hasShooter() ? shooterEncoder.getVelocity() : 0;
+  }
 }

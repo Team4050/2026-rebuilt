@@ -36,11 +36,12 @@ public class RobotContainer {
 
   public final Climber climber = new Climber();
 
-  // TODO remove hard-coded shooter motor ID
-  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeRightId, 57);
+  // left unloader is set to outtake by omitting shooter ID
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.outtakeLeftId);
 
-  // TODO look at these when ready to test unloaders
-  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeLeftId);
+  // right unloader is set to shooter by passing shooter ID
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.outtakeRightId,
+      Constants.Subsystems.shooterRightId);
 
   public final UnloadCommand unloadCommand = new UnloadCommand(unloaderLeft, unloaderRight);
 
@@ -58,8 +59,7 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
-
-    // TODO add unloaders to robot state
+    rs.addUnloaders(unloaderLeft, unloaderRight);
   }
 
   private void configureBindings() {

@@ -183,7 +183,26 @@ public class RobotState {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
 
-  // TODO reimplement unloader logging
+  public void addUnloaders(Unloader unloaderLeft, Unloader unloaderRight) {
+    this.unloaderLeft = unloaderLeft;
+    this.unloaderRight = unloaderRight;
+  }
+
+  public boolean leftUnloaderIsShooter() {
+    return unloaderLeft.hasShooter();
+  }
+
+  public boolean rightUnloaderIsShooter() {
+    return unloaderRight.hasShooter();
+  }
+
+  public double getShooterLeftRPM() {
+    return unloaderLeft.getShooterRPM();
+  }
+
+  public double getShooterRightRPM() {
+    return unloaderRight.getShooterRPM();
+  }
 
   // ===================== Vision =====================
 
