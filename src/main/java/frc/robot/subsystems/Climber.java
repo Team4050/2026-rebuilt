@@ -13,12 +13,12 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.HomeCommand;
 
-public class Climber extends SubsystemBase {
+public class Climber extends SubsystemBase implements Homeable {
   // default units are rotations
   private final double ENCODER_POSITION_MIN = 0.0;
 
@@ -36,8 +36,6 @@ public class Climber extends SubsystemBase {
   private static final double STALL_CURRENT_AMPS = 10.0;
   private static final double STALL_VELOCITY_RPM = 5.0;
   private static final double STALL_TIME_SEC = 0.1;
-
-  private boolean abort_homing = false;
 
   public Climber() {
     final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
@@ -75,9 +73,7 @@ public class Climber extends SubsystemBase {
   /**
    * Move the climber up at full speed
    */
-  public void up() {
-    abort_homing = true;
-
+  private void up() {
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
     setPosition(ENCODER_POSITION_MIN);
   }
@@ -85,9 +81,7 @@ public class Climber extends SubsystemBase {
   /**
    * Move the climber down at full speed
    */
-  public void down() {
-    abort_homing = true;
-
+  private void down() {
     // "down" refers to climber primary down, and encoder values change in opposite direction
     setPosition(ENCODER_POSITION_MAX);
   }
@@ -105,6 +99,16 @@ public class Climber extends SubsystemBase {
     // pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 
+  /** Command that drives the climber up while active, stops on end. */
+  public Command upCommand() {
+    return startEnd(this::up, this::stop).withName("Climber: Up");
+  }
+
+  /** Command that drives the climber down while active, stops on end. */
+  public Command downCommand() {
+    return startEnd(this::down, this::stop).withName("Climber: Down");
+  }
+
   public Command stopCommand() {
     return runOnce(this::stop).withName("Climber: Stop");
   }
@@ -115,61 +119,34 @@ public class Climber extends SubsystemBase {
    * @return The generated command.
    */
   public Command homeCommand() {
-    return new Command() {
-      private final Timer stallTimer = new Timer();
+    return new HomeCommand(this, STALL_CURRENT_AMPS, STALL_VELOCITY_RPM, STALL_TIME_SEC).withName("Climber: Home");
+  }
 
-      @Override
-      public void initialize() {
-        System.out.println("Climber - stall homing start.");
+  // ===================== Homeable =====================
 
-        stallTimer.stop();
-        stallTimer.reset();
-
-        abort_homing = false;
-      }
-
-      @Override
-      public void execute() {
-        if (abort_homing) {
-          System.out.println("Climber - stall homing aborted.");
-          leaderMotor.stopMotor();
-          return;
-        }
-
-        leaderMotor.set(-HOMING_SPEED);
-
-        boolean stalled = leaderMotor.getOutputCurrent() > STALL_CURRENT_AMPS
-            && Math.abs(encoder.getVelocity()) < STALL_VELOCITY_RPM;
-
-        if (stalled) {
-          if (!stallTimer.isRunning()) {
-            stallTimer.start();
-            System.out.println("Climber - stalled.");
-          }
-        } else {
-          stallTimer.stop();
-          stallTimer.reset();
-        }
-      }
-
-      @Override
-      public boolean isFinished() {
-        return abort_homing || stallTimer.hasElapsed(STALL_TIME_SEC);
-      }
-
-      @Override
-      public void end(boolean interrupted) {
-        if (abort_homing)
-          return;
-        stop();
-        encoder.setPosition(ENCODER_POSITION_MIN);
-      }
-    }.withName("Climber: Home");
+  @Override
+  public void driveToHome() {
+    leaderMotor.set(-HOMING_SPEED);
   }
 
   @Override
-  public void periodic() {
-    /* currently unused */
+  public void stopHoming() {
+    stop();
+  }
+
+  @Override
+  public double getHomingCurrent() {
+    return leaderMotor.getOutputCurrent();
+  }
+
+  @Override
+  public double getHomingVelocity() {
+    return Math.abs(encoder.getVelocity());
+  }
+
+  @Override
+  public void onHomeComplete() {
+    encoder.setPosition(ENCODER_POSITION_MIN);
   }
 
   public double getEncoderPosition() {
