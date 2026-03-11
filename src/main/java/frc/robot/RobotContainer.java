@@ -8,11 +8,14 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -61,6 +64,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     configureRobotTriggers();
+    configureDefaultCommands();
     configurePrimaryBindings();
     configureSecondaryBindings();
 
@@ -72,6 +76,7 @@ public class RobotContainer {
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
     SmartDashboard.putData("Climber: Home", climber.homeCommand());
+  }
 
   private void configureDefaultCommands() {
     // intakeRollers.setDefaultCommand(intakeRollers.stopCommand());
