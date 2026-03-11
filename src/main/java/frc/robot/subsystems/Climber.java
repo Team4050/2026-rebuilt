@@ -4,7 +4,6 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -19,11 +18,14 @@ import frc.robot.Constants;
 import frc.robot.commands.HomeCommand;
 
 public class Climber extends SubsystemBase implements Homeable {
-  // default units are rotations
   private final double ENCODER_POSITION_MIN = 0.0;
 
   // manually calibrated 2/26/2026 for climber rev. 2
   private final double ENCODER_POSITION_MAX = 54.5;
+
+  // The maximum output speed (percentage) of the closed loop controller.
+  // Must be between 0 and 1.
+  private final double MAX_OUTPUT = 0.1;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
   private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
@@ -31,26 +33,17 @@ public class Climber extends SubsystemBase implements Homeable {
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
-  // stall homing constants
-  private static final double HOMING_SPEED = 0.1;
-  private static final double STALL_CURRENT_AMPS = 10.0;
-  private static final double STALL_VELOCITY_RPM = 5.0;
-  private static final double STALL_TIME_SEC = 0.1;
-
   public Climber() {
-    final SparkMaxConfig leaderMotorConfig = new SparkMaxConfig();
-    leaderMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
-    leaderMotorConfig.closedLoop.pid(0.3, 0.0, 0.0, ClosedLoopSlot.kSlot0).outputRange(-0.1, 0.1);
+    var leaderConfig = new SparkMaxConfig();
+    leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
+    leaderConfig.closedLoop.pid(0.3, 0.0, 0.0).outputRange(-MAX_OUTPUT, MAX_OUTPUT);
 
     if (leaderMotor
-        .configure(
-            leaderMotorConfig,
-            ResetMode.kResetSafeParameters,
-            PersistMode.kPersistParameters) != REVLibError.kOk) {
+        .configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("WARNING: Climber Leader Motor failed to configure. Climber may not work.", false);
     }
 
-    SparkMaxConfig followerConfig = new SparkMaxConfig();
+    var followerConfig = new SparkMaxConfig();
     followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).follow(leaderMotor, false);
 
     if (followerMotor
@@ -60,7 +53,7 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   private void setPosition(double position) {
-    pidController.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    pidController.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
   /**
@@ -113,6 +106,13 @@ public class Climber extends SubsystemBase implements Homeable {
     return runOnce(this::stop).withName("Climber: Stop");
   }
 
+  // ===================== Homing =====================
+
+  private static final double HOMING_SPEED = 0.1;
+  private static final double STALL_CURRENT_AMPS = 10.0;
+  private static final double STALL_VELOCITY_RPM = 5.0;
+  private static final double STALL_TIME_SEC = 0.1;
+
   /**
    * Command for stall homing the climber.
    *
@@ -121,8 +121,6 @@ public class Climber extends SubsystemBase implements Homeable {
   public Command homeCommand() {
     return new HomeCommand(this, STALL_CURRENT_AMPS, STALL_VELOCITY_RPM, STALL_TIME_SEC).withName("Climber: Home");
   }
-
-  // ===================== Homeable =====================
 
   @Override
   public void driveToHome() {

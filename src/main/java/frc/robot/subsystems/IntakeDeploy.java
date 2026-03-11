@@ -18,11 +18,11 @@ import frc.robot.Constants;
 
 public class IntakeDeploy extends SubsystemBase {
 
-  private final double mechanismMinAngle = 48;
-  private final double mechanismMaxAngle = 180;
+  private final double MIN_ANGLE = 48;
+  private final double MAX_ANGLE = 180;
 
-  private final double retractedAngle = 50;
-  private final double deployedAngle = 175;
+  private final double RETRACTED_ANGLE = 50;
+  private final double DEPLOYED_ANGLE = 175;
 
   // Note: We should not use our zero offset to indicate resting position (either deployed or not).
   // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
@@ -32,11 +32,12 @@ public class IntakeDeploy extends SubsystemBase {
   // 1. Set zero offset to 0
   // 2. Manually move the intake to the desired "retracted" position
   // 3. Read the absolute encoder position from the dashboard and set that as the zero offset
-  private final double zeroOffset = 0;
-  private final double conversionFactor = 360;
+  private final double ZERO_OFFSET = 0;
+  private final double CONVERSION_FACTOR = 360;
 
-  // The maximum output speed (percentage). Must be between 0 and 1.
-  private final double maxOutput = 0.3;
+  // The maximum output speed (percentage) of the closed loop controller.
+  // Must be between 0 and 1.
+  private final double MAX_OUTPUT = 0.3;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
 
@@ -60,20 +61,20 @@ public class IntakeDeploy extends SubsystemBase {
             // D: Derivative gain, how much the controller responds based on the rate of change of the error.
             // Can help reduce overshoot and improve stability.
             0.001)
-        .outputRange(-maxOutput, maxOutput)
+        .outputRange(-MAX_OUTPUT, MAX_OUTPUT)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     config.softLimit
-        .forwardSoftLimit(mechanismMaxAngle)
+        .forwardSoftLimit(MAX_ANGLE)
         .forwardSoftLimitEnabled(true)
-        .reverseSoftLimit(mechanismMinAngle)
+        .reverseSoftLimit(MIN_ANGLE)
         .reverseSoftLimitEnabled(true);
 
     config.absoluteEncoder
         .setSparkMaxDataPortConfig()
-        .positionConversionFactor(conversionFactor)
+        .positionConversionFactor(CONVERSION_FACTOR)
         .inverted(false)
-        .zeroOffset(zeroOffset / conversionFactor);
+        .zeroOffset(ZERO_OFFSET / CONVERSION_FACTOR);
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Intake Deploy Motor", false);
@@ -91,12 +92,12 @@ public class IntakeDeploy extends SubsystemBase {
 
   private void deploy() {
     deployed = true;
-    setPosition(deployedAngle);
+    setPosition(DEPLOYED_ANGLE);
   }
 
   private void retract() {
     deployed = false;
-    setPosition(retractedAngle);
+    setPosition(RETRACTED_ANGLE);
   }
 
   public Command toggleDeployCommand() {
