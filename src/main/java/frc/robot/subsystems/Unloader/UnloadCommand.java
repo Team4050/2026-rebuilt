@@ -54,14 +54,14 @@ public class UnloadCommand {
   }
 
   public Command primeCommand() {
-    return new RunCommand(this::primeShooter, unloaderLeft, unloaderRight);
+    return new RunCommand(this::primeShooter, unloaderLeft, unloaderRight).withName("Unloaders: prime shooter(s)");
   }
 
   public Command shootCommand() {
-    return new RunCommand(this::shoot, unloaderLeft, unloaderRight);
+    return new RunCommand(this::shoot, unloaderLeft, unloaderRight).withName("Unloaders: shoot");
   }
 
   public Command outtakeCommand() {
-    return new RunCommand(this::outtake, unloaderLeft, unloaderRight);
+    return new RunCommand(this::outtake, unloaderLeft, unloaderRight).withName("Unloaders: run outtake");
   }
 }
