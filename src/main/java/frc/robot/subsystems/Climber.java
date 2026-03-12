@@ -57,10 +57,7 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   private void handleClimbStage1() {
-    /* TODO make sure auto is handeled (do not pass L1) */
-
     if (primaryAtUpperLimit()) {
-      /* TODO maybe pause here to settle before running stage 2 */
       climbStage = ClimbStage.STAGE_2;
     } else {
       primaryUp();
@@ -68,10 +65,7 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   private void handleClimbStage2() {
-    /* TODO make sure auto is handeled (do not pass L1) */
-
     if (primaryAtLowerLimit()) {
-      /* TODO maybe pause here to settle before running stage 1 again */
       numLevelsClimbed++;
       climbStage = ClimbStage.STAGE_1;
     } else {
