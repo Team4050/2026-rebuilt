@@ -59,20 +59,20 @@ public class Unload {
     return new RunCommand(this::primeShooter).finallyDo(() -> {
       unloaderLeft.stopShooter();
       unloaderRight.stopShooter();
-    }).withName("Unloaders: prime shooter(s)");
+    }).withName("Unloaders: Prime Shooter(s)");
   }
 
   public Command shootCommand() {
     return new RunCommand(this::shoot, unloaderLeft, unloaderRight).finallyDo(() -> {
       unloaderLeft.stopKicker();
       unloaderRight.stopKicker();
-    }).withName("Unloaders: shoot");
+    }).withName("Unloaders: Shoot");
   }
 
   public Command outtakeCommand() {
     return new RunCommand(this::outtake, unloaderLeft, unloaderRight).finallyDo(() -> {
       unloaderLeft.stopKicker();
       unloaderRight.stopKicker();
-    }).withName("Unloaders: run outtake");
+    }).withName("Unloaders: Run Outtake");
   }
 }
