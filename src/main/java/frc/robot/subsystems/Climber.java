@@ -10,18 +10,18 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.Home;
 
 public class Climber extends SubsystemBase implements Homeable {
-  private final double ENCODER_POSITION_MIN = 0.0;
+  private final double ENCODER_POSITION_TOP = 0.0;
 
   // manually calibrated 2/26/2026 for climber rev. 2
-  private final double ENCODER_POSITION_MAX = 54.5;
+  private final double ENCODER_POSITION_BOTTOM = 54.5;
 
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
@@ -32,6 +32,14 @@ public class Climber extends SubsystemBase implements Homeable {
   private final RelativeEncoder encoder = leaderMotor.getEncoder();
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
+
+  public enum ClimbStage {
+    STAGE_1, STAGE_2
+  }
+
+  private ClimbStage climbStage = ClimbStage.STAGE_1;
+
+  private int numLevelsClimbed = 0;
 
   public Climber() {
     var leaderConfig = new SparkMaxConfig();
@@ -60,7 +68,7 @@ public class Climber extends SubsystemBase implements Homeable {
     if (primaryAtUpperLimit()) {
       climbStage = ClimbStage.STAGE_2;
     } else {
-      primaryUp();
+      overridePrimaryUp();
     }
   }
 
@@ -69,21 +77,14 @@ public class Climber extends SubsystemBase implements Homeable {
       numLevelsClimbed++;
       climbStage = ClimbStage.STAGE_1;
     } else {
-      primaryDown();
+      overridePrimaryDown();
     }
-  }
-
-  /**
-   * Set a position for the climber to move to.
-   */
-  public void setTargetPosition(double position) {
-    setPosition(MathUtil.clamp(position, ENCODER_POSITION_TOP, ENCODER_POSITION_BOTTOM));
   }
 
   /**
    * Manually move the primary climber up at full speed
    */
-  private void up() {
+  private void overridePrimaryUp() {
     // "up" refers to climber primary moving up, and encoder values change in opposite direction
     setPosition(ENCODER_POSITION_TOP);
   }
@@ -91,7 +92,7 @@ public class Climber extends SubsystemBase implements Homeable {
   /**
    * Manually ove the primary climber down at full speed
    */
-  private void down() {
+  private void overridePrimaryDown() {
     // "down" refers to climber primary down, and encoder values change in opposite direction
     setPosition(ENCODER_POSITION_BOTTOM);
   }
@@ -103,24 +104,46 @@ public class Climber extends SubsystemBase implements Homeable {
     leaderMotor.stopMotor();
 
     // TODO: Determine if we need to use the setpoint for stopping.
-    // - One reason not to use it is that it will keep the PID loop running, sending power to the motor and eating up CPU
-    // - One reason to use it is that it will hold the climber in place when stopped, using the motor's power. This can
-    //   can partially be negated with brake mode.
+    // stopMotor() is ideal, if we might require setSetpoint() to keep us at L3 max height (test this)
     // pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
 
+  private void climb() {
+    if (climbStage == ClimbStage.STAGE_1) {
+      handleClimbStage1();
+    } else {
+      handleClimbStage2();
+    }
+  }
+
+  public double getEncoderPosition() {
+    return encoder.getPosition();
+  }
+
+  public boolean primaryAtUpperLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < 0.1;
+  }
+
+  public boolean primaryAtLowerLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < 0.1;
+  }
+
   /** Command that drives the climber up while active, stops on end. */
-  public Command upCommand() {
-    return startEnd(this::up, this::stop).withName("Climber: Up");
+  public Command overridePrimaryUpCommand() {
+    return startEnd(this::overridePrimaryUp, this::stop).withName("Climber: Up");
   }
 
   /** Command that drives the climber down while active, stops on end. */
-  public Command downCommand() {
-    return startEnd(this::down, this::stop).withName("Climber: Down");
+  public Command overridePrimaryDownCommand() {
+    return startEnd(this::overridePrimaryDown, this::stop).withName("Climber: Down");
   }
 
   public Command stopCommand() {
     return runOnce(this::stop).withName("Climber: Stop");
+  }
+
+  public Command climbCommand() {
+    return new RunCommand(this::climb, this).finallyDo(this::stop).withName("Climber: Auto L3 Climb");
   }
 
   // ===================== Homing =====================
@@ -161,10 +184,6 @@ public class Climber extends SubsystemBase implements Homeable {
 
   @Override
   public void onHomeComplete() {
-    encoder.setPosition(ENCODER_POSITION_MIN);
-  }
-
-  public double getEncoderPosition() {
-    return encoder.getPosition();
+    encoder.setPosition(ENCODER_POSITION_TOP);
   }
 }
