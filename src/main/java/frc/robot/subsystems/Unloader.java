@@ -64,6 +64,7 @@ public class Unloader extends SubsystemBase {
   }
 
   public void shoot() {
+    // TODO:  Tune the velocity threshold for when to run the kicker.
     if (shooterEncoder.getVelocity() > 2000.0) {
       kickerMotor.set(SHOOTER_SPEED);
     }
