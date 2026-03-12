@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
  * Interface for subsystems that support stall-based homing. Implementing this interface allows the subsystem to be used
- * with {@link frc.robot.commands.HomeCommand}.
+ * with {@link frc.robot.commands.Home}.
  */
 public interface Homeable extends Subsystem {
   /** Drive the mechanism toward the home position at homing speed. */

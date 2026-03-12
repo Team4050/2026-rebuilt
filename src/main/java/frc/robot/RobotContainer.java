@@ -20,13 +20,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
-import frc.robot.subsystems.Unloader.UnloadCommand;
-import frc.robot.subsystems.Unloader.Unloader;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -41,7 +41,7 @@ public class RobotContainer {
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId,
       Constants.Subsystems.shooterRightId);
 
-  public final UnloadCommand unloadCommand = new UnloadCommand(unloaderLeft, unloaderRight);
+  public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
