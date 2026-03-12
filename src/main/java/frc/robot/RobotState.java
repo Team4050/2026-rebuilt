@@ -14,8 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeDeploy;
-import frc.robot.subsystems.IntakeRollers;
+import frc.robot.subsystems.Unloader;
+import frc.robot.subsystems.Intake.IntakeDeploy;
+import frc.robot.subsystems.Intake.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
@@ -175,6 +176,40 @@ public class RobotState {
       return 0.0;
     }
     return intakeRollers.motorCurrent();
+  }
+
+  // ===================== Outtake =====================
+
+  private Unloader unloaderLeft;
+  private Unloader unloaderRight;
+
+  public void addUnloaders(Unloader unloaderLeft, Unloader unloaderRight) {
+    this.unloaderLeft = unloaderLeft;
+    this.unloaderRight = unloaderRight;
+  }
+
+  public boolean leftKickerIsRunning() {
+    return unloaderLeft.kickerIsRunning();
+  }
+
+  public boolean leftUnloaderIsShooter() {
+    return unloaderLeft.hasShooter();
+  }
+
+  public double getShooterLeftRPM() {
+    return unloaderLeft.getShooterRPM();
+  }
+
+  public boolean rightKickerIsRunning() {
+    return unloaderRight.kickerIsRunning();
+  }
+
+  public boolean rightUnloaderIsShooter() {
+    return unloaderRight.hasShooter();
+  }
+
+  public double getShooterRightRPM() {
+    return unloaderRight.getShooterRPM();
   }
 
   // ===================== Vision =====================

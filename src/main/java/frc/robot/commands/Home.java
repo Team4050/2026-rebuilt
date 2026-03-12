@@ -12,7 +12,7 @@ import frc.robot.subsystems.Homeable;
  * On successful completion, {@link Homeable#onHomeComplete()} is called to reset the encoder. If interrupted (e.g. by
  * another command), the motor is stopped but the encoder is not reset.
  */
-public class HomeCommand extends Command {
+public class Home extends Command {
   private final Homeable subsystem;
   private final double stallCurrentAmps;
   private final double stallVelocityRpm;
@@ -32,7 +32,7 @@ public class HomeCommand extends Command {
    * @param stallTimeSec
    *          Duration (seconds) the stall condition must be sustained before homing is complete.
    */
-  public HomeCommand(Homeable subsystem, double stallCurrentAmps, double stallVelocityRpm, double stallTimeSec) {
+  public Home(Homeable subsystem, double stallCurrentAmps, double stallVelocityRpm, double stallTimeSec) {
     this.subsystem = subsystem;
     this.stallCurrentAmps = stallCurrentAmps;
     this.stallVelocityRpm = stallVelocityRpm;

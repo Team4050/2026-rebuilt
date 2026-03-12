@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.HomeCommand;
+import frc.robot.commands.Home;
 
 public class Climber extends SubsystemBase implements Homeable {
   private final double ENCODER_POSITION_MIN = 0.0;
@@ -119,7 +119,7 @@ public class Climber extends SubsystemBase implements Homeable {
    * @return The generated command.
    */
   public Command homeCommand() {
-    return new HomeCommand(this, STALL_CURRENT_AMPS, STALL_VELOCITY_RPM, STALL_TIME_SEC).withName("Climber: Home");
+    return new Home(this, STALL_CURRENT_AMPS, STALL_VELOCITY_RPM, STALL_TIME_SEC).withName("Climber: Home");
   }
 
   @Override

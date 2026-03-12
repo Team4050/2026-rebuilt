@@ -20,18 +20,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeDeploy;
-import frc.robot.subsystems.IntakeRollers;
+import frc.robot.subsystems.Unloader;
+import frc.robot.subsystems.Intake.IntakeDeploy;
+import frc.robot.subsystems.Intake.IntakeRollers;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 
   public final IntakeRollers intakeRollers = new IntakeRollers();
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
+
   public final Climber climber = new Climber();
+
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId);
+
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId,
+      Constants.Subsystems.shooterRightId);
+
+  public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
@@ -47,6 +57,7 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
+    rs.addUnloaders(unloaderLeft, unloaderRight);
   }
 
   private void configureBindings() {
@@ -127,19 +138,12 @@ public class RobotContainer {
     // B: Run intake rollers while held
     joystickSecondary.b().whileTrue(intakeRollers.inCommand());
 
-    // ===== Unloaders (stubbed) =====
+    // ===== Unloaders =====
 
-    // Left trigger (hold): Shoot left unloader
-    joystickSecondary.leftTrigger().whileTrue(Commands.idle().withName("Left Unloader: Shoot")); // TODO: wire to unloader subsystem
+    joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
 
-    // Right trigger (hold): Shoot right unloader
-    joystickSecondary.rightTrigger().whileTrue(Commands.idle().withName("Right Unloader: Shoot")); // TODO: wire to unloader subsystem
-
-    // Left bumper (toggle): Spin up left unloader
-    joystickSecondary.leftBumper().toggleOnTrue(Commands.idle().withName("Left Unloader: Spin Up")); // TODO: wire to unloader subsystem
-
-    // Right bumper (toggle): Spin up right unloader
-    joystickSecondary.rightBumper().toggleOnTrue(Commands.idle().withName("Right Unloader: Spin Up")); // TODO: wire to unloader subsystem
+    joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
+    joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
 
     // ===== Climber =====
 
@@ -149,11 +153,11 @@ public class RobotContainer {
     // PovDown (hold): Climb down
     joystickSecondary.povDown().whileTrue(climber.downCommand());
 
+    // TODO: implement climber deploy/retract toggle
     // PovRight (tap): Toggle climber deploy / retract
     joystickSecondary
         .povRight()
         .onTrue(Commands.print("[STUB] Climber: Toggle Deploy").withName("Climber: Toggle Deploy"));
-    // TODO: implement climber deploy/retract toggle
 
     // ===== Overrides =====
 
