@@ -19,10 +19,10 @@ import frc.robot.Constants;
 public class IntakeDeploy extends SubsystemBase {
 
   private final double MIN_ANGLE = 48;
-  private final double MAX_ANGLE = 180;
+  private final double MAX_ANGLE = 190;
 
   private final double RETRACTED_ANGLE = 50;
-  private final double DEPLOYED_ANGLE = 175;
+  private final double DEPLOYED_ANGLE = 181;
 
   // Note: We should not use our zero offset to indicate resting position (either deployed or not).
   // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
@@ -47,6 +47,8 @@ public class IntakeDeploy extends SubsystemBase {
   private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder();
   private final SparkClosedLoopController controller = motor.getClosedLoopController();
 
+  private double targetPosition = DEPLOYED_ANGLE;
+
   public IntakeDeploy() {
     var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true);
@@ -60,7 +62,7 @@ public class IntakeDeploy extends SubsystemBase {
             0.0,
             // D: Derivative gain, how much the controller responds based on the rate of change of the error.
             // Can help reduce overshoot and improve stability.
-            0.001)
+            0.01)
         .outputRange(-MAX_OUTPUT, MAX_OUTPUT)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
@@ -92,12 +94,12 @@ public class IntakeDeploy extends SubsystemBase {
 
   private void deploy() {
     deployed = true;
-    setPosition(DEPLOYED_ANGLE);
+    targetPosition = DEPLOYED_ANGLE;
   }
 
   private void retract() {
     deployed = false;
-    setPosition(RETRACTED_ANGLE);
+    targetPosition = RETRACTED_ANGLE;
   }
 
   public Command toggleDeployCommand() {
@@ -134,5 +136,10 @@ public class IntakeDeploy extends SubsystemBase {
 
   public double getAppliedOutput() {
     return motor.getAppliedOutput();
+  }
+
+  @Override
+  public void periodic() {
+    setPosition(targetPosition);
   }
 }

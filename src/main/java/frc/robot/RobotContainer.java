@@ -36,10 +36,10 @@ public class RobotContainer {
 
   public final Climber climber = new Climber();
 
-  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId);
+  public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId, true);
 
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId,
-      Constants.Subsystems.shooterRightId);
+      Constants.Subsystems.shooterRightId, false);
 
   public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
 

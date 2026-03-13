@@ -14,7 +14,7 @@ import frc.robot.Constants;
 
 public class IntakeRollers extends SubsystemBase {
 
-  private final double SPEED = 0.7;
+  private final double SPEED = 0.6;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
 

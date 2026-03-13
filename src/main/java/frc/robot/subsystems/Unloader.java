@@ -23,11 +23,11 @@ public class Unloader extends SubsystemBase {
   private SparkMax shooterMotor;
   private RelativeEncoder shooterEncoder;
 
-  public Unloader(int kickerMotorId) {
+  public Unloader(int kickerMotorId, boolean reverseKicker) {
     kickerMotor = new SparkMax(kickerMotorId, SparkMax.MotorType.kBrushless);
 
     var config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kCoast).smartCurrentLimit(KICKER_CURRENT_LIMIT);
+    config.idleMode(IdleMode.kCoast).smartCurrentLimit(KICKER_CURRENT_LIMIT).inverted(reverseKicker);
 
     if (kickerMotor
         .configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -35,9 +35,9 @@ public class Unloader extends SubsystemBase {
     }
   }
 
-  public Unloader(int kickerMotorId, int shooterMotorId) {
+  public Unloader(int kickerMotorId, int shooterMotorId, boolean reverseKicker) {
     // Add kicker motor (with single param constructor)
-    this(kickerMotorId);
+    this(kickerMotorId, reverseKicker);
 
     // Add shooter motor
     shooterMotor = new SparkMax(shooterMotorId, SparkMax.MotorType.kBrushless);
