@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase implements Homeable {
   private final double ENCODER_POSITION_TOP = 0.0;
 
   // manually calibrated 2/26/2026 for climber rev. 2
-  private final double ENCODER_POSITION_BOTTOM = 54.5;
+  private final double ENCODER_POSITION_BOTTOM = 55.0;
 
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
@@ -36,6 +36,8 @@ public class Climber extends SubsystemBase implements Homeable {
   public enum ClimbStage {
     STAGE_1, STAGE_2
   }
+
+  private final double LIMIT_THRESHOLD = 0.2;
 
   private ClimbStage climbStage = ClimbStage.STAGE_1;
 
@@ -129,11 +131,11 @@ public class Climber extends SubsystemBase implements Homeable {
   }
 
   public boolean primaryAtUpperLimit() {
-    return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < 0.1;
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < LIMIT_THRESHOLD;
   }
 
   public boolean primaryAtLowerLimit() {
-    return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < 0.1;
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < LIMIT_THRESHOLD;
   }
 
   /** Command that drives the climber up while active, stops on end. */

@@ -129,6 +129,35 @@ public class RobotState {
     this.climber = climber;
   }
 
+  public double getClimberPosition() {
+    if (climber == null) {
+      return 0.0;
+    }
+    return climber.getEncoderPosition();
+  }
+
+  public Climber.ClimbStage getClimbStage() {
+    if (climber == null) {
+      return null;
+    }
+    return climber.getClimbStage();
+  }
+
+  public int getNumLevelsClimbed() {
+    if (climber == null) {
+      return 0;
+    }
+    return climber.getNumLevelsClimbed();
+  }
+
+  public boolean primaryAtUpperLimit() {
+    return climber != null && climber.primaryAtUpperLimit();
+  }
+
+  public boolean primaryAtLowerLimit() {
+    return climber != null && climber.primaryAtLowerLimit();
+  }
+
   // ===================== Intake =====================
 
   private IntakeDeploy intakeDeploy;
