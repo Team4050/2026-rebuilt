@@ -47,8 +47,6 @@ public class IntakeDeploy extends SubsystemBase {
   private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder();
   private final SparkClosedLoopController controller = motor.getClosedLoopController();
 
-  private double targetPosition = DEPLOYED_ANGLE;
-
   public IntakeDeploy() {
     var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true);
@@ -94,12 +92,12 @@ public class IntakeDeploy extends SubsystemBase {
 
   private void deploy() {
     deployed = true;
-    targetPosition = DEPLOYED_ANGLE;
+    setPosition(DEPLOYED_ANGLE);
   }
 
   private void retract() {
     deployed = false;
-    targetPosition = RETRACTED_ANGLE;
+    setPosition(RETRACTED_ANGLE);
   }
 
   public Command toggleDeployCommand() {
@@ -136,10 +134,5 @@ public class IntakeDeploy extends SubsystemBase {
 
   public double getAppliedOutput() {
     return motor.getAppliedOutput();
-  }
-
-  @Override
-  public void periodic() {
-    setPosition(targetPosition);
   }
 }
