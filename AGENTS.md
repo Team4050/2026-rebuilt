@@ -51,15 +51,13 @@ Two-file architecture built on CTRE Phoenix 6:
 - **Generated code**: `TunerConstants.java` (CTRE Tuner X output) and `BuildConstants.java` (GVersion git metadata). Do not edit directly.
 - **Third-party libraries**: Managed as vendordep JSON files in `vendordeps/`. Each file declares Maven coordinates, JNI bindings, and version info for a vendor library. Must match the WPILib year.
 
-## 2026 Game Mechanics
-
-Teleop has alternating alliance scoring shifts (4 shifts of 25s each, starting at 130s remaining). `RobotState` tracks which shift is active and whether it's our scoring period via game-specific message data from the FMS.
-
 ## Documentation
 
-Prefer online JavaDoc documentation over dumping individual dependency Jar files or inefficient searches. Some useful documentation sources:
+**NEVER read, inspect, or extract dependency JAR files directly.** Always use the online JavaDoc to understand library APIs. Use WebFetch to retrieve pages from these sources:
 
 - WPILib: https://github.wpilib.org/allwpilib/docs/release/java/index.html
 - CTRE/Phoenix: https://api.ctr-electronics.com/phoenix6/stable/java/
 - RevRobotics: https://codedocs.revrobotics.com/java/
+- LimeLight: https://limelightlib-wpijava-reference.limelightvision.io/frc/robot/package-summary.html
 
+To look up a specific class, navigate to its package path on the relevant JavaDoc site (e.g., for `com.ctre.phoenix6.swerve.SwerveDrivetrain`, fetch `https://api.ctr-electronics.com/phoenix6/stable/java/com/ctre/phoenix6/swerve/SwerveDrivetrain.html`).
