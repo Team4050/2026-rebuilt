@@ -4,12 +4,14 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -38,6 +40,18 @@ public class IntakeDeploy extends SubsystemBase {
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
   private final double MAX_OUTPUT = 0.3;
+
+  // Gravity feedforward: the voltage needed to hold the mechanism when the arm is horizontal
+  // (maximum gravity torque). Passed as arbitrary feedforward in setSetpoint so we can
+  // account for our encoder zero offset independently via HORIZONTAL_ANGLE.
+  // Tune on the real robot — start small (e.g. 0.5V) and increase until the arm holds
+  // position without drifting.
+  private final double GRAVITY_FF = 1.0;
+
+  // The encoder angle (in degrees) at which the arm is perfectly horizontal.
+  // Feedforward is strongest here and falls off with cos() as the arm tilts away.
+  // Set this based on your mechanism's geometry.
+  private final double HORIZONTAL_ANGLE = 140;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
 
@@ -85,7 +99,10 @@ public class IntakeDeploy extends SubsystemBase {
   }
 
   private void setPosition(double position) {
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition);
+    var angleFromHorizontal = Units.degreesToRadians(position - HORIZONTAL_ANGLE);
+    var ff = GRAVITY_FF * Math.cos(angleFromHorizontal);
+
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ff);
   }
 
   private boolean deployed = false;
