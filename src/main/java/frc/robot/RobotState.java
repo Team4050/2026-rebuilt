@@ -164,7 +164,15 @@ public class RobotState {
     }
     return intakeDeploy.getAppliedOutput();
   }
-
+  public boolean isIntakeDeployed() {
+    if (intakeDeploy == null) {
+      return false;
+    }
+    if (intakeDeploy.getPosition() >= 180.0) {
+      return true;
+    }
+      return false;
+  }
   private IntakeRollers intakeRollers;
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
