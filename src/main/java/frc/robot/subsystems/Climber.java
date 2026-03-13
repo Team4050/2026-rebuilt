@@ -120,6 +120,14 @@ public class Climber extends SubsystemBase implements Homeable {
     return encoder.getPosition();
   }
 
+  public ClimbStage getClimbStage() {
+    return climbStage;
+  }
+
+  public int getNumLevelsClimbed() {
+    return numLevelsClimbed;
+  }
+
   public boolean primaryAtUpperLimit() {
     return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < 0.1;
   }
