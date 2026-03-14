@@ -17,7 +17,7 @@ public class Unloader extends SubsystemBase {
 
   private final double OUTTAKE_SPEED = 0.7;
   private final double REVERSE_SPEED = -0.5;
-  private final double SHOOTER_SPEED = 1.0;
+  private final double SHOOTER_SPEED = 0.58;
 
   private SparkMax kickerMotor;
   private SparkMax shooterMotor;
@@ -64,7 +64,7 @@ public class Unloader extends SubsystemBase {
   }
 
   public void shoot() {
-    if (shooterEncoder.getVelocity() > 2000.0) {
+    if (shooterEncoder.getVelocity() > 10.0) {
       kickerMotor.set(SHOOTER_SPEED);
     }
   }
