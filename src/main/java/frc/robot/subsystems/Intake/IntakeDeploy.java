@@ -145,7 +145,7 @@ public class IntakeDeploy extends SubsystemBase {
       double input = joystickY.getAsDouble();
       if (input != 0) {
         manualDeployCurrentPosition += input;
-        manualDeployCurrentPosition = MathUtil.clamp(manualDeployCurrentPosition, MIN_ANGLE, MAX_ANGLE);
+        manualDeployCurrentPosition = MathUtil.clamp(manualDeployCurrentPosition, 100, MAX_ANGLE);
         setPosition(manualDeployCurrentPosition);
       } else {
         manualDeployCurrentPosition = getPosition();
