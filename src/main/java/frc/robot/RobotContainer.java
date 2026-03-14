@@ -55,15 +55,12 @@ public class RobotContainer {
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser = buildAutoChooser();
 
   public RobotContainer() {
     initRobotState();
     registerNamedCommands();
     configureBindings();
-
-    autoChooser = buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   private void initRobotState() {
@@ -76,10 +73,16 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands() {
+    NamedCommands.registerCommand("intake", intakeRollers.inCommand());
+    NamedCommands.registerCommand("outtake", intakeRollers.outCommand());
     NamedCommands
         .registerCommand(
             "alignToTower",
-            new AlignToTower(drivetrain, true).withTimeout(5).withName("Auto: Align To Tower"));
+            Commands
+                .defer(
+                    () -> new AlignToTower(drivetrain, true).withTimeout(Constants.Tower.ALIGN_TIMEOUT_SEC),
+                    Set.of(drivetrain))
+                .withName("Auto: Align To Tower"));
   }
 
   private void configureBindings() {
@@ -212,13 +215,12 @@ public class RobotContainer {
 
     return AutoBuilder
         .pathfindToPose(approachPose, new PathConstraints(3.0, 3.0, 540, 720))
-        .andThen(new AlignToTower(drivetrain, true).withTimeout(5))
+        .andThen(new AlignToTower(drivetrain, true).withTimeout(Constants.Tower.ALIGN_TIMEOUT_SEC))
         .withName("Auto: Tower Climb");
   }
 
   private SendableChooser<Command> buildAutoChooser() {
-    SendableChooser<Command> chooser = AutoBuilder.buildAutoChooser();
-    chooser.setDefaultOption("Do Nothing", Commands.none().withName("Auto: Do Nothing"));
+    SendableChooser<Command> chooser = AutoBuilder.buildAutoChooser("Do Nothing");
     chooser.addOption("Tower Climb Auto", towerClimbAuto());
     return chooser;
   }
