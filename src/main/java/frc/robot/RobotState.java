@@ -61,17 +61,6 @@ public class RobotState {
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    // Set camera pose on the Limelight so all vision data is robot-relative
-    LimelightHelpers
-        .setCameraPose_RobotSpace(
-            Constants.Vision.LIMELIGHT_NAME,
-            Constants.Vision.CAMERA_FORWARD,
-            Constants.Vision.CAMERA_SIDE,
-            Constants.Vision.CAMERA_UP,
-            Constants.Vision.CAMERA_ROLL,
-            Constants.Vision.CAMERA_PITCH,
-            Constants.Vision.CAMERA_YAW);
-
     if (Constants.DEV_MODE) {
       // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
       SmartDashboard.putData("Field", drivetrain.getFieldPosition());
