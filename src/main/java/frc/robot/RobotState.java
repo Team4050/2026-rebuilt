@@ -129,13 +129,6 @@ public class RobotState {
     this.climber = climber;
   }
 
-  public double getClimberPosition() {
-    if (climber == null) {
-      return 0.0;
-    }
-    return climber.getEncoderPosition();
-  }
-
   // ===================== Intake =====================
 
   private IntakeDeploy intakeDeploy;
@@ -151,31 +144,11 @@ public class RobotState {
     return intakeDeploy.getPosition();
   }
 
-  public double getIntakeDeployCurrent() {
-    if (intakeDeploy == null) {
-      return 0.0;
-    }
-    return intakeDeploy.getOutputCurrent();
-  }
-
-  public double getIntakeDeployAppliedOutput() {
-    if (intakeDeploy == null) {
-      return 0.0;
-    }
-    return intakeDeploy.getAppliedOutput();
-  }
-
+  // TODO: We may not have anything that needs logged here
   private IntakeRollers intakeRollers;
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
     this.intakeRollers = intakeRollers;
-  }
-
-  public double getIntakeCurrent() {
-    if (intakeRollers == null) {
-      return 0.0;
-    }
-    return intakeRollers.motorCurrent();
   }
 
   // ===================== Outtake =====================
@@ -183,17 +156,13 @@ public class RobotState {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
 
-  public void addUnloaders(Unloader unloaderLeft, Unloader unloaderRight) {
-    this.unloaderLeft = unloaderLeft;
-    this.unloaderRight = unloaderRight;
+  public void addUnloaders(Unloader left, Unloader right) {
+    this.unloaderLeft = left;
+    this.unloaderRight = right;
   }
 
   public boolean leftKickerIsRunning() {
     return unloaderLeft.kickerIsRunning();
-  }
-
-  public boolean leftUnloaderIsShooter() {
-    return unloaderLeft.hasShooter();
   }
 
   public double getShooterLeftRPM() {
@@ -202,10 +171,6 @@ public class RobotState {
 
   public boolean rightKickerIsRunning() {
     return unloaderRight.kickerIsRunning();
-  }
-
-  public boolean rightUnloaderIsShooter() {
-    return unloaderRight.hasShooter();
   }
 
   public double getShooterRightRPM() {

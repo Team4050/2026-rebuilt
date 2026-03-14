@@ -35,7 +35,7 @@ public class Unloader extends SubsystemBase {
     }
   }
 
-  public Unloader(int kickerMotorId, int shooterMotorId, boolean reverseKicker) {
+  public Unloader(int kickerMotorId, boolean reverseKicker, int shooterMotorId, boolean reverseShooter) {
     // Add kicker motor (with single param constructor)
     this(kickerMotorId, reverseKicker);
 
@@ -43,7 +43,7 @@ public class Unloader extends SubsystemBase {
     shooterMotor = new SparkMax(shooterMotorId, SparkMax.MotorType.kBrushless);
 
     var config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kCoast).smartCurrentLimit(SHOOTER_CURRENT_LIMIT);
+    config.idleMode(IdleMode.kCoast).smartCurrentLimit(SHOOTER_CURRENT_LIMIT).inverted(reverseShooter);
 
     if (shooterMotor
         .configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -64,7 +64,6 @@ public class Unloader extends SubsystemBase {
   }
 
   public void shoot() {
-    // TODO:  Tune the velocity threshold for when to run the kicker.
     if (shooterEncoder.getVelocity() > 2000.0) {
       kickerMotor.set(SHOOTER_SPEED);
     }
@@ -83,7 +82,9 @@ public class Unloader extends SubsystemBase {
   }
 
   public void stopShooter() {
-    shooterMotor.stopMotor();
+    if (hasShooter()) {
+      shooterMotor.stopMotor();
+    }
   }
 
   public double getShooterRPM() {
