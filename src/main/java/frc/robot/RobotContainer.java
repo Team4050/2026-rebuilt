@@ -14,13 +14,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.AlignToTower;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -51,6 +56,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     initRobotState();
+    registerNamedCommands();
     configureBindings();
 
     autoChooser = buildAutoChooser();
@@ -64,6 +70,13 @@ public class RobotContainer {
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber);
     rs.addUnloaders(unloaderLeft, unloaderRight);
+  }
+
+  private void registerNamedCommands() {
+    NamedCommands
+        .registerCommand(
+            "alignToTower",
+            new AlignToTower(drivetrain, true).withTimeout(5).withName("Auto: Align To Tower"));
   }
 
   private void configureBindings() {
@@ -134,6 +147,11 @@ public class RobotContainer {
         .start()
         .onTrue(drivetrain.runOnce(() -> isRobotCentric.set(false)).withName("DT: Toggle Field Centric"));
 
+    // ===== Vision Alignment =====
+
+    // Left bumper (hold): Vision-based tower alignment
+    joystickPrimary.leftBumper().whileTrue(new AlignToTower(drivetrain, false).withName("DT: Align To Tower"));
+
     // ===== Intake =====
 
     joystickPrimary.leftTrigger().whileTrue(intakeRollers.outCommand());
@@ -185,8 +203,21 @@ public class RobotContainer {
   }
 
   // ===================== Autonomous Routines =====================
+
+  private Command towerClimbAuto() {
+    Pose2d approachPose = new Pose2d(Constants.Tower.APPROACH_X, Constants.Tower.APPROACH_Y,
+        Rotation2d.fromDegrees(Constants.Tower.APPROACH_HEADING_DEG));
+
+    return AutoBuilder
+        .pathfindToPose(approachPose, new PathConstraints(3.0, 3.0, 540, 720))
+        .andThen(new AlignToTower(drivetrain, true).withTimeout(5))
+        .withName("Auto: Tower Climb");
+  }
+
   private SendableChooser<Command> buildAutoChooser() {
     SendableChooser<Command> chooser = AutoBuilder.buildAutoChooser();
+    chooser.setDefaultOption("Do Nothing", Commands.none().withName("Auto: Do Nothing"));
+    chooser.addOption("Tower Climb Auto", towerClimbAuto());
     return chooser;
   }
 
