@@ -66,9 +66,9 @@ public final class Constants {
     // Measure from the robot center (floor level, between the 4 swerve modules)
     // to the camera lens center.
     // +X = forward, +Y = left, +Z = up
-    public static final double CAMERA_FORWARD = -3.6065;
-    public static final double CAMERA_SIDE = 1.7534;
-    public static final double CAMERA_UP = 5.1911;
+    public static final double CAMERA_FORWARD = -0.36065;
+    public static final double CAMERA_SIDE = 0.17534;
+    public static final double CAMERA_UP = 0.51911;
     public static final double CAMERA_ROLL = 0;
     public static final double CAMERA_PITCH = 10; // Camera is angled slightly upwards
     public static final double CAMERA_YAW = 190; // Camera is facing backwards
