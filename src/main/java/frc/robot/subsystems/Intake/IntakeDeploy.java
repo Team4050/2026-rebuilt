@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Intake;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
@@ -11,6 +13,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -56,7 +59,7 @@ public class IntakeDeploy extends SubsystemBase {
     config.closedLoop
         .pid(
             // P: Proportional gain, how aggressively the controller responds.
-            0.03,
+            0.01,
             // I: Integral gain, how much the controller responds based on accumulated error over time.
             // Should likely remain 0 for the current mechanism, since there is some slop in the gearing.
             0,
@@ -127,10 +130,29 @@ public class IntakeDeploy extends SubsystemBase {
       deployOverrideCurrentPosition = getPosition();
     }, () -> {
       deployOverrideCurrentPosition += out ? -1 : 1;
-      controller.setSetpoint(deployOverrideCurrentPosition, SparkMax.ControlType.kPosition);
+      setPosition(deployOverrideCurrentPosition);
     }, interrupted -> {
       motor.configure(softLimitsEnabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }, () -> false, this).withName("Intake Deploy: Override " + (out ? "Out" : "In"));
+  }
+
+  private double manualDeployCurrentPosition = 0;
+
+  public Command manualDeployCommand(DoubleSupplier joystickY) {
+    return new FunctionalCommand(() -> {
+      manualDeployCurrentPosition = getPosition();
+    }, () -> {
+      double input = joystickY.getAsDouble();
+      if (input != 0) {
+        manualDeployCurrentPosition += input;
+        manualDeployCurrentPosition = MathUtil.clamp(manualDeployCurrentPosition, MIN_ANGLE, MAX_ANGLE);
+        setPosition(manualDeployCurrentPosition);
+      } else {
+        manualDeployCurrentPosition = getPosition();
+      }
+    }, interrupted -> {
+      deployed = manualDeployCurrentPosition > (RETRACTED_ANGLE + DEPLOYED_ANGLE) / 2;
+    }, () -> false, this).withName("Intake Deploy: Manual");
   }
 
   public double getPosition() {
@@ -149,8 +171,4 @@ public class IntakeDeploy extends SubsystemBase {
     return encoder.getVelocity();
   }
 
-  public void joystick(Double stick) {
-    double currentPosition = getPosition();
-    setPosition(currentPosition += stick);
-  }
 }

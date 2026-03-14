@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.Unload;
@@ -134,10 +133,10 @@ public class RobotContainer {
 
   private void configureSecondaryBindings() {
     // ===== Intake =====
-    intakeDeploy.setDefaultCommand(new InstantCommand(() -> {
-      double joystickValue = applyDeadband(joystickSecondary.getLeftY(), 0.1);
-      intakeDeploy.joystick(joystickValue);
-    }, intakeDeploy));
+
+    intakeDeploy
+        .setDefaultCommand(intakeDeploy.manualDeployCommand(() -> -applyDeadband(joystickSecondary.getLeftY(), 0.1)));
+
     // X: Toggle intake deploy (press to deploy, press again to retract)
     joystickSecondary.x().onTrue(intakeDeploy.toggleDeployCommand());
 
