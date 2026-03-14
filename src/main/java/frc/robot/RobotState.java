@@ -236,7 +236,7 @@ public class RobotState {
   private static final double ALLIANCE_SHIFTS_START = 130.0; // after 10s transition
   private static final double SHIFT_DURATION = 25.0;
 
-  private double matchRemainingTime = -1;
+  public double matchRemainingTime = -1;
 
   @NotLogged
   private DriverStation.Alliance alliance;

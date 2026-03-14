@@ -22,8 +22,8 @@
           },
           {
             "title": "Climber: Home",
-            "x": 256.0,
-            "y": 640.0,
+            "x": 1664.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -36,8 +36,8 @@
           },
           {
             "title": "Intake Position",
-            "x": 1664.0,
-            "y": 128.0,
+            "x": 0.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Radial Gauge",
@@ -76,9 +76,9 @@
           {
             "title": "Is Our Scoring Period",
             "x": 0.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/Robot State/Is Our Scoring Period",
@@ -91,33 +91,36 @@
             }
           },
           {
-            "title": "Vision Valid",
-            "x": 512.0,
-            "y": 640.0,
-            "width": 128.0,
+            "title": "Intake Roller Speed",
+            "x": 1664.0,
+            "y": 128.0,
+            "width": 256.0,
             "height": 128.0,
-            "type": "Boolean Box",
+            "type": "Number Slider",
             "properties": {
-              "topic": "Robot/Robot State/Vision Valid",
+              "topic": "/SmartDashboard/Intake Roller Speed",
               "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
             }
           },
           {
-            "title": "Vision Tags",
-            "x": 640.0,
-            "y": 640.0,
-            "width": 128.0,
+            "title": "Match Remaining Time",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
             "height": 128.0,
-            "type": "Large Text Display",
+            "type": "Match Time",
             "properties": {
-              "topic": "Robot/Robot State/Vision Tag Count",
+              "topic": "Robot/Robot State/Match Remaining Time",
               "period": 0.06,
-              "data_type": "int"
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
             }
           }
         ]
@@ -211,8 +214,8 @@
             "title": "Intake Position",
             "x": 640.0,
             "y": 384.0,
-            "width": 384.0,
-            "height": 384.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "Radial Gauge",
             "properties": {
               "topic": "Robot/Robot State/Intake Position",
@@ -226,6 +229,36 @@
               "wrap_value": false,
               "show_pointer": true,
               "show_ticks": true
+            }
+          },
+          {
+            "title": "Vision Valid",
+            "x": 896.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Valid",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Tag Count",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Tag Count",
+              "period": 0.06,
+              "data_type": "int"
             }
           }
         ]
