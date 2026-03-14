@@ -32,9 +32,9 @@ public class AlignToTower extends Command {
     this.drivetrain = drivetrain;
     this.finishWhenAligned = finishWhenAligned;
 
-    rotationPid.setTolerance(1.5);
-    forwardPid.setTolerance(0.03);
-    strafePid.setTolerance(0.03);
+    rotationPid.setTolerance(Constants.Tower.ROTATION_TOLERANCE_DEG);
+    forwardPid.setTolerance(Constants.Tower.POSITION_TOLERANCE_M);
+    strafePid.setTolerance(Constants.Tower.POSITION_TOLERANCE_M);
 
     addRequirements(drivetrain);
   }

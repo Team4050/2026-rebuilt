@@ -104,6 +104,9 @@ public final class Constants {
     public static final double ROTATION_TOLERANCE_DEG = 1.5;
     public static final double POSITION_TOLERANCE_M = 0.03;
 
+    // Timeout for auto alignment commands (seconds)
+    public static final double ALIGN_TIMEOUT_SEC = 5.0;
+
     // Approach pose for autonomous pathfinding — update with real coordinates
     public static final double APPROACH_X = 4.0;
     public static final double APPROACH_Y = 4.0;
