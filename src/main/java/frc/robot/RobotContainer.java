@@ -55,12 +55,14 @@ public class RobotContainer {
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
-  private final SendableChooser<Command> autoChooser = buildAutoChooser();
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     initRobotState();
     registerNamedCommands();
     configureBindings();
+
+    autoChooser = buildAutoChooser();
   }
 
   private void initRobotState() {
