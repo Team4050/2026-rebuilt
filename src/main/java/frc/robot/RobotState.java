@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -124,9 +125,11 @@ public class RobotState {
   // ===================== Climber =====================
 
   private Climber climber;
+  private ClimbCommand climbCommand;
 
-  public void addClimber(Climber climber) {
+  public void addClimber(Climber climber, ClimbCommand climbCommand) {
     this.climber = climber;
+    this.climbCommand = climbCommand;
   }
 
   public double getClimberPosition() {
@@ -136,18 +139,12 @@ public class RobotState {
     return climber.getEncoderPosition();
   }
 
-  public Climber.ClimbStage getClimbStage() {
-    if (climber == null) {
-      return null;
-    }
-    return climber.getClimbStage();
+  public double getClimberLeaderCurrent() {
+    return climber.getLeaderCurrent();
   }
 
-  public int getNumLevelsClimbed() {
-    if (climber == null) {
-      return 0;
-    }
-    return climber.getNumLevelsClimbed();
+  public double getClimberFollowerCurrent() {
+    return climber.getFollowerCurrent();
   }
 
   public boolean primaryAtUpperLimit() {
@@ -156,6 +153,20 @@ public class RobotState {
 
   public boolean primaryAtLowerLimit() {
     return climber != null && climber.primaryAtLowerLimit();
+  }
+
+  public ClimbCommand.ClimbStage getClimbStage() {
+    if (climbCommand == null) {
+      return null;
+    }
+    return climbCommand.getClimbStage();
+  }
+
+  public int getNumLevelsClimbed() {
+    if (climbCommand == null) {
+      return 0;
+    }
+    return climbCommand.getNumLevelsClimbed();
   }
 
   // ===================== Intake =====================
