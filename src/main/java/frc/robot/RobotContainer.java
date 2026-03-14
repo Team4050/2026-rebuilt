@@ -79,6 +79,7 @@ public class RobotContainer {
     // ===== Driving =====
 
     var maxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    var crawlSpeed = 0.15 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     var maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     var fieldCentricSwerveRequest = new SwerveRequest.FieldCentric()
@@ -96,8 +97,9 @@ public class RobotContainer {
     var isRobotCentric = new AtomicBoolean(false);
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
-      var vx = -joystickPrimary.getLeftY() * maxSpeed;
-      var vy = -joystickPrimary.getLeftX() * maxSpeed;
+      var speed = joystickPrimary.getHID().getRightBumperButton() ? crawlSpeed : maxSpeed;
+      var vx = -joystickPrimary.getLeftY() * speed;
+      var vy = -joystickPrimary.getLeftX() * speed;
       var rot = -joystickPrimary.getRightX() * maxAngularRate;
       if (isRobotCentric.get()) {
         return robotCentricSwerveRequest.withVelocityX(vx).withVelocityY(vy).withRotationalRate(rot);
