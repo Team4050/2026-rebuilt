@@ -11,7 +11,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -20,11 +19,11 @@ import frc.robot.Constants;
 
 public class IntakeDeploy extends SubsystemBase {
 
-  private final double MIN_ANGLE = 48;
+  private final double MIN_ANGLE = 50;
   private final double MAX_ANGLE = 190;
 
   private final double RETRACTED_ANGLE = 50;
-  private final double DEPLOYED_ANGLE = 181;
+  private final double DEPLOYED_ANGLE = 181.5;
 
   // Note: We should not use our zero offset to indicate resting position (either deployed or not).
   // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
@@ -39,19 +38,7 @@ public class IntakeDeploy extends SubsystemBase {
 
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
-  private final double MAX_OUTPUT = 0.3;
-
-  // Gravity feedforward: the voltage needed to hold the mechanism when the arm is horizontal
-  // (maximum gravity torque). Passed as arbitrary feedforward in setSetpoint so we can
-  // account for our encoder zero offset independently via HORIZONTAL_ANGLE.
-  // Tune on the real robot — start small (e.g. 0.5V) and increase until the arm holds
-  // position without drifting.
-  private final double GRAVITY_FF = 1.0;
-
-  // The encoder angle (in degrees) at which the arm is perfectly horizontal.
-  // Feedforward is strongest here and falls off with cos() as the arm tilts away.
-  // Set this based on your mechanism's geometry.
-  private final double HORIZONTAL_ANGLE = 140;
+  private final double MAX_OUTPUT = 0.2;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
 
@@ -68,15 +55,16 @@ public class IntakeDeploy extends SubsystemBase {
     config.closedLoop
         .pid(
             // P: Proportional gain, how aggressively the controller responds.
-            0.005,
+            0.03,
             // I: Integral gain, how much the controller responds based on accumulated error over time.
             // Should likely remain 0 for the current mechanism, since there is some slop in the gearing.
-            0.0,
+            0,
             // D: Derivative gain, how much the controller responds based on the rate of change of the error.
             // Can help reduce overshoot and improve stability.
             0.01)
         .outputRange(-MAX_OUTPUT, MAX_OUTPUT)
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .allowedClosedLoopError(1, ClosedLoopSlot.kSlot0);
 
     config.softLimit
         .forwardSoftLimit(MAX_ANGLE)
@@ -96,13 +84,12 @@ public class IntakeDeploy extends SubsystemBase {
 
     softLimitsEnabled.softLimit.forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
     softLimitsDisabled.softLimit.forwardSoftLimitEnabled(false).reverseSoftLimitEnabled(false);
+
+    deployed = getPosition() > (RETRACTED_ANGLE + DEPLOYED_ANGLE) / 2;
   }
 
   private void setPosition(double position) {
-    var angleFromHorizontal = Units.degreesToRadians(position - HORIZONTAL_ANGLE);
-    var ff = GRAVITY_FF * Math.cos(angleFromHorizontal);
-
-    controller.setSetpoint(position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ff);
+    controller.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
   private boolean deployed = false;
