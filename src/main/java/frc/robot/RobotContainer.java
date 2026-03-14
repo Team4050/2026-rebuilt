@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -35,6 +36,7 @@ public class RobotContainer {
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
 
   public final Climber climber = new Climber();
+  public final ClimbCommand climbCommand = new ClimbCommand(climber);
 
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId, false,
       Constants.Subsystems.shooterLeftId, false);
@@ -56,7 +58,7 @@ public class RobotContainer {
     rs.addDrivetrain(drivetrain);
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
-    rs.addClimber(climber);
+    rs.addClimber(climber, climbCommand);
     rs.addUnloaders(unloaderLeft, unloaderRight);
   }
 
@@ -150,10 +152,15 @@ public class RobotContainer {
     // ===== Climber =====
 
     // PovUp (hold): Climb up
-    joystickSecondary.povUp().whileTrue(climber.upCommand());
+    joystickSecondary.povUp().whileTrue(climber.overridePrimaryUpCommand().withName("Climber: Override Primary Up"));
 
     // PovDown (hold): Climb down
-    joystickSecondary.povDown().whileTrue(climber.downCommand());
+    joystickSecondary
+        .povDown()
+        .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
+
+    // PovLeft (tap): Auto climb (abort with second tap)
+    joystickSecondary.povLeft().toggleOnTrue(climbCommand.withName("Climber: Auto L3 Climb"));
 
     // TODO: implement climber deploy/retract toggle
     // PovRight (tap): Toggle climber deploy / retract
