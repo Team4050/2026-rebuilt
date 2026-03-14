@@ -20,10 +20,11 @@ import frc.robot.Constants;
 public class IntakeDeploy extends SubsystemBase {
 
   private final double MIN_ANGLE = 50;
-  private final double MAX_ANGLE = 190;
+  private final double MAX_ANGLE = 183;
 
   private final double RETRACTED_ANGLE = 50;
   private final double DEPLOYED_ANGLE = 181.5;
+  private final double outtakeAngle = 0;
 
   // Note: We should not use our zero offset to indicate resting position (either deployed or not).
   // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
@@ -104,6 +105,10 @@ public class IntakeDeploy extends SubsystemBase {
     setPosition(RETRACTED_ANGLE);
   }
 
+  public void intakePosition() {
+    setPosition(outtakeAngle);
+  }
+
   public Command toggleDeployCommand() {
     return runOnce(() -> {
       if (deployed) {
@@ -142,5 +147,10 @@ public class IntakeDeploy extends SubsystemBase {
 
   public double getEncoderVelocity() {
     return encoder.getVelocity();
+  }
+
+  public void joystick(Double stick) {
+    double currentPosition = getPosition();
+    setPosition(currentPosition += stick);
   }
 }
