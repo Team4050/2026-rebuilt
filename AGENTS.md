@@ -349,6 +349,7 @@ Managed as JSON files in `vendordeps/`. Each must match the WPILib year.
 - **CTRE Phoenix 6**: https://api.ctr-electronics.com/phoenix6/stable/java/
 - **REV Robotics**: https://codedocs.revrobotics.com/java/
 - **Limelight**: https://limelightlib-wpijava-reference.limelightvision.io/frc/robot/package-summary.html
+- **PathPlanner**: https://pathplanner.dev/api/java/
 
 To look up a class, navigate to its package path on the relevant site (e.g., `com.ctre.phoenix6.swerve.SwerveDrivetrain` -> `https://api.ctr-electronics.com/phoenix6/stable/java/com/ctre/phoenix6/swerve/SwerveDrivetrain.html`).
 
