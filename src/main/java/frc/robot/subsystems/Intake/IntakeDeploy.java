@@ -139,4 +139,8 @@ public class IntakeDeploy extends SubsystemBase {
   public double getAppliedOutput() {
     return motor.getAppliedOutput();
   }
+
+  public double getEncoderVelocity() {
+    return encoder.getVelocity();
+  }
 }

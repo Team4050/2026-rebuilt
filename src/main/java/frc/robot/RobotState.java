@@ -144,6 +144,13 @@ public class RobotState {
     return intakeDeploy.getPosition();
   }
 
+  public double getIntakeDeployVelocity() {
+    if (intakeDeploy == null) {
+      return 0.0;
+    }
+    return intakeDeploy.getEncoderVelocity();
+  }
+
   // TODO: We may not have anything that needs logged here
   private IntakeRollers intakeRollers;
 
