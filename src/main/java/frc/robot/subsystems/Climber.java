@@ -10,7 +10,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,14 +17,16 @@ import frc.robot.Constants;
 import frc.robot.commands.Home;
 
 public class Climber extends SubsystemBase implements Homeable {
-  private final double ENCODER_POSITION_MIN = 0.0;
+  public final double ENCODER_POSITION_TOP = 0.0;
 
-  // manually calibrated 2/26/2026 for climber rev. 2
-  private final double ENCODER_POSITION_MAX = 54.5;
+  // manually calibrated 3/14/2026 during climber testing
+  public final double ENCODER_POSITION_BOTTOM = 55.0;
+
+  public final double ENCODER_POSITION_L1 = 30.0;
 
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
-  private final double MAX_OUTPUT = 0.1;
+  private final double MAX_OUTPUT = 0.3;
 
   private final SparkMax leaderMotor = new SparkMax(Constants.Subsystems.climberPrimaryId, MotorType.kBrushless);
   private final SparkMax followerMotor = new SparkMax(Constants.Subsystems.climberFollowerId, MotorType.kBrushless);
@@ -33,10 +34,12 @@ public class Climber extends SubsystemBase implements Homeable {
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
+  private final double LIMIT_THRESHOLD = 0.2;
+
   public Climber() {
     var leaderConfig = new SparkMaxConfig();
     leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(60).inverted(true);
-    leaderConfig.closedLoop.pid(0.3, 0.0, 0.0).outputRange(-MAX_OUTPUT, MAX_OUTPUT);
+    leaderConfig.closedLoop.pid(0.1, 0.0, 0.0).outputRange(-MAX_OUTPUT, MAX_OUTPUT);
 
     if (leaderMotor
         .configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
@@ -52,61 +55,65 @@ public class Climber extends SubsystemBase implements Homeable {
     }
   }
 
-  private void setPosition(double position) {
+  public void setPosition(double position) {
     pidController.setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
-  /**
-   * Set a position for the climber to move to.
-   */
-  public void setTargetPosition(double position) {
-    setPosition(MathUtil.clamp(position, ENCODER_POSITION_MIN, ENCODER_POSITION_MAX));
-  }
-
-  /**
-   * Move the climber up at full speed
-   */
-  private void up() {
-    // "up" refers to climber primary moving up, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MIN);
-  }
-
-  /**
-   * Move the climber down at full speed
-   */
-  private void down() {
-    // "down" refers to climber primary down, and encoder values change in opposite direction
-    setPosition(ENCODER_POSITION_MAX);
-  }
-
-  /**
-   * Stop the climber.
-   */
-  private void stop() {
+  public void stop() {
     leaderMotor.stopMotor();
-
-    // TODO: Determine if we need to use the setpoint for stopping.
-    // - One reason not to use it is that it will keep the PID loop running, sending power to the motor and eating up CPU
-    // - One reason to use it is that it will hold the climber in place when stopped, using the motor's power. This can
-    //   can partially be negated with brake mode.
-    // pidController.setSetpoint(encoder.getPosition(), SparkMax.ControlType.kPosition);
   }
+
+  /** Get the leader motor's encoder position. */
+  public double getEncoderPosition() {
+    return encoder.getPosition();
+  }
+
+  /** Get whether the primary climber is at its upper limit. */
+  public boolean primaryAtUpperLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_TOP) < LIMIT_THRESHOLD;
+  }
+
+  /** Get the output current of the climber's leader motor */
+  public double getLeaderCurrent() {
+    return leaderMotor.getOutputCurrent();
+  }
+
+  /** Get the output current of the climber's follower motor */
+  public double getFollowerCurrent() {
+    return followerMotor.getOutputCurrent();
+  }
+
+  /** Get whether the primary climber is at its lower limit. */
+  public boolean primaryAtLowerLimit() {
+    return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < LIMIT_THRESHOLD;
+  }
+
+  private void overridePrimaryUp() {
+    setPosition(ENCODER_POSITION_TOP);
+  }
+
+  private void overridePrimaryDown() {
+    setPosition(ENCODER_POSITION_BOTTOM);
+  }
+
+  /** Move the climber so that the robot has climbed to L1 */
+  public void climbToLevel1() {
+    setPosition(ENCODER_POSITION_L1);
+  }
+
+  // ===================== Control Commands =====================
 
   /** Command that drives the climber up while active, stops on end. */
-  public Command upCommand() {
-    return startEnd(this::up, this::stop).withName("Climber: Up");
+  public Command overridePrimaryUpCommand() {
+    return startEnd(this::overridePrimaryUp, this::stop).withName("Climber: Override Up");
   }
 
   /** Command that drives the climber down while active, stops on end. */
-  public Command downCommand() {
-    return startEnd(this::down, this::stop).withName("Climber: Down");
+  public Command overridePrimaryDownCommand() {
+    return startEnd(this::overridePrimaryDown, this::stop).withName("Climber: Override Down");
   }
 
-  public Command stopCommand() {
-    return runOnce(this::stop).withName("Climber: Stop");
-  }
-
-  // ===================== Homing =====================
+  // ========================== Homing ==========================
 
   private static final double HOMING_SPEED = 0.1;
   private static final double STALL_CURRENT_AMPS = 10.0;
@@ -144,10 +151,6 @@ public class Climber extends SubsystemBase implements Homeable {
 
   @Override
   public void onHomeComplete() {
-    encoder.setPosition(ENCODER_POSITION_MIN);
-  }
-
-  public double getEncoderPosition() {
-    return encoder.getPosition();
+    encoder.setPosition(ENCODER_POSITION_TOP);
   }
 }

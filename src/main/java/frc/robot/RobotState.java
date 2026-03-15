@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Climb;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -124,9 +125,48 @@ public class RobotState {
   // ===================== Climber =====================
 
   private Climber climber;
+  private Climb climbCommand;
 
-  public void addClimber(Climber climber) {
+  public void addClimber(Climber climber, Climb climbCommand) {
     this.climber = climber;
+    this.climbCommand = climbCommand;
+  }
+
+  public double getClimberPosition() {
+    if (climber == null) {
+      return 0.0;
+    }
+    return climber.getEncoderPosition();
+  }
+
+  public double getClimberLeaderCurrent() {
+    return climber.getLeaderCurrent();
+  }
+
+  public double getClimberFollowerCurrent() {
+    return climber.getFollowerCurrent();
+  }
+
+  public boolean primaryAtUpperLimit() {
+    return climber != null && climber.primaryAtUpperLimit();
+  }
+
+  public boolean primaryAtLowerLimit() {
+    return climber != null && climber.primaryAtLowerLimit();
+  }
+
+  public Climb.ClimbStage getClimbStage() {
+    if (climbCommand == null) {
+      return null;
+    }
+    return climbCommand.getClimbStage();
+  }
+
+  public int getNumLevelsClimbed() {
+    if (climbCommand == null) {
+      return 0;
+    }
+    return climbCommand.getNumLevelsClimbed();
   }
 
   // ===================== Intake =====================
