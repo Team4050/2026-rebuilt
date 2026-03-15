@@ -55,14 +55,12 @@ public class RobotContainer {
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
-  private final SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     initRobotState();
     registerNamedCommands();
     configureBindings();
-
-    autoChooser = buildAutoChooser();
   }
 
   private void initRobotState() {
@@ -92,9 +90,10 @@ public class RobotContainer {
     configurePrimaryBindings();
     configureSecondaryBindings();
 
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // ===== Auto & Diagnostic choosers =====
 
-    // ===== Diagnostic commands =====
+    autoChooser = buildAutoChooser();
+    SmartDashboard.putData("Autonomous Routine", autoChooser);
 
     SendableChooser<Command> sysIdChooser = drivetrain.buildSysIdChooser();
     SmartDashboard.putData("SysId Routine", sysIdChooser);

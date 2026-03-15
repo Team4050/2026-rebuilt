@@ -235,7 +235,7 @@ public class RobotState {
   @SuppressWarnings("unused") // Logged by Epilogue
   private TowerAlignmentState towerAlignment = TowerAlignmentState.EMPTY;
 
-  public int getTowerPrimaryTagID() {
+  public int getTowerPrimaryTagId() {
     if (alliance == null) {
       return Constants.Tower.BLUE_PRIMARY_TAG_ID;
     }
