@@ -159,9 +159,6 @@ public class RobotContainer {
         .povDown()
         .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
 
-    // PovLeft (tap): Auto climb (abort with second tap)
-    joystickSecondary.povLeft().toggleOnTrue(climbCommand.withName("Climber: Auto L3 Climb"));
-
     // TODO: implement climber deploy/retract toggle
     // PovRight (tap): Toggle climber deploy / retract
     joystickSecondary
