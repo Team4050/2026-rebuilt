@@ -8,10 +8,10 @@
         "layouts": [],
         "containers": [
           {
-            "title": "limelight",
-            "x": 256.0,
+            "title": "Climber Camera",
+            "x": 1024.0,
             "y": 0.0,
-            "width": 1408.0,
+            "width": 640.0,
             "height": 640.0,
             "type": "Camera Stream",
             "properties": {
@@ -23,7 +23,7 @@
           {
             "title": "Climber: Home",
             "x": 1664.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -37,7 +37,7 @@
           {
             "title": "Intake Position",
             "x": 0.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Radial Gauge",
@@ -74,10 +74,10 @@
             }
           },
           {
-            "title": "Is Our Scoring Period",
-            "x": 0.0,
-            "y": 128.0,
-            "width": 256.0,
+            "title": "Shift",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -92,8 +92,8 @@
           },
           {
             "title": "Intake Roller Speed",
-            "x": 1664.0,
-            "y": 128.0,
+            "x": 0.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Slider",
@@ -108,7 +108,7 @@
             }
           },
           {
-            "title": "Match Remaining Time",
+            "title": "Match Time",
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
@@ -121,6 +121,62 @@
               "time_display_mode": "Minutes and Seconds",
               "red_start_time": 20,
               "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Intake Camera",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 640.0,
+            "height": 640.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Vision Valid",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Valid",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Tags",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Tag Count",
+              "period": 0.06,
+              "data_type": "int"
+            }
+          },
+          {
+            "title": "Climb Stage",
+            "x": 1664.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Climb Stage",
+              "period": 0.06,
+              "data_type": "string"
             }
           }
         ]
