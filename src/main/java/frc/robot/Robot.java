@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
@@ -30,6 +31,8 @@ public class Robot extends TimedRobot {
   private final RobotContainer robotContainer;
 
   public Robot() {
+    CameraServer.startAutomaticCapture();
+
     // Serve Elastic dashboard config file
     // https://frc-elastic.gitbook.io/docs/additional-features-and-references/remote-layout-downloading#on-robot-configuration
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());

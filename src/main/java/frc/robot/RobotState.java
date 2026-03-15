@@ -12,10 +12,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Climb;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeDeploy;
-import frc.robot.subsystems.IntakeRollers;
+import frc.robot.subsystems.Unloader;
+import frc.robot.subsystems.Intake.IntakeDeploy;
+import frc.robot.subsystems.Intake.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
@@ -123,9 +125,11 @@ public class RobotState {
   // ===================== Climber =====================
 
   private Climber climber;
+  private Climb climbCommand;
 
-  public void addClimber(Climber climber) {
+  public void addClimber(Climber climber, Climb climbCommand) {
     this.climber = climber;
+    this.climbCommand = climbCommand;
   }
 
   public double getClimberPosition() {
@@ -133,6 +137,36 @@ public class RobotState {
       return 0.0;
     }
     return climber.getEncoderPosition();
+  }
+
+  public double getClimberLeaderCurrent() {
+    return climber.getLeaderCurrent();
+  }
+
+  public double getClimberFollowerCurrent() {
+    return climber.getFollowerCurrent();
+  }
+
+  public boolean primaryAtUpperLimit() {
+    return climber != null && climber.primaryAtUpperLimit();
+  }
+
+  public boolean primaryAtLowerLimit() {
+    return climber != null && climber.primaryAtLowerLimit();
+  }
+
+  public Climb.ClimbStage getClimbStage() {
+    if (climbCommand == null) {
+      return null;
+    }
+    return climbCommand.getClimbStage();
+  }
+
+  public int getNumLevelsClimbed() {
+    if (climbCommand == null) {
+      return 0;
+    }
+    return climbCommand.getNumLevelsClimbed();
   }
 
   // ===================== Intake =====================
@@ -150,31 +184,44 @@ public class RobotState {
     return intakeDeploy.getPosition();
   }
 
-  public double getIntakeDeployCurrent() {
+  public double getIntakeDeployVelocity() {
     if (intakeDeploy == null) {
       return 0.0;
     }
-    return intakeDeploy.getOutputCurrent();
+    return intakeDeploy.getEncoderVelocity();
   }
 
-  public double getIntakeDeployAppliedOutput() {
-    if (intakeDeploy == null) {
-      return 0.0;
-    }
-    return intakeDeploy.getAppliedOutput();
-  }
-
+  // TODO: We may not have anything that needs logged here
   private IntakeRollers intakeRollers;
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
     this.intakeRollers = intakeRollers;
   }
 
-  public double getIntakeCurrent() {
-    if (intakeRollers == null) {
-      return 0.0;
-    }
-    return intakeRollers.motorCurrent();
+  // ===================== Outtake =====================
+
+  private Unloader unloaderLeft;
+  private Unloader unloaderRight;
+
+  public void addUnloaders(Unloader left, Unloader right) {
+    this.unloaderLeft = left;
+    this.unloaderRight = right;
+  }
+
+  public boolean leftKickerIsRunning() {
+    return unloaderLeft.kickerIsRunning();
+  }
+
+  public double getShooterLeftRPM() {
+    return unloaderLeft.getShooterRPM();
+  }
+
+  public boolean rightKickerIsRunning() {
+    return unloaderRight.kickerIsRunning();
+  }
+
+  public double getShooterRightRPM() {
+    return unloaderRight.getShooterRPM();
   }
 
   // ===================== Vision =====================
@@ -236,7 +283,7 @@ public class RobotState {
   private static final double ALLIANCE_SHIFTS_START = 130.0; // after 10s transition
   private static final double SHIFT_DURATION = 25.0;
 
-  private double matchRemainingTime = -1;
+  public double matchRemainingTime = -1;
 
   @NotLogged
   private DriverStation.Alliance alliance;

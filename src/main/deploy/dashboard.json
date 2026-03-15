@@ -8,16 +8,209 @@
         "layouts": [],
         "containers": [
           {
-            "title": "limelight",
-            "x": 256.0,
+            "title": "Climber Camera",
+            "x": 1024.0,
             "y": 0.0,
-            "width": 1408.0,
+            "width": 640.0,
             "height": 640.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight",
               "period": 0.06,
               "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Climber: Home",
+            "x": 1664.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Climber: Home",
+              "period": 0.06,
+              "show_type": false,
+              "maximize_button_space": true
+            }
+          },
+          {
+            "title": "Intake Position",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "Robot/Robot State/Intake Position",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -90.0,
+              "end_angle": 140.0,
+              "min_value": 48.0,
+              "max_value": 190.0,
+              "number_of_labels": 6,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Voltage",
+            "x": 1664.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "Robot/Robot State/PDH/Voltage",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 4.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Shift",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/Robot State/Is Our Scoring Period",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "Robot/Robot State/Match Remaining Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Intake Camera",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 640.0,
+            "height": 640.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Vision Valid",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Valid",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Tags",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Tag Count",
+              "period": 0.06,
+              "data_type": "int"
+            }
+          },
+          {
+            "title": "Climb Stage",
+            "x": 1664.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Climb Stage",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Shooter Speed",
+            "x": 1664.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter Speed",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Intake Roller Speed In",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Intake Roller Speed In",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Intake Roller Speed Out",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Intake Roller Speed Out",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
             }
           }
         ]
@@ -108,31 +301,67 @@
             }
           },
           {
+            "title": "Autonomous Routine",
+            "x": 384.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Autonomous Routine",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
             "title": "Intake Position",
             "x": 640.0,
             "y": 384.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
             "properties": {
               "topic": "Robot/Robot State/Intake Position",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": 48.0,
+              "max_value": 190.0,
+              "number_of_labels": 8,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
             }
           },
           {
-            "title": "Climber Position",
-            "x": 768.0,
+            "title": "Vision Valid",
+            "x": 896.0,
             "y": 384.0,
             "width": 128.0,
             "height": 128.0,
-            "type": "Text Display",
+            "type": "Boolean Box",
             "properties": {
-              "topic": "Robot/Robot State/Climber Position",
+              "topic": "Robot/Robot State/Vision Valid",
               "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Tag Count",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/Robot State/Vision Tag Count",
+              "period": 0.06,
+              "data_type": "int"
             }
           }
         ]
