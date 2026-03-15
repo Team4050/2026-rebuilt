@@ -9,15 +9,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Unloader extends SubsystemBase {
+  private static final String SPEED_SHOOTER_KEY = "Shooter Speed";
+  private static final double DEFAULT_SPEED_SHOOTER = 0.55;
+
   private final int KICKER_CURRENT_LIMIT = 20;
   private final int SHOOTER_CURRENT_LIMIT = 50;
 
-  private final double OUTTAKE_SPEED = 0.7;
-  private final double REVERSE_SPEED = -0.5;
-  private final double SHOOTER_SPEED = 0.58;
+  private final double KICKER_SPEED_OUT = 0.7;
+  private final double KICKER_SPEED_IN = -0.5;
 
   private SparkMax kickerMotor;
   private SparkMax shooterMotor;
@@ -51,6 +54,12 @@ public class Unloader extends SubsystemBase {
     }
 
     shooterEncoder = shooterMotor.getEncoder();
+
+    SmartDashboard.putNumber(SPEED_SHOOTER_KEY, DEFAULT_SPEED_SHOOTER);
+  }
+
+  private double getShooterSpeed() {
+    return SmartDashboard.getNumber(SPEED_SHOOTER_KEY, DEFAULT_SPEED_SHOOTER);
   }
 
   public boolean hasShooter() {
@@ -59,22 +68,22 @@ public class Unloader extends SubsystemBase {
 
   public void primeShooter() {
     if (hasShooter()) {
-      shooterMotor.set(SHOOTER_SPEED);
+      shooterMotor.set(getShooterSpeed());
     }
   }
 
   public void shoot() {
     if (shooterEncoder.getVelocity() > 10.0) {
-      kickerMotor.set(SHOOTER_SPEED);
+      kickerMotor.set(getShooterSpeed());
     }
   }
 
   public void runOuttake() {
-    kickerMotor.set(OUTTAKE_SPEED);
+    kickerMotor.set(KICKER_SPEED_OUT);
   }
 
   public void reverse() {
-    kickerMotor.set(REVERSE_SPEED);
+    kickerMotor.set(KICKER_SPEED_IN);
   }
 
   public void stopKicker() {
