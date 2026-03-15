@@ -145,7 +145,7 @@ public class RobotContainer {
 
     // ===== Unloaders =====
 
-    joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
+    // joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
 
     joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
     joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
