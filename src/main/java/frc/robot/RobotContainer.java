@@ -160,16 +160,13 @@ public class RobotContainer {
         .povDown()
         .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
 
-    // TODO: implement climber deploy/retract toggle
-    // PovRight (tap): Toggle climber deploy / retract
-    joystickSecondary
-        .povRight()
-        .onTrue(Commands.print("[STUB] Climber: Toggle Deploy").withName("Climber: Toggle Deploy"));
-
     // ===== Overrides =====
 
-    joystickSecondary.start().whileTrue(intakeDeploy.deployOverrideCommand(false));
-    joystickSecondary.back().whileTrue(intakeDeploy.deployOverrideCommand(true));
+    // Start (hold): Override intake deploy - ignores soft limits
+    joystickSecondary.start().whileTrue(intakeDeploy.deployOverrideNoLimitsCommand(false));
+
+    // Back (hold): Override intake deploy - ignores soft limits
+    joystickSecondary.back().whileTrue(intakeDeploy.deployOverrideNoLimitsCommand(true));
   }
 
   private void configureRobotTriggers() {

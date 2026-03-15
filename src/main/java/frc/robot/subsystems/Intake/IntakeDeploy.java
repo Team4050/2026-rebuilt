@@ -116,7 +116,7 @@ public class IntakeDeploy extends SubsystemBase {
 
   private double deployOverrideCurrentPosition = 0;
 
-  public Command deployOverrideCommand(boolean out) {
+  public Command deployOverrideNoLimitsCommand(boolean out) {
     return new FunctionalCommand(() -> {
       motor.configure(softLimitsDisabled, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
       deployOverrideCurrentPosition = getPosition();
