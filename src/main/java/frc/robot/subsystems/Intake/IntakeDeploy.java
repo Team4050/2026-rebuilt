@@ -4,7 +4,6 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
@@ -19,8 +18,8 @@ import frc.robot.Constants;
 
 public class IntakeDeploy extends SubsystemBase {
 
-  private final double MIN_ANGLE = 50;
-  private final double MAX_ANGLE = 190;
+  private final double MIN_ANGLE = 48;
+  private final double MAX_ANGLE = 184;
 
   private final double RETRACTED_ANGLE = 50;
   private final double DEPLOYED_ANGLE = 181.5;
@@ -55,16 +54,16 @@ public class IntakeDeploy extends SubsystemBase {
     config.closedLoop
         .pid(
             // P: Proportional gain, how aggressively the controller responds.
-            0.03,
+            0.008,
             // I: Integral gain, how much the controller responds based on accumulated error over time.
             // Should likely remain 0 for the current mechanism, since there is some slop in the gearing.
             0,
             // D: Derivative gain, how much the controller responds based on the rate of change of the error.
             // Can help reduce overshoot and improve stability.
-            0.01)
+            0)
         .outputRange(-MAX_OUTPUT, MAX_OUTPUT)
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .allowedClosedLoopError(1, ClosedLoopSlot.kSlot0);
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    // .allowedClosedLoopError(1, ClosedLoopSlot.kSlot0);
 
     config.softLimit
         .forwardSoftLimit(MAX_ANGLE)
