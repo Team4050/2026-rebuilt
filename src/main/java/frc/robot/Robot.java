@@ -40,6 +40,8 @@ public class Robot extends TimedRobot {
     // Default dashboard to diagnostics tab when not on main or event branch
     if (Constants.DEV_MODE) {
       Elastic.selectTab("Diagnostics");
+    } else {
+      Elastic.selectTab("Teleoperated");
     }
 
     configureLogging();
