@@ -41,7 +41,8 @@ public class RobotContainer {
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId, false,
       Constants.Subsystems.shooterLeftId, false);
 
-  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId, true);
+  public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId, true,
+      Constants.Subsystems.shooterRightId, true);
 
   public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
 
