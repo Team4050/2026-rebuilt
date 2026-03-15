@@ -22,6 +22,8 @@ public class Climber extends SubsystemBase implements Homeable {
   // manually calibrated 3/14/2026 during climber testing
   public final double ENCODER_POSITION_BOTTOM = 55.0;
 
+  public final double ENCODER_POSITION_L1 = 30.0;
+
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
   private final double MAX_OUTPUT = 0.3;
@@ -86,20 +88,29 @@ public class Climber extends SubsystemBase implements Homeable {
     return Math.abs(encoder.getPosition() - ENCODER_POSITION_BOTTOM) < LIMIT_THRESHOLD;
   }
 
+  private void overridePrimaryUp() {
+    setPosition(ENCODER_POSITION_TOP);
+  }
+
+  private void overridePrimaryDown() {
+    setPosition(ENCODER_POSITION_BOTTOM);
+  }
+
+  /** Move the climber so that the robot has climbed to L1 */
+  public void climbToLevel1() {
+    setPosition(ENCODER_POSITION_L1);
+  }
+
   // ===================== Control Commands =====================
 
   /** Command that drives the climber up while active, stops on end. */
   public Command overridePrimaryUpCommand() {
-    return startEnd(() -> {
-      setPosition(ENCODER_POSITION_TOP);
-    }, this::stop).withName("Climber: Up");
+    return startEnd(this::overridePrimaryUp, this::stop).withName("Climber: Override Up");
   }
 
   /** Command that drives the climber down while active, stops on end. */
   public Command overridePrimaryDownCommand() {
-    return startEnd(() -> {
-      setPosition(ENCODER_POSITION_BOTTOM);
-    }, this::stop).withName("Climber: Down");
+    return startEnd(this::overridePrimaryDown, this::stop).withName("Climber: Override Down");
   }
 
   // ========================== Homing ==========================

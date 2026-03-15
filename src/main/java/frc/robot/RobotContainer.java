@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -36,7 +36,7 @@ public class RobotContainer {
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
 
   public final Climber climber = new Climber();
-  public final ClimbCommand climbCommand = new ClimbCommand(climber);
+  public final Climb climbCommand = new Climb(climber);
 
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId, false,
       Constants.Subsystems.shooterLeftId, false);

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.Climb;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -125,9 +125,9 @@ public class RobotState {
   // ===================== Climber =====================
 
   private Climber climber;
-  private ClimbCommand climbCommand;
+  private Climb climbCommand;
 
-  public void addClimber(Climber climber, ClimbCommand climbCommand) {
+  public void addClimber(Climber climber, Climb climbCommand) {
     this.climber = climber;
     this.climbCommand = climbCommand;
   }
@@ -155,7 +155,7 @@ public class RobotState {
     return climber != null && climber.primaryAtLowerLimit();
   }
 
-  public ClimbCommand.ClimbStage getClimbStage() {
+  public Climb.ClimbStage getClimbStage() {
     if (climbCommand == null) {
       return null;
     }

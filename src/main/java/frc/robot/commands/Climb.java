@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 
-public class ClimbCommand extends Command {
+public class Climb extends Command {
   private Climber climber;
 
   public enum ClimbStage {
@@ -15,13 +15,13 @@ public class ClimbCommand extends Command {
   private int numLevelsClimbed;
 
   /** Create a climb command for L3 */
-  public ClimbCommand(Climber climber) {
+  public Climb(Climber climber) {
     this.climber = climber;
     addRequirements(climber);
   }
 
   /** Create a climb command for a specific number of levels */
-  public ClimbCommand(Climber climber, int levelsToClimb) {
+  public Climb(Climber climber, int levelsToClimb) {
     this(climber);
     this.levelsToClimb = levelsToClimb;
   }
