@@ -7,10 +7,10 @@ public class Climb extends Command {
   private Climber climber;
 
   public enum ClimbStage {
-    STAGE_1, STAGE_2
+    UNKNOWN, STAGE_1, STAGE_2
   }
 
-  private ClimbStage climbStage;
+  private ClimbStage climbStage = ClimbStage.UNKNOWN;
   private int levelsToClimb = 3;
   private int numLevelsClimbed;
 
@@ -57,6 +57,10 @@ public class Climb extends Command {
         break;
       case STAGE_2 :
         handleClimbStage2();
+        break;
+      case UNKNOWN :
+      default :
+        // Do nothing
         break;
     }
   }
