@@ -8,6 +8,8 @@ public class Unload {
   private final Unloader unloaderLeft;
   private final Unloader unloaderRight;
 
+  private boolean shooterMotorActive = false;
+
   public Unload(Unloader unloaderLeft, Unloader unloaderRight) {
     this.unloaderLeft = unloaderLeft;
     this.unloaderRight = unloaderRight;
@@ -16,8 +18,14 @@ public class Unload {
   private void primeShooter() {
     unloaderLeft.primeShooter();
     unloaderRight.primeShooter();
+
+    shooterMotorActive = true;
   }
 
+  /**
+   * Runs the shooter. Only active if the unloader has a shooter. If the unloader doesn't have a shooter, runs the
+   * kicker in reverse to eject the game piece.
+   */
   private void shoot() {
     if (!unloaderLeft.hasShooter() && !unloaderRight.hasShooter()) {
       return;
@@ -36,6 +44,10 @@ public class Unload {
     }
   }
 
+  /**
+   * Runs the outtake. Only active if the unloader doesn't have a shooter. If the unloader has a shooter, runs the
+   * kicker in reverse to eject the game piece.
+   */
   private void outtake() {
     if (unloaderLeft.hasShooter() && unloaderRight.hasShooter()) {
       return;
@@ -59,6 +71,7 @@ public class Unload {
     return new RunCommand(this::primeShooter).finallyDo(() -> {
       unloaderLeft.stopShooter();
       unloaderRight.stopShooter();
+      shooterMotorActive = false;
     }).withName("Unloaders: Prime Shooter(s)");
   }
 
@@ -74,5 +87,9 @@ public class Unload {
       unloaderLeft.stopKicker();
       unloaderRight.stopKicker();
     }).withName("Unloaders: Run Outtake");
+  }
+
+  public boolean shooterIsActive() {
+    return shooterMotorActive;
   }
 }

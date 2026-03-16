@@ -24,15 +24,15 @@ public class IntakeRollers extends SubsystemBase {
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeRollerId, SparkMax.MotorType.kBrushless);
 
   public IntakeRollers() {
-    SmartDashboard.putNumber(SPEED_IN_KEY, DEFAULT_SPEED_IN);
-    SmartDashboard.putNumber(SPEED_OUT_KEY, DEFAULT_SPEED_OUT);
-
     var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kCoast).smartCurrentLimit(50);
 
     if (motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) != REVLibError.kOk) {
       DriverStation.reportWarning("Error configuring Intake Rollers Motor", false);
     }
+
+    SmartDashboard.putNumber(SPEED_IN_KEY, DEFAULT_SPEED_IN);
+    SmartDashboard.putNumber(SPEED_OUT_KEY, DEFAULT_SPEED_OUT);
   }
 
   private double getInSpeed() {

@@ -13,14 +13,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Unloader extends SubsystemBase {
+  // TODO: Unloader is designed to support N unloaders, but having a fixed SmartDashboard
+  // key for shooter speed means that all shooters will run at the same speed.
+  // We should do this differently someday.
   private static final String SPEED_SHOOTER_KEY = "Shooter Speed";
   private static final double DEFAULT_SPEED_SHOOTER = 0.55;
 
-  private final int KICKER_CURRENT_LIMIT = 20;
-  private final int SHOOTER_CURRENT_LIMIT = 50;
+  private static final int KICKER_CURRENT_LIMIT = 20;
+  private static final int SHOOTER_CURRENT_LIMIT = 50;
 
-  private final double KICKER_SPEED_OUT = 0.7;
-  private final double KICKER_SPEED_IN = -0.5;
+  private static final double KICKER_SPEED_OUT = 0.7;
+  private static final double KICKER_SPEED_IN = -0.5;
 
   private SparkMax kickerMotor;
   private SparkMax shooterMotor;
@@ -94,13 +97,5 @@ public class Unloader extends SubsystemBase {
     if (hasShooter()) {
       shooterMotor.stopMotor();
     }
-  }
-
-  public double getShooterRPM() {
-    return hasShooter() ? shooterEncoder.getVelocity() : 0;
-  }
-
-  public boolean kickerIsRunning() {
-    return kickerMotor.getEncoder().getVelocity() > 0.1;
   }
 }

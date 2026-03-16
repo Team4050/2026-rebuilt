@@ -60,7 +60,7 @@ public class RobotContainer {
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
     rs.addClimber(climber, climbCommand);
-    rs.addUnloaders(unloaderLeft, unloaderRight);
+    rs.addUnloaders(unloaderLeft, unloaderRight, unloadCommand);
   }
 
   private void configureBindings() {

@@ -18,11 +18,11 @@ import frc.robot.Constants;
 
 public class IntakeDeploy extends SubsystemBase {
 
-  private final double MIN_ANGLE = 48;
-  private final double MAX_ANGLE = 184;
+  private static final double MIN_ANGLE = 48;
+  private static final double MAX_ANGLE = 184;
 
-  private final double RETRACTED_ANGLE = 50;
-  private final double DEPLOYED_ANGLE = 181.5;
+  private static final double RETRACTED_ANGLE = 50;
+  private static final double DEPLOYED_ANGLE = 181.5;
 
   // Note: We should not use our zero offset to indicate resting position (either deployed or not).
   // This opens us up to the risk of potentially rolling over (past 0, or past 360) which
@@ -32,12 +32,12 @@ public class IntakeDeploy extends SubsystemBase {
   // 1. Set zero offset to 0
   // 2. Manually move the intake to the desired "retracted" position
   // 3. Read the absolute encoder position from the dashboard and set that as the zero offset
-  private final double ZERO_OFFSET = 0;
-  private final double CONVERSION_FACTOR = 360;
+  private static final double ZERO_OFFSET = 0;
+  private static final double CONVERSION_FACTOR = 360;
 
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
-  private final double MAX_OUTPUT = 0.2;
+  private static final double MAX_OUTPUT = 0.2;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.intakeDeployId, SparkMax.MotorType.kBrushless);
 

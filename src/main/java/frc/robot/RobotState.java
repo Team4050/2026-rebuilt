@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Climb;
+import frc.robot.commands.Unload;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -191,7 +192,7 @@ public class RobotState {
     return intakeDeploy.getEncoderVelocity();
   }
 
-  // TODO: We may not have anything that needs logged here
+  @SuppressWarnings("unused") // TODO: May be used in the future
   private IntakeRollers intakeRollers;
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
@@ -200,28 +201,20 @@ public class RobotState {
 
   // ===================== Outtake =====================
 
+  @SuppressWarnings("unused") // TODO: May be used in the future
   private Unloader unloaderLeft;
+  @SuppressWarnings("unused") // TODO: May be used in the future
   private Unloader unloaderRight;
+  private Unload unloadCommand;
 
-  public void addUnloaders(Unloader left, Unloader right) {
+  public void addUnloaders(Unloader left, Unloader right, Unload command) {
     this.unloaderLeft = left;
     this.unloaderRight = right;
+    this.unloadCommand = command;
   }
 
-  public boolean leftKickerIsRunning() {
-    return unloaderLeft.kickerIsRunning();
-  }
-
-  public double getShooterLeftRPM() {
-    return unloaderLeft.getShooterRPM();
-  }
-
-  public boolean rightKickerIsRunning() {
-    return unloaderRight.kickerIsRunning();
-  }
-
-  public double getShooterRightRPM() {
-    return unloaderRight.getShooterRPM();
+  public boolean getShooterActive() {
+    return unloadCommand.shooterIsActive();
   }
 
   // ===================== Vision =====================
@@ -233,9 +226,6 @@ public class RobotState {
 
   @SuppressWarnings("unused") // Logged by Epilogue
   private double visionAvgTagDist = 0;
-
-  @SuppressWarnings("unused") // Logged by Epilogue
-  private double visionLatencyMs = 0;
 
   @SuppressWarnings("unused") // Logged by Epilogue
   private boolean visionValid = false;
@@ -259,7 +249,6 @@ public class RobotState {
     visionPose = estimate.pose;
     visionTagCount = estimate.tagCount;
     visionAvgTagDist = estimate.avgTagDist;
-    visionLatencyMs = estimate.latency;
     visionValid = true;
 
     // Show vision estimate on field widget
