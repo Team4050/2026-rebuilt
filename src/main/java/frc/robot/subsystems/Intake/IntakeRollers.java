@@ -16,7 +16,7 @@ import frc.robot.Constants;
 public class IntakeRollers extends SubsystemBase {
 
   private static final String SPEED_IN_KEY = "Intake Roller Speed In";
-  private static final double DEFAULT_SPEED_IN = 0.85;
+  private static final double DEFAULT_SPEED_IN = 0.7;
 
   private static final String SPEED_OUT_KEY = "Intake Roller Speed Out";
   private static final double DEFAULT_SPEED_OUT = 0.7;
