@@ -87,7 +87,7 @@ public class RobotContainer {
 
     var fieldCentricSwerveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(theoreticalMaxSpeed * 0.05)
-        .withRotationalDeadband(theoreticalMaxAngularRate * 0.1)
+        .withRotationalDeadband(theoreticalMaxAngularRate * 0.05)
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     var robotCentricSwerveRequest = new SwerveRequest.RobotCentric()
