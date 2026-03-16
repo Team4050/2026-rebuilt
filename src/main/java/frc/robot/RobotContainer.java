@@ -83,16 +83,16 @@ public class RobotContainer {
 
     var theoreticalMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     var crawlSpeed = 0.15 * theoreticalMaxSpeed;
-    var maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    var theoreticalMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     var fieldCentricSwerveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(theoreticalMaxSpeed * 0.05)
-        .withRotationalDeadband(maxAngularRate * 0.1)
+        .withRotationalDeadband(theoreticalMaxAngularRate * 0.1)
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     var robotCentricSwerveRequest = new SwerveRequest.RobotCentric()
         .withDeadband(theoreticalMaxSpeed * 0.05)
-        .withRotationalDeadband(maxAngularRate * 0.1)
+        .withRotationalDeadband(theoreticalMaxAngularRate * 0.1)
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     var brakeDriveRequest = new SwerveRequest.SwerveDriveBrake();
@@ -101,6 +101,7 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
       var maxSpeed = drivetrain.getSpeedMultiplier() * theoreticalMaxSpeed;
+      var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
       var speed = joystickPrimary.getHID().getRightBumperButton() ? crawlSpeed : maxSpeed;
       var vx = -joystickPrimary.getLeftY() * speed;
       var vy = -joystickPrimary.getLeftX() * speed;
