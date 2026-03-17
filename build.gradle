@@ -167,7 +167,9 @@ spotless {
       exclude "**/build/**", "**/build-*/**", "**/bin/**"
     }
     eclipse().configFile("formatting-rules.xml")
-    removeUnusedImports()
+    if (!project.hasProperty('skipImportCleanup')) {
+      removeUnusedImports()
+    }
     trimTrailingWhitespace()
     endWithNewline()
   }
