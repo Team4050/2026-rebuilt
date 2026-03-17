@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,6 +25,8 @@ public class Climber extends SubsystemBase implements Homeable {
 
   public final double ENCODER_POSITION_L1 = 30.0;
 
+  private final double LIMIT_THRESHOLD = 0.2;
+
   // The maximum output speed (percentage) of the closed loop controller.
   // Must be between 0 and 1.
   private final double MAX_OUTPUT = 0.3;
@@ -34,7 +37,7 @@ public class Climber extends SubsystemBase implements Homeable {
 
   private final SparkClosedLoopController pidController = leaderMotor.getClosedLoopController();
 
-  private final double LIMIT_THRESHOLD = 0.2;
+  private final Servo primaryServo = new Servo(0);
 
   public Climber() {
     var leaderConfig = new SparkMaxConfig();
@@ -153,4 +156,11 @@ public class Climber extends SubsystemBase implements Homeable {
   public void onHomeComplete() {
     encoder.setPosition(ENCODER_POSITION_TOP);
   }
+
+  // ========================== Servos ==========================
+
+  public void setServoPosition(double position) {
+    primaryServo.setPosition(position);
+  }
+
 }
