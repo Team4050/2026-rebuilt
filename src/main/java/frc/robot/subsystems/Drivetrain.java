@@ -38,10 +38,10 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  */
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final String SPEED_KEY = "Chassis Speed";
-  private static final double DEFAULT_SPEED = 0.5;
+  private static final double DEFAULT_SPEED = 0.75;
 
   private static final String ROT_SPEED_KEY = "Rotational Speed";
-  private static final double DEFAULT_ROT_SPEED = 0.5;
+  private static final double DEFAULT_ROT_SPEED = 0.75;
 
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
