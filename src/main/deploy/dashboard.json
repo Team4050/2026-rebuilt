@@ -416,14 +416,14 @@
             }
           },
           {
-            "title": "Rotational Speed",
+            "title": "Chassis Rotational Speed",
             "x": 1024.0,
             "y": 512.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Slider",
             "properties": {
-              "topic": "/SmartDashboard/Rotational Speed",
+              "topic": "/SmartDashboard/Chassis Rotational Speed",
               "period": 0.06,
               "data_type": "double",
               "min_value": 0.25,
