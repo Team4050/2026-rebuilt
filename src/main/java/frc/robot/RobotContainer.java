@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.auto.SimpleClimb;
 import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
@@ -184,8 +185,7 @@ public class RobotContainer {
 
   private void configureAutos() {
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
-    // Add autos here:
-    // autoChooser.addOption("Example Auto", exampleAutoCommand());
+    autoChooser.addOption("Simple Climb", new SimpleClimb(drivetrain, climber));
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
