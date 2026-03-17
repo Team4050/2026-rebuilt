@@ -49,9 +49,12 @@ public class RobotContainer {
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
 
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
   public RobotContainer() {
     initRobotState();
     configureBindings();
+    configureAutos();
   }
 
   private void initRobotState() {
@@ -179,8 +182,15 @@ public class RobotContainer {
         .whileTrue(drivetrain.applyRequest(() -> new SwerveRequest.Idle()).ignoringDisable(true).withName("DT: Idle"));
   }
 
+  private void configureAutos() {
+    autoChooser.setDefaultOption("Do Nothing", Commands.none());
+    // Add autos here:
+    // autoChooser.addOption("Example Auto", exampleAutoCommand());
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
   public Command getAutonomousCommand() {
-    // TODO: Autonomous code
-    return null;
+    return autoChooser.getSelected();
   }
 }
