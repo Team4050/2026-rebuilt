@@ -41,6 +41,9 @@ public class RobotState {
   private RobotState() {
     if (Constants.DEV_MODE) {
       SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
+
+      // TODO remove test servo value
+      SmartDashboard.putNumber("Climber: ServoPosition", 0.0);
     }
   }
 
@@ -48,6 +51,11 @@ public class RobotState {
     updateDrivetrainPeriodic();
     updateMatchDataPeriodic();
     updateVisionPeriodic();
+
+    // TODO remove test servo value
+    if (climber != null) {
+      climber.setServoPosition(SmartDashboard.getNumber("Climber: ServoPosition", 0.0));
+    }
   }
 
   // ===================== Drivetrain =====================
