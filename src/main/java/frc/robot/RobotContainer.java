@@ -20,10 +20,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
@@ -35,8 +33,8 @@ public class RobotContainer {
   public final IntakeRollers intakeRollers = new IntakeRollers();
   public final IntakeDeploy intakeDeploy = new IntakeDeploy();
 
-  public final Climber climber = new Climber();
-  public final Climb climbCommand = new Climb(climber);
+  // public final Climber climber = new Climber();
+  // public final Climb climbCommand = new Climb(climber);
 
   public final Unloader unloaderLeft = new Unloader(Constants.Subsystems.kickerLeftId, false,
       Constants.Subsystems.shooterLeftId, false);
@@ -59,7 +57,7 @@ public class RobotContainer {
     rs.addDrivetrain(drivetrain);
     rs.addIntakeDeploy(intakeDeploy);
     rs.addIntakeRollers(intakeRollers);
-    rs.addClimber(climber, climbCommand);
+    // rs.addClimber(climber, climbCommand);
     rs.addUnloaders(unloaderLeft, unloaderRight, unloadCommand);
   }
 
@@ -75,7 +73,7 @@ public class RobotContainer {
         .povUp()
         .whileTrue(Commands.defer(sysIdChooser::getSelected, Set.of(drivetrain)).withName("DT: Run SysId"));
 
-    SmartDashboard.putData("Climber: Home", climber.homeCommand());
+    // SmartDashboard.putData("Climber: Home", climber.homeCommand());
   }
 
   private void configurePrimaryBindings() {
@@ -154,13 +152,15 @@ public class RobotContainer {
 
     // ===== Climber =====
 
-    // PovUp (hold): Climb up
-    joystickSecondary.povUp().whileTrue(climber.overridePrimaryUpCommand().withName("Climber: Override Primary Up"));
-
-    // PovDown (hold): Climb down
-    joystickSecondary
-        .povDown()
-        .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
+    /*
+     *
+     * // PovUp (hold): Climb up
+     * joystickSecondary.povUp().whileTrue(climber.overridePrimaryUpCommand().withName("Climber: Override Primary Up"));
+     *
+     * // PovDown (hold): Climb down joystickSecondary .povDown()
+     * .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
+     *
+     */
 
     // ===== Overrides =====
 
