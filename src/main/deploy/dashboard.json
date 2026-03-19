@@ -180,14 +180,14 @@
             }
           },
           {
-            "title": "Left Shooter",
+            "title": "Shooter Active",
             "x": 1664.0,
             "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "Robot/Robot State/Left Shooter Is Running",
+              "topic": "Robot/Robot State/Shooter Active",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -197,14 +197,14 @@
             }
           },
           {
-            "title": "Right Shooter",
+            "title": "Shooter At Speed",
             "x": 1792.0,
             "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "Robot/Robot State/Right Shooter Is Running",
+              "topic": "Robot/Robot State/Is Shooter At Speed",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,

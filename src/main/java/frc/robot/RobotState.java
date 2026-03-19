@@ -224,6 +224,13 @@ public class RobotState {
     return unloadCommand.shooterIsActive();
   }
 
+  public boolean isShooterAtSpeed() {
+    if (unloaderLeft == null || unloaderRight == null) {
+      return false;
+    }
+    return unloaderLeft.isAtSpeed() || unloaderRight.isAtSpeed();
+  }
+
   // ===================== Vision =====================
 
   private Pose2d visionPose = new Pose2d();
