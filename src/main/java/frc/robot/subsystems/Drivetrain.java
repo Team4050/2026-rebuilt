@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -36,6 +37,12 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * command-based projects.
  */
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
+  private static final String SPEED_KEY = "Chassis Speed";
+  private static final double DEFAULT_SPEED = 0.75;
+
+  private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
+  private static final double DEFAULT_ROT_SPEED = 0.75;
+
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
   private double lastSimTime;
@@ -66,6 +73,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
+
+    SmartDashboard.putNumber(SPEED_KEY, DEFAULT_SPEED);
+    SmartDashboard.putNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
   }
 
   /**
@@ -134,6 +144,14 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    */
   public Command applyRequest(Supplier<SwerveRequest> request) {
     return run(() -> this.setControl(request.get()));
+  }
+
+  public double getSpeedMultiplier() {
+    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED);
+  }
+
+  public double getRotSpeedMultiplier() {
+    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
   }
 
   @Override
