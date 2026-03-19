@@ -141,10 +141,16 @@ public class RobotState {
   }
 
   public double getClimberLeaderCurrent() {
+    if (climber == null) {
+      return 0.0;
+    }
     return climber.getLeaderCurrent();
   }
 
   public double getClimberFollowerCurrent() {
+    if (climber == null) {
+      return 0.0;
+    }
     return climber.getFollowerCurrent();
   }
 
