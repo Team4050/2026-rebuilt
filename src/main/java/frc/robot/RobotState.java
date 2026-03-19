@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Climb;
+import frc.robot.commands.Climb.ClimbStage;
 import frc.robot.commands.Unload;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -164,7 +165,7 @@ public class RobotState {
 
   public Climb.ClimbStage getClimbStage() {
     if (climbCommand == null) {
-      return null;
+      return ClimbStage.UNKNOWN;
     }
     return climbCommand.getClimbStage();
   }
