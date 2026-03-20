@@ -186,7 +186,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // TODO: Autonomous code
-    return null;
+    var moveToBottom = Commands
+        .runOnce(() -> climber.setPosition(climber.ENCODER_POSITION_BOTTOM), climber)
+        .withName("Climber: Move To Bottom");
+
+    return Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
   }
 }
