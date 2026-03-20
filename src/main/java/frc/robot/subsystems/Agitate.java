@@ -17,7 +17,7 @@ import frc.robot.Constants;
 public class Agitate extends SubsystemBase {
 
   private static final String SPEED_KEY = "Agitate Speed";
-  private static final double DEFAULT_SPEED = 0.5;
+  private static final double DEFAULT_SPEED = 1.0;
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.agitateId, SparkMax.MotorType.kBrushed);
 
@@ -36,11 +36,11 @@ public class Agitate extends SubsystemBase {
     return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED);
   }
 
-  private void stop() {
+  public void stop() {
     motor.stopMotor();
   }
 
-  private void agitateOn() {
+  public void agitateOn() {
     motor.set(getSpeed());
   }
 
