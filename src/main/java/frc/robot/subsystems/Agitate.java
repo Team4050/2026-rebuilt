@@ -41,7 +41,7 @@ public class Agitate extends SubsystemBase {
   }
 
   public void agitateOn() {
-    motor.set(getSpeed());
+    motor.set(-getSpeed());
   }
 
   public Command agitateCommand() {

@@ -21,7 +21,6 @@ public class Unload {
   private void primeShooter() {
     unloaderLeft.primeShooter();
     unloaderRight.primeShooter();
-    agitate.agitateOn();
 
     shooterMotorActive = true;
   }
@@ -34,6 +33,7 @@ public class Unload {
     if (!unloaderLeft.hasShooter() && !unloaderRight.hasShooter()) {
       return;
     }
+    agitate.agitateOn();
 
     if (unloaderLeft.hasShooter()) {
       unloaderLeft.shoot();
@@ -75,7 +75,6 @@ public class Unload {
     return new RunCommand(this::primeShooter).finallyDo(() -> {
       unloaderLeft.stopShooter();
       unloaderRight.stopShooter();
-      agitate.stop();
       shooterMotorActive = false;
     }).withName("Unloaders: Prime Shooter(s)");
   }
@@ -84,6 +83,7 @@ public class Unload {
     return new RunCommand(this::shoot, unloaderLeft, unloaderRight).finallyDo(() -> {
       unloaderLeft.stopKicker();
       unloaderRight.stopKicker();
+      agitate.stop();
     }).withName("Unloaders: Shoot");
   }
 
