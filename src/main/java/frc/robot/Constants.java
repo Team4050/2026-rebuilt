@@ -55,7 +55,7 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final boolean VISION_ENABLED = true;
+    public static final boolean VISION_ENABLED = false;
     public static final String LIMELIGHT_NAME = "limelight";
   }
 }
