@@ -208,9 +208,7 @@ public class RobotState {
 
   // ===================== Outtake =====================
 
-  @SuppressWarnings("unused") // TODO: May be used in the future
   private Unloader unloaderLeft;
-  @SuppressWarnings("unused") // TODO: May be used in the future
   private Unloader unloaderRight;
   private Unload unloadCommand;
 
@@ -221,10 +219,13 @@ public class RobotState {
   }
 
   public boolean getShooterActive() {
+    if (unloadCommand == null) {
+      return false;
+    }
     return unloadCommand.shooterIsActive();
   }
 
-  public boolean isShooterAtSpeed() {
+  public boolean getShooterAtSpeed() {
     if (unloaderLeft == null || unloaderRight == null) {
       return false;
     }

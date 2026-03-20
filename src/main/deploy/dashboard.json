@@ -22,8 +22,8 @@
           },
           {
             "title": "Climber: Home",
-            "x": 1664.0,
-            "y": 128.0,
+            "x": 0.0,
+            "y": 512.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -37,7 +37,7 @@
           {
             "title": "Intake Position",
             "x": 0.0,
-            "y": 128.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Radial Gauge",
@@ -75,9 +75,9 @@
           },
           {
             "title": "Shift",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 128.0,
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -110,7 +110,7 @@
             "title": "Intake Camera",
             "x": 256.0,
             "y": 0.0,
-            "width": 640.0,
+            "width": 768.0,
             "height": 640.0,
             "type": "Camera Stream",
             "properties": {
@@ -120,70 +120,10 @@
             }
           },
           {
-            "title": "Vision Valid",
-            "x": 896.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "Robot/Robot State/Vision Valid",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Vision Tags",
-            "x": 896.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "Robot/Robot State/Vision Tag Count",
-              "period": 0.06,
-              "data_type": "int"
-            }
-          },
-          {
-            "title": "Climb Stage",
-            "x": 1664.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "Robot/Robot State/Climb Stage",
-              "period": 0.06,
-              "data_type": "string"
-            }
-          },
-          {
-            "title": "Shooter Speed",
-            "x": 1664.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Shooter Speed",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
-            }
-          },
-          {
             "title": "Shooter Active",
             "x": 1664.0,
-            "y": 512.0,
-            "width": 128.0,
+            "y": 128.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -198,13 +138,13 @@
           },
           {
             "title": "Shooter At Speed",
-            "x": 1792.0,
-            "y": 512.0,
-            "width": 128.0,
+            "x": 1664.0,
+            "y": 256.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "Robot/Robot State/Is Shooter At Speed",
+              "topic": "Robot/Robot State/Shooter At Speed",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -217,10 +157,96 @@
       }
     },
     {
-      "name": "Autonomous",
+      "name": "Config",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "Intake Roller Speed In",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Intake Roller Speed In",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Chassis Speed",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Chassis Speed",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Shooter Speed",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter Speed",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Intake Roller Speed Out",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Intake Roller Speed Out",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Chassis Rotational Speed",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Chassis Rotational Speed",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          }
+        ]
       }
     },
     {
@@ -362,74 +388,6 @@
               "topic": "Robot/Robot State/Vision Tag Count",
               "period": 0.06,
               "data_type": "int"
-            }
-          },
-          {
-            "title": "Chassis Speed",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Chassis Speed",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.25,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
-            }
-          },
-          {
-            "title": "Intake Roller Speed In",
-            "x": 1536.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Intake Roller Speed In",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
-            }
-          },
-          {
-            "title": "Intake Roller Speed Out",
-            "x": 1536.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Intake Roller Speed Out",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
-            }
-          },
-          {
-            "title": "Chassis Rotational Speed",
-            "x": 1024.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Chassis Rotational Speed",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.25,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
             }
           }
         ]
