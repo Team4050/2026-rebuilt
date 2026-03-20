@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Agitate;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -43,6 +45,8 @@ public class RobotContainer {
 
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId, true,
       Constants.Subsystems.shooterRightId, true);
+
+  public final Agitate agitate = new Agitate();
 
   public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
 
@@ -145,12 +149,14 @@ public class RobotContainer {
     // B: Run intake rollers while held
     joystickSecondary.b().whileTrue(intakeRollers.inCommand());
 
+    Command agitateandShoot = new ParallelCommandGroup(unloadCommand.shootCommand(), agitate.agitateCommand());
+
     // ===== Unloaders =====
 
     // joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
 
     joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
-    joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
+    joystickSecondary.rightTrigger().whileTrue(agitateandShoot);
 
     // ===== Climber =====
 
