@@ -115,7 +115,7 @@ public class Climber extends SubsystemBase implements Homeable {
 
   // ========================== Homing ==========================
 
-  private static final double HOMING_SPEED = 0.20;
+  private static final double HOMING_SPEED = 0.15;
   private static final double STALL_CURRENT_AMPS = 10.0;
   private static final double STALL_VELOCITY_RPM = 5.0;
   private static final double STALL_TIME_SEC = 0.1;
