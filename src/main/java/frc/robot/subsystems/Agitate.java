@@ -13,11 +13,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 
 public class Agitate extends SubsystemBase {
 
   private static final String SPEED_KEY = "Agitate Speed";
   private static final double DEFAULT_SPEED = 1.0;
+  private RobotState rs = RobotState.getInstance();
 
   private final SparkMax motor = new SparkMax(Constants.Subsystems.agitateId, SparkMax.MotorType.kBrushed);
 
@@ -41,6 +43,10 @@ public class Agitate extends SubsystemBase {
   }
 
   public void agitateOn() {
+    if (rs.getIntakePosition() <= 100) {
+      stop();
+      return;
+    }
     motor.set(-getSpeed());
   }
 
