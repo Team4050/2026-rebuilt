@@ -166,6 +166,8 @@ public class RobotContainer {
         .povDown()
         .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
 
+    joystickSecondary.povRight().onTrue(climber.homeCommand().withName("Climber: Home"));
+
     // ===== Overrides =====
 
     // Start (hold): Override intake deploy - ignores soft limits
