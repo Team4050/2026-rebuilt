@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase implements Homeable {
   public final double ENCODER_POSITION_TOP = 0.0;
 
   // manually calibrated 3/14/2026 during climber testing
-  public final double ENCODER_POSITION_BOTTOM = 40.0;
+  public final double ENCODER_POSITION_BOTTOM = 45.0;
 
   public final double ENCODER_POSITION_L1 = 30.0;
 
