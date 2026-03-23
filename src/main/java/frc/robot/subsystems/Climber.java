@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase implements Homeable {
   public final double ENCODER_POSITION_TOP = 0.0;
 
   // manually calibrated 3/14/2026 during climber testing
-  public final double ENCODER_POSITION_BOTTOM = 55.0;
+  public final double ENCODER_POSITION_BOTTOM = 45.0;
 
   public final double ENCODER_POSITION_L1 = 30.0;
 
@@ -115,7 +115,7 @@ public class Climber extends SubsystemBase implements Homeable {
 
   // ========================== Homing ==========================
 
-  private static final double HOMING_SPEED = 0.1;
+  private static final double HOMING_SPEED = 0.15;
   private static final double STALL_CURRENT_AMPS = 10.0;
   private static final double STALL_VELOCITY_RPM = 5.0;
   private static final double STALL_TIME_SEC = 0.1;

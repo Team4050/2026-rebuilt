@@ -17,10 +17,12 @@ public class Unloader extends SubsystemBase {
   // key for shooter speed means that all shooters will run at the same speed.
   // We should do this differently someday.
   private static final String SPEED_SHOOTER_KEY = "Shooter Speed";
-  private static final double DEFAULT_SPEED_SHOOTER = 0.6;
+  private static final double DEFAULT_SPEED_SHOOTER = 0.65;
 
   private static final int KICKER_CURRENT_LIMIT = 20;
   private static final int SHOOTER_CURRENT_LIMIT = 50;
+
+  private static final double SHOOTER_TARGET_RPM = 1000.0;
 
   private static final double KICKER_SPEED_OUT = 0.7;
   private static final double KICKER_SPEED_IN = -0.5;
@@ -91,6 +93,10 @@ public class Unloader extends SubsystemBase {
 
   public void stopKicker() {
     kickerMotor.stopMotor();
+  }
+
+  public boolean isAtSpeed() {
+    return hasShooter() && shooterEncoder.getVelocity() >= SHOOTER_TARGET_RPM;
   }
 
   public void stopShooter() {

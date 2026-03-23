@@ -16,10 +16,12 @@ import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.Elastic;
+import frc.robot.util.KernelLogMonitor;
 import frc.robot.util.LimelightHelpers;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
@@ -43,6 +45,9 @@ public class Robot extends TimedRobot {
     } else {
       Elastic.selectTab("Teleoperated");
     }
+
+    // Initialize + start kernel log monitor
+    KernelLogMonitor.getInstance();
 
     configureLogging();
     configureLimeLight();
@@ -98,8 +103,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    robotState.periodic();
     CommandScheduler.getInstance().run();
+
+    robotState.periodic();
+
+    if (RobotBase.isReal()) {
+      KernelLogMonitor.getInstance().publishToLogger();
+    }
   }
 
   @Override

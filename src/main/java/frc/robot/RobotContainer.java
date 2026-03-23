@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Agitate;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Unloader;
@@ -44,7 +45,8 @@ public class RobotContainer {
   public final Unloader unloaderRight = new Unloader(Constants.Subsystems.kickerRightId, true,
       Constants.Subsystems.shooterRightId, true);
 
-  public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight);
+  public final Agitate agitate = new Agitate();
+  public final Unload unloadCommand = new Unload(unloaderLeft, unloaderRight, agitate);
 
   private final CommandXboxController joystickPrimary = new CommandXboxController(0);
   private final CommandXboxController joystickSecondary = new CommandXboxController(1);
@@ -145,9 +147,11 @@ public class RobotContainer {
     // B: Run intake rollers while held
     joystickSecondary.b().whileTrue(intakeRollers.inCommand());
 
+    //Command agitateandShoot = new ParallelCommandGroup(unloadCommand.primeCommand(), agitate.agitateCommand());
+
     // ===== Unloaders =====
 
-    // joystickSecondary.leftTrigger().whileTrue(unloadCommand.outtakeCommand());
+    joystickSecondary.leftBumper().whileTrue(agitate.agitateCommand());
 
     joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
     joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
@@ -161,6 +165,8 @@ public class RobotContainer {
     joystickSecondary
         .povDown()
         .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
+
+    joystickSecondary.povRight().onTrue(climber.homeCommand().withName("Climber: Home"));
 
     // ===== Overrides =====
 
@@ -180,7 +186,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // TODO: Autonomous code
-    return null;
+    var moveToBottom = Commands
+        .runOnce(() -> climber.setPosition(climber.ENCODER_POSITION_BOTTOM), climber)
+        .withName("Climber: Move To Bottom");
+
+    return Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
   }
 }

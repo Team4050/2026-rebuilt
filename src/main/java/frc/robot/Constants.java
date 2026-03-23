@@ -52,10 +52,12 @@ public final class Constants {
 
     public static final int kickerRightId = 58;
     public static final int shooterRightId = 59;
+
+    public static final int agitateId = 60;
   }
 
   public final class Vision {
-    public static final boolean VISION_ENABLED = true;
+    public static final boolean VISION_ENABLED = false;
     public static final String LIMELIGHT_NAME = "limelight";
   }
 }

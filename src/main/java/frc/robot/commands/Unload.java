@@ -2,22 +2,26 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.Agitate;
 import frc.robot.subsystems.Unloader;
 
 public class Unload {
   private final Unloader unloaderLeft;
   private final Unloader unloaderRight;
+  private final Agitate agitate;
 
   private boolean shooterMotorActive = false;
 
-  public Unload(Unloader unloaderLeft, Unloader unloaderRight) {
+  public Unload(Unloader unloaderLeft, Unloader unloaderRight, Agitate agitate) {
     this.unloaderLeft = unloaderLeft;
     this.unloaderRight = unloaderRight;
+    this.agitate = agitate;
   }
 
   private void primeShooter() {
     unloaderLeft.primeShooter();
     unloaderRight.primeShooter();
+    agitate.agitateOn();
 
     shooterMotorActive = true;
   }
@@ -71,6 +75,7 @@ public class Unload {
     return new RunCommand(this::primeShooter).finallyDo(() -> {
       unloaderLeft.stopShooter();
       unloaderRight.stopShooter();
+      agitate.stop();
       shooterMotorActive = false;
     }).withName("Unloaders: Prime Shooter(s)");
   }
