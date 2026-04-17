@@ -104,7 +104,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
       var maxSpeed = drivetrain.getSpeedMultiplier() * theoreticalMaxSpeed;
       var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
-      var speed = joystickPrimary.getHID().getRightBumperButton() ? crawlSpeed : maxSpeed;
+      // for outreach we have swap the maxSpeed and crawlSpeed on the bumper, so that the "crawl mode" is the default.
+      var speed = joystickPrimary.getHID().getRightBumperButton() ? maxSpeed : crawlSpeed;
       var vx = -joystickPrimary.getLeftY() * speed;
       var vy = -joystickPrimary.getLeftX() * speed;
       var rot = -joystickPrimary.getRightX() * maxAngularRate;
