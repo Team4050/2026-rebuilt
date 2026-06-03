@@ -6,7 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.Utils;
+import org.jcp.xml.dsig.internal.dom.Utils;
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -39,6 +40,9 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final String SPEED_KEY = "Chassis Speed";
   private static final double DEFAULT_SPEED = 0.50;
+
+  private static final String ALT_SPEED_KEY = "Chassis Alt Speed";
+  private static final double DEFAULT_ALT_SPEED = 0.15;
 
   private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
   private static final double DEFAULT_ROT_SPEED = 0.50;
@@ -148,6 +152,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public double getSpeedMultiplier() {
     return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED);
+  }
+
+  public double getAltSpeedMultiplier() {
+    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED);
   }
 
   public double getRotSpeedMultiplier() {

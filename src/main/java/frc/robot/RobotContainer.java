@@ -84,7 +84,6 @@ public class RobotContainer {
     // ===== Driving =====
 
     var theoreticalMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    var crawlSpeed = 0.15 * theoreticalMaxSpeed;
     var theoreticalMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     var fieldCentricSwerveRequest = new SwerveRequest.FieldCentric()
@@ -102,12 +101,9 @@ public class RobotContainer {
     var isRobotCentric = new AtomicBoolean(false);
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
-      var maxSpeed = drivetrain.getSpeedMultiplier() * theoreticalMaxSpeed;
       var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
-      // for outreach we have swap the maxSpeed and crawlSpeed on the bumper, so that the "crawl mode" is the default.
-      var speed = joystickPrimary.getHID().getRightBumperButton() ? maxSpeed : crawlSpeed;
-      var vx = -joystickPrimary.getLeftY() * speed;
-      var vy = -joystickPrimary.getLeftX() * speed;
+      var vx = -joystickPrimary.getLeftY() * getSpeed();
+      var vy = -joystickPrimary.getLeftX() * getSpeed();
       var rot = -joystickPrimary.getRightX() * maxAngularRate;
       if (isRobotCentric.get()) {
         return robotCentricSwerveRequest.withVelocityX(vx).withVelocityY(vy).withRotationalRate(rot);
@@ -137,6 +133,16 @@ public class RobotContainer {
 
     joystickPrimary.leftTrigger().whileTrue(intakeRollers.outCommand());
     joystickPrimary.rightTrigger().whileTrue(intakeRollers.inCommand());
+  }
+
+  private double getSpeed() {
+    var theoreticalMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
+    if (joystickPrimary.leftBumper().getAsBoolean()) {
+      return drivetrain.getAltSpeedMultiplier() * theoreticalMaxSpeed;
+    }
+
+    return drivetrain.getSpeedMultiplier() * theoreticalMaxSpeed;
   }
 
   private void configureSecondaryBindings() {
