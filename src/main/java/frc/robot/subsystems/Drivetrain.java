@@ -46,6 +46,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
   private static final double DEFAULT_ROT_SPEED = 0.50;
 
+  private static final String Enable_KEY = "Drivetrain_Enable";
+  private static final boolean DEFAULT_Enable = true;
+
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
   private double lastSimTime;
@@ -79,6 +82,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     SmartDashboard.putNumber(SPEED_KEY, DEFAULT_SPEED);
     SmartDashboard.putNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
+    SmartDashboard.putBoolean(ALT_SPEED_KEY, DEFAULT_Enable);
   }
 
   /**
