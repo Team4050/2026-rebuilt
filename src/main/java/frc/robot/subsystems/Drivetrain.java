@@ -45,7 +45,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
   private static final double DEFAULT_ROT_SPEED = 0.50;
-
   private static final String ENABLED_KEY = "Drivetrain Enabled";
   private static final boolean DEFAULT_ENABLED = true;
 
