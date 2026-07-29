@@ -82,7 +82,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     SmartDashboard.putNumber(SPEED_KEY, DEFAULT_SPEED);
     SmartDashboard.putNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
-    SmartDashboard.putBoolean(ALT_SPEED_KEY, DEFAULT_Enable);
+    SmartDashboard.putBoolean(Enable_KEY, DEFAULT_Enable);
   }
 
   /**
@@ -164,6 +164,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public double getRotSpeedMultiplier() {
     return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
   }
+
+private double getEnableMuiltplier () {
+  boolean isEnable = SmartDashboard.getboolean(Enable_KEY, DEFAULT_Enable);
+  if (isEnable) {
+    return 1;
+  } else {
+    return 0;
+  }
+
+}
 
   @Override
   public void periodic() {
