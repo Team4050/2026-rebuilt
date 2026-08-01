@@ -199,7 +199,7 @@ public class RobotState {
     smartdashboard.putBoolean(INTAKE_ENABLE_KEY,DEFAULT_INTAKE_ENABLE);
   }
 
-  public boolean getIntake_Enable(){
+  public boolean getIntakeEnable(){
     return smartdashboard.putBoolean(INTAKE_ENABLE_KEY,DEFAULT_INTAKE_ENABLE);
   }
   public double getIntakePosition() {
