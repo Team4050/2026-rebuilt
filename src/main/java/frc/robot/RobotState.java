@@ -129,9 +129,18 @@ public class RobotState {
   private Climber climber;
   private Climb climbCommand;
 
+  private final String CLIMBER_ENABLE_KEY = "Climber Enabled";
+  private final boolean DEFAULT_CLIMBER_ENABLE = true;
+
   public void addClimber(Climber climber, Climb climbCommand) {
     this.climber = climber;
     this.climbCommand = climbCommand;
+
+    SmartDashboard.putBoolean(CLIMBER_ENABLE_KEY, DEFAULT_CLIMBER_ENABLE);
+  }
+
+  public boolean getClimberEnable() {
+    return SmartDashboard.getBoolean(CLIMBER_ENABLE_KEY, DEFAULT_CLIMBER_ENABLE);
   }
 
   public double getClimberPosition() {

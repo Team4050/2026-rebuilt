@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Climb;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
@@ -54,6 +55,10 @@ public class RobotContainer {
   public RobotContainer() {
     initRobotState();
     configureBindings();
+  }
+
+  private Trigger climberEnabled() {
+    return new Trigger(() -> RobotState.getInstance().getClimberEnable());
   }
 
   private void initRobotState() {
@@ -166,14 +171,18 @@ public class RobotContainer {
     // ===== Climber =====
 
     // PovUp (hold): Climb up
-    joystickSecondary.povUp().whileTrue(climber.overridePrimaryUpCommand().withName("Climber: Override Primary Up"));
+    joystickSecondary
+        .povUp()
+        .and(climberEnabled())
+        .whileTrue(climber.overridePrimaryUpCommand().withName("Climber: Override Primary Up"));
 
     // PovDown (hold): Climb down
     joystickSecondary
         .povDown()
+        .and(climberEnabled())
         .whileTrue(climber.overridePrimaryDownCommand().withName("Climber: Override Primary Down"));
 
-    joystickSecondary.povRight().onTrue(climber.homeCommand().withName("Climber: Home"));
+    joystickSecondary.povRight().and(climberEnabled()).onTrue(climber.homeCommand().withName("Climber: Home"));
 
     // ===== Overrides =====
 
