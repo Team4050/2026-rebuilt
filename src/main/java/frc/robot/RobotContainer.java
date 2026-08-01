@@ -140,8 +140,8 @@ public class RobotContainer {
 
     // ===== Intake =====
 
-    joystickPrimary.leftTrigger().whileTrue(intakeRollers.outCommand());
-    joystickPrimary.rightTrigger().whileTrue(intakeRollers.inCommand());
+    joystickPrimary.leftTrigger().and(intakeEnabled()).whileTrue(intakeRollers.outCommand());
+    joystickPrimary.rightTrigger().and(intakeEnabled()).whileTrue(intakeRollers.inCommand());
   }
 
   private double getSpeed() {
