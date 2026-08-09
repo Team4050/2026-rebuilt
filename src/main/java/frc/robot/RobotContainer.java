@@ -61,6 +61,10 @@ public class RobotContainer {
     return new Trigger(() -> RobotState.getInstance().getClimberEnable());
   }
 
+  private Trigger intakeEnabled() {
+    return new Trigger(() -> RobotState.getInstance().getIntakeEnable());
+  }
+
   private void initRobotState() {
     RobotState rs = RobotState.getInstance();
     rs.addDrivetrain(drivetrain);
@@ -136,8 +140,8 @@ public class RobotContainer {
 
     // ===== Intake =====
 
-    joystickPrimary.leftTrigger().whileTrue(intakeRollers.outCommand());
-    joystickPrimary.rightTrigger().whileTrue(intakeRollers.inCommand());
+    joystickPrimary.leftTrigger().and(intakeEnabled()).whileTrue(intakeRollers.outCommand());
+    joystickPrimary.rightTrigger().and(intakeEnabled()).whileTrue(intakeRollers.inCommand());
   }
 
   private double getSpeed() {
@@ -154,10 +158,10 @@ public class RobotContainer {
     // ===== Intake =====
 
     // X: Toggle intake deploy (press to deploy, press again to retract)
-    joystickSecondary.x().onTrue(intakeDeploy.toggleDeployCommand());
+    joystickSecondary.x().and(intakeEnabled()).onTrue(intakeDeploy.toggleDeployCommand());
 
     // B: Run intake rollers while held
-    joystickSecondary.b().whileTrue(intakeRollers.inCommand());
+    joystickSecondary.b().and(intakeEnabled()).whileTrue(intakeRollers.inCommand());
 
     //Command agitateandShoot = new ParallelCommandGroup(unloadCommand.primeCommand(), agitate.agitateCommand());
 

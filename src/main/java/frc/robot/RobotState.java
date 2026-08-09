@@ -190,8 +190,17 @@ public class RobotState {
 
   private IntakeDeploy intakeDeploy;
 
+  private final String INTAKE_ENABLE_KEY = "Intake Enable";
+  private final boolean DEFAULT_INTAKE_ENABLE = true;
+
   public void addIntakeDeploy(IntakeDeploy intakeDeploy) {
     this.intakeDeploy = intakeDeploy;
+
+    SmartDashboard.putBoolean(INTAKE_ENABLE_KEY, DEFAULT_INTAKE_ENABLE);
+  }
+
+  public boolean getIntakeEnable() {
+    return SmartDashboard.getBoolean(INTAKE_ENABLE_KEY, DEFAULT_INTAKE_ENABLE);
   }
 
   public double getIntakePosition() {
