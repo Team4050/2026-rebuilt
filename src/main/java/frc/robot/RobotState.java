@@ -55,6 +55,9 @@ public class RobotState {
 
   private Drivetrain drivetrain;
 
+  private final String DRIVERTRAIN_ENABLE_KEY = "Drivetrain Enabled";
+  private final boolean DEFAULT_DRIVETRAIN_ENABLE = true;
+
   @NotLogged
   private SwerveModuleState[] cachedModuleStates = new SwerveModuleState[] { new SwerveModuleState(),
       new SwerveModuleState(),
@@ -63,6 +66,8 @@ public class RobotState {
 
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
+
+SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
 
     if (Constants.DEV_MODE) {
       // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
