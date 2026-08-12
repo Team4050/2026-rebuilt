@@ -57,6 +57,10 @@ public class RobotContainer {
     configureBindings();
   }
 
+private Trigger drivetrainEnabled() {
+    return new Trigger(() -> RobotState.getInstance().getDrivetrainEnable());
+  }
+
   private Trigger climberEnabled() {
     return new Trigger(() -> RobotState.getInstance().getClimberEnable());
   }

@@ -86,7 +86,9 @@ SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
       });
     }
   }
-
+public boolean getDrivetrainEnable() {
+  return SmartDashboard.getBoolean (DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
+}
   private void updateDrivetrainPeriodic() {
     if (drivetrain == null) {
       return;
