@@ -46,8 +46,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
   private static final double DEFAULT_ROT_SPEED = 0.50;
 
-  private static final String ENABLED_KEY = "Drivetrain Enabled";
-  private static final boolean DEFAULT_ENABLED = true;
+
 
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
@@ -82,7 +81,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     SmartDashboard.putNumber(SPEED_KEY, DEFAULT_SPEED);
     SmartDashboard.putNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
-    SmartDashboard.putBoolean(ENABLED_KEY, DEFAULT_ENABLED);
+
   }
 
   /**
@@ -153,25 +152,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return run(() -> this.setControl(request.get()));
   }
 
-  private double getEnableMuiltplier() {
-    boolean isEnable = SmartDashboard.getBoolean(ENABLED_KEY, DEFAULT_ENABLED);
-    if (isEnable) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
+
 
   public double getSpeedMultiplier() {
-    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED) * getEnableMuiltplier();
+    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED) ;
   }
 
   public double getAltSpeedMultiplier() {
-    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED) * getEnableMuiltplier();
+    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED) ;
   }
 
   public double getRotSpeedMultiplier() {
-    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED) * getEnableMuiltplier();
+    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED) ;
   }
 
   @Override

@@ -57,6 +57,10 @@ public class RobotContainer {
     configureBindings();
   }
 
+  private Trigger drivetrainEnabled() {
+    return new Trigger(() -> RobotState.getInstance().getDrivetrainEnable());
+  }
+
   private Trigger climberEnabled() {
     return new Trigger(() -> RobotState.getInstance().getClimberEnable());
   }
@@ -110,32 +114,49 @@ public class RobotContainer {
     var isRobotCentric = new AtomicBoolean(false);
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> {
-      var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
-      var vx = -joystickPrimary.getLeftY() * getSpeed();
-      var vy = -joystickPrimary.getLeftX() * getSpeed();
-      var rot = -joystickPrimary.getRightX() * maxAngularRate;
-      if (isRobotCentric.get()) {
-        return robotCentricSwerveRequest.withVelocityX(vx).withVelocityY(vy).withRotationalRate(rot);
+      if (!RobotState.getInstance().getDrivetrainEnable()) {
+        // sets all speeds to 0 to disable movement
+        return robotCentricSwerveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0);
       }
-      return fieldCentricSwerveRequest.withVelocityX(vx).withVelocityY(vy).withRotationalRate(rot);
+
+      var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
+      var velocityX = -joystickPrimary.getLeftY() * getSpeed();
+      var velocityY = -joystickPrimary.getLeftX() * getSpeed();
+      var rotationalRate = -joystickPrimary.getRightX() * maxAngularRate;
+      if (isRobotCentric.get()) {
+        return robotCentricSwerveRequest
+            .withVelocityX(velocityX)
+            .withVelocityY(velocityY)
+            .withRotationalRate(rotationalRate);
+      }
+      return fieldCentricSwerveRequest
+          .withVelocityX(velocityX)
+          .withVelocityY(velocityY)
+          .withRotationalRate(rotationalRate);
     }).withName("DT: Drive"));
 
     // Apply Brakes while holding X
-    joystickPrimary.x().whileTrue(drivetrain.applyRequest(() -> brakeDriveRequest).withName("DT: Brake"));
+    joystickPrimary
+        .x()
+        .and(drivetrainEnabled())
+        .whileTrue(drivetrain.applyRequest(() -> brakeDriveRequest).withName("DT: Brake"));
 
     // Reset the field-centric heading on Y button press.
     joystickPrimary
         .y()
+        .and(drivetrainEnabled())
         .onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric).withName("DT: Reset Field Centric Heading"));
 
     // Toggle to robot-relative driving on back button
     joystickPrimary
         .back()
+        .and(drivetrainEnabled())
         .onTrue(drivetrain.runOnce(() -> isRobotCentric.set(true)).withName("DT: Toggle Robot Centric"));
 
     // Toggle to field-relative driving on start button
     joystickPrimary
         .start()
+        .and(drivetrainEnabled())
         .onTrue(drivetrain.runOnce(() -> isRobotCentric.set(false)).withName("DT: Toggle Field Centric"));
 
     // ===== Intake =====
