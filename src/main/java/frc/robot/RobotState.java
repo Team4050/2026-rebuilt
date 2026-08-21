@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Climb;
@@ -21,6 +22,7 @@ import frc.robot.subsystems.Unloader;
 import frc.robot.subsystems.Intake.IntakeDeploy;
 import frc.robot.subsystems.Intake.IntakeRollers;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Preset;
 
 @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class RobotState {
@@ -35,6 +37,7 @@ public class RobotState {
   public static RobotState getInstance() {
     if (instance == null) {
       instance = new RobotState();
+      instance.configurePresetChooser();
     }
     return instance;
   }
@@ -67,7 +70,7 @@ public class RobotState {
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
+    SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
 
     if (Constants.DEV_MODE) {
       // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
@@ -86,9 +89,11 @@ SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
       });
     }
   }
-public boolean getDrivetrainEnable() {
-  return SmartDashboard.getBoolean (DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
-}
+
+  public boolean getDrivetrainEnable() {
+    return SmartDashboard.getBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
+  }
+
   private void updateDrivetrainPeriodic() {
     if (drivetrain == null) {
       return;
@@ -374,5 +379,33 @@ public boolean getDrivetrainEnable() {
   }
 
   // ================== Settings Presets ==================
-  // TODO
+
+  private SendableChooser<Preset> presetChooser = new SendableChooser<Preset>();
+
+  private void applyPreset(Preset preset) {
+    // if no preset is selected, assume custom settings
+    // therefore, do not apply preset settings
+    if (preset == null) {
+      return;
+    }
+
+    SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, preset.drivetrainEnabled());
+    SmartDashboard.putBoolean(CLIMBER_ENABLE_KEY, preset.climberEnabled());
+    SmartDashboard.putBoolean(INTAKE_ENABLE_KEY, preset.intakeEnabled());
+    // TODO SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, preset.outtakeEnabled());
+    // TODO SmartDashboard.putNumber(MAIN_SPEED_KEY, preset.mainSpeed());
+    // TODO SmartDashboard.putNumber(SECONDARY_SPEED_KEY, preset.secondarySpeed());
+    // TODO SmartDashboard.putNumber(ROTATIONAL_RATE_KEY, preset.rotationalRate());
+  }
+
+  // ====== Presets ======
+  private void configurePresetChooser() {
+    presetChooser.onChange(this::applyPreset);
+
+    presetChooser.addOption("Competitive", Preset.competitive());
+    // TODO add other presets
+
+    SmartDashboard.putData("Presets", presetChooser);
+
+  }
 }
