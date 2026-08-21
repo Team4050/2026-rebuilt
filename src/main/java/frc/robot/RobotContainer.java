@@ -69,6 +69,10 @@ public class RobotContainer {
     return new Trigger(() -> RobotState.getInstance().getIntakeEnable());
   }
 
+  private Trigger OuttakeEnable() {
+    return new Trigger(() -> RobotState.getInstance().getOuttakeEnable());
+  }
+
   private void initRobotState() {
     RobotState rs = RobotState.getInstance();
     rs.addDrivetrain(drivetrain);
@@ -188,10 +192,10 @@ public class RobotContainer {
 
     // ===== Unloaders =====
 
-    joystickSecondary.leftBumper().whileTrue(agitate.agitateCommand());
+    joystickSecondary.leftBumper().and(OuttakeEnable()).whileTrue(agitate.agitateCommand()); // Why is this here?
 
-    joystickSecondary.rightBumper().toggleOnTrue(unloadCommand.primeCommand());
-    joystickSecondary.rightTrigger().whileTrue(unloadCommand.shootCommand());
+    joystickSecondary.rightBumper().and(OuttakeEnable()).toggleOnTrue(unloadCommand.primeCommand());
+    joystickSecondary.rightTrigger().and(OuttakeEnable()).whileTrue(unloadCommand.shootCommand());
 
     // ===== Climber =====
 
