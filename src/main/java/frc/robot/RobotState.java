@@ -38,6 +38,7 @@ public class RobotState {
     if (instance == null) {
       instance = new RobotState();
       instance.configurePresetChooser();
+      instance.configurePresetChooser();
     }
     return instance;
   }
@@ -241,21 +242,19 @@ public class RobotState {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
   private Unload unloadCommand;
-  private final String  OUTTAKE_ENABLE_KEY = "Intake Enable";
+  private final String OUTTAKE_ENABLE_KEY = "Intake Enable";
   private final boolean DEFAULT_OUTTAKE_ENABLE = true;
-
 
   public void addUnloaders(Unloader left, Unloader right, Unload command) {
     this.unloaderLeft = left;
     this.unloaderRight = right;
     this.unloadCommand = command;
 
-    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
+    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
   }
 
-
   public boolean getOuttakeEnable() {
-    return SmartDashboard.getBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
+    return SmartDashboard.getBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
   }
 
   public boolean getShooterActive() {
@@ -395,7 +394,7 @@ public class RobotState {
   private void applyPreset(Preset preset) {
     // if no preset is selected, assume custom settings
     // therefore, do not apply preset settings
-    if (preset == null || preset.equals(Preset.noPreset())) {
+    if (preset == null) {
       return;
     }
 
@@ -412,8 +411,7 @@ public class RobotState {
   private void configurePresetChooser() {
     presetChooser.onChange(this::applyPreset);
 
-    presetChooser.setDefaultOption(Preset.noPreset().name(), Preset.noPreset());
-    presetChooser.addOption(Preset.competitive().name(), Preset.competitive());
+    presetChooser.addOption("Competitive", Preset.competitive());
     // TODO add other presets
 
     SmartDashboard.putData("Presets", presetChooser);
