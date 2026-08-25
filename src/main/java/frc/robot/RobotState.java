@@ -385,7 +385,7 @@ public class RobotState {
   private void applyPreset(Preset preset) {
     // if no preset is selected, assume custom settings
     // therefore, do not apply preset settings
-    if (preset == null) {
+    if (preset == null || preset.equals(Preset.noPreset())) {
       return;
     }
 
@@ -402,7 +402,8 @@ public class RobotState {
   private void configurePresetChooser() {
     presetChooser.onChange(this::applyPreset);
 
-    presetChooser.addOption("Competitive", Preset.competitive());
+    presetChooser.setDefaultOption(Preset.noPreset().name(), Preset.noPreset());
+    presetChooser.addOption(Preset.competitive().name(), Preset.competitive());
     // TODO add other presets
 
     SmartDashboard.putData("Presets", presetChooser);
