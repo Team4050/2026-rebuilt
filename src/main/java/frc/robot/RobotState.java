@@ -242,7 +242,7 @@ public class RobotState {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
   private Unload unloadCommand;
-  private final String OUTTAKE_ENABLE_KEY = "Intake Enable";
+  private final String OUTTAKE_ENABLE_KEY = "Outtake Enable";
   private final boolean DEFAULT_OUTTAKE_ENABLE = true;
 
   public void addUnloaders(Unloader left, Unloader right, Unload command) {
@@ -389,6 +389,8 @@ public class RobotState {
 
   // ================== Settings Presets ==================
 
+  private final String PRESET_LABEL_KEY = "Current Preset";
+
   private SendableChooser<Preset> presetChooser = new SendableChooser<Preset>();
 
   private void applyPreset(Preset preset) {
@@ -397,6 +399,8 @@ public class RobotState {
     if (preset == null) {
       return;
     }
+
+    SmartDashboard.putString(PRESET_LABEL_KEY, preset.name());
 
     SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, preset.drivetrainEnabled());
     SmartDashboard.putBoolean(CLIMBER_ENABLE_KEY, preset.climberEnabled());
@@ -411,7 +415,7 @@ public class RobotState {
   private void configurePresetChooser() {
     presetChooser.onChange(this::applyPreset);
 
-    presetChooser.addOption("Competitive", Preset.competitive());
+    presetChooser.setDefaultOption("Competitive", Preset.competitive());
     // TODO add other presets
 
     SmartDashboard.putData("Presets", presetChooser);
