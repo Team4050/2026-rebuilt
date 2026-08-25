@@ -11,10 +11,9 @@ public record Preset(String name, boolean drivetrainEnabled, boolean climberEnab
     return new Preset("Competitive", true, true, true, true, 0.50, 0.15, 0.5, 0.65);
   }
 
+  public static Preset noDrivetrain() {
+    return new Preset("No Drivetrain", false, true, true, true, 0.50, 0.15, 0.5, 0.65);
+  }
+
   // TODO add other presets
-}
-
-
-public static Preset noDrivetrain() {
-  return new Preset("No Drivetrain", false, true, true, true, 0.50, 0.15, 0.5, 0.65);
 }
