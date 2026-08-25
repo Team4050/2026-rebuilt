@@ -17,3 +17,7 @@ public record Preset(String name, boolean drivetrainEnabled, boolean climberEnab
 
   // TODO add other presets
 }
+
+public static Preset Drivetrainonly() {
+    return new Preset("No Drivetrainonly", true, false, false, false, 0.30, 0.10, 0.5, 0.65);
+  }
