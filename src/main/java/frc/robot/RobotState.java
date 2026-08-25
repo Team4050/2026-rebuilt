@@ -405,7 +405,7 @@ public class RobotState {
     SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, preset.drivetrainEnabled());
     SmartDashboard.putBoolean(CLIMBER_ENABLE_KEY, preset.climberEnabled());
     SmartDashboard.putBoolean(INTAKE_ENABLE_KEY, preset.intakeEnabled());
-    // TODO SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, preset.outtakeEnabled());
+    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, preset.outtakeEnabled());
     // TODO SmartDashboard.putNumber(MAIN_SPEED_KEY, preset.mainSpeed());
     // TODO SmartDashboard.putNumber(SECONDARY_SPEED_KEY, preset.secondarySpeed());
     // TODO SmartDashboard.putNumber(ROTATIONAL_RATE_KEY, preset.rotationalRate());
