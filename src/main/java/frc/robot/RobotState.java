@@ -67,7 +67,7 @@ public class RobotState {
   public void addDrivetrain(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
+    SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
 
     if (Constants.DEV_MODE) {
       // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
@@ -86,9 +86,11 @@ SmartDashboard.putBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
       });
     }
   }
-public boolean getDrivetrainEnable() {
-  return SmartDashboard.getBoolean (DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
-}
+
+  public boolean getDrivetrainEnable() {
+    return SmartDashboard.getBoolean(DRIVERTRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
+  }
+
   private void updateDrivetrainPeriodic() {
     if (drivetrain == null) {
       return;
@@ -236,11 +238,21 @@ public boolean getDrivetrainEnable() {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
   private Unload unloadCommand;
+  private final String  OUTTAKE_ENABLE_KEY = "Intake Enable";
+  private final boolean DEFAULT_OUTTAKE_ENABLE = true;
+
 
   public void addUnloaders(Unloader left, Unloader right, Unload command) {
     this.unloaderLeft = left;
     this.unloaderRight = right;
     this.unloadCommand = command;
+
+    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
+  }
+
+
+  public boolean getOuttakeEnable() {
+    return SmartDashboard.getBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
   }
 
   public boolean getShooterActive() {
