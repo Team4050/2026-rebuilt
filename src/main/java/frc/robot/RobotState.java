@@ -416,6 +416,7 @@ public class RobotState {
     presetChooser.onChange(this::applyPreset);
 
     presetChooser.setDefaultOption(Preset.competitive().name(), Preset.competitive());
+    presetChooser.addOption(Preset.noDrivetrain().name(), Preset.noDrivetrain());
     // TODO add other presets
 
     SmartDashboard.putData("Presets", presetChooser);
