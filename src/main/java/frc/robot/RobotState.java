@@ -238,21 +238,19 @@ public class RobotState {
   private Unloader unloaderLeft;
   private Unloader unloaderRight;
   private Unload unloadCommand;
-  private final String  OUTTAKE_ENABLE_KEY = "Intake Enable";
+  private final String OUTTAKE_ENABLE_KEY = "Outtake Enable";
   private final boolean DEFAULT_OUTTAKE_ENABLE = true;
-
 
   public void addUnloaders(Unloader left, Unloader right, Unload command) {
     this.unloaderLeft = left;
     this.unloaderRight = right;
     this.unloadCommand = command;
 
-    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
+    SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
   }
 
-
   public boolean getOuttakeEnable() {
-    return SmartDashboard.getBoolean(OUTTAKE_ENABLE_KEY,DEFAULT_OUTTAKE_ENABLE);
+    return SmartDashboard.getBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
   }
 
   public boolean getShooterActive() {

@@ -46,8 +46,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
   private static final double DEFAULT_ROT_SPEED = 0.50;
 
-
-
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
   private double lastSimTime;
@@ -152,18 +150,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return run(() -> this.setControl(request.get()));
   }
 
-
-
   public double getSpeedMultiplier() {
-    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED) ;
+    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED);
   }
 
   public double getAltSpeedMultiplier() {
-    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED) ;
+    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED);
   }
 
   public double getRotSpeedMultiplier() {
-    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED) ;
+    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
   }
 
   @Override
