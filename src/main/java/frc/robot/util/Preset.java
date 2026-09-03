@@ -20,6 +20,6 @@ public record Preset(String name, boolean drivetrainEnabled, boolean climberEnab
   }
 
   public static Preset safeMode() {
-    return new Preset("Safe Mode", true, false, true, false, 0.30, 0.10, 0.5, 0.30);
+    return new Preset("Safe Mode", true, false, true, true, 0.20, 0.10, 0.5, 0.30);
   }
 }
