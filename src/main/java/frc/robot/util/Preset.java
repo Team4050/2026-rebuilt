@@ -15,9 +15,11 @@ public record Preset(String name, boolean drivetrainEnabled, boolean climberEnab
     return new Preset("No Drivetrain", false, true, true, true, 0.50, 0.15, 0.5, 0.65);
   }
 
-  // TODO add other presets
-}
-
-public static Preset Drivetrainonly() {
-    return new Preset("No Drivetrainonly", true, false, false, false, 0.30, 0.10, 0.5, 0.65);
+  public static Preset onlyDrivetrain() {
+    return new Preset("Drivetrain Only", true, false, false, false, 0.30, 0.10, 0.5, 0.65);
   }
+
+  public static Preset safeMode() {
+    return new Preset("Safe Mode", true, false, true, false, 0.30, 0.10, 0.5, 0.30);
+  }
+}
