@@ -30,22 +30,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.Preset;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily be used in
  * command-based projects.
  */
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  private static final String SPEED_KEY = "Chassis Speed";
-  private static final double DEFAULT_SPEED = 0.50;
-
-  private static final String ALT_SPEED_KEY = "Chassis Alt Speed";
-  private static final double DEFAULT_ALT_SPEED = 0.15;
-
-  private static final String ROT_SPEED_KEY = "Chassis Rotational Speed";
-  private static final double DEFAULT_ROT_SPEED = 0.50;
-
   private static final double simLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
   private double lastSimTime;
@@ -76,10 +69,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
-    SmartDashboard.putNumber(SPEED_KEY, DEFAULT_SPEED);
-    SmartDashboard.putNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
-
   }
 
   /**
@@ -151,15 +140,15 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public double getSpeedMultiplier() {
-    return SmartDashboard.getNumber(SPEED_KEY, DEFAULT_SPEED);
+    return SmartDashboard.getNumber(Constants.Drivetrain.MAIN_SPEED_KEY, Preset.safeMode().mainSpeed());
   }
 
-  public double getAltSpeedMultiplier() {
-    return SmartDashboard.getNumber(ALT_SPEED_KEY, DEFAULT_ALT_SPEED);
+  public double getSecondarySpeedMultiplier() {
+    return SmartDashboard.getNumber(Constants.Drivetrain.SECONDARY_SPEED_KEY, Preset.safeMode().secondarySpeed());
   }
 
-  public double getRotSpeedMultiplier() {
-    return SmartDashboard.getNumber(ROT_SPEED_KEY, DEFAULT_ROT_SPEED);
+  public double getRotationalRateMultiplier() {
+    return SmartDashboard.getNumber(Constants.Drivetrain.ROTATIONAL_RATE_KEY, Preset.safeMode().rotationalRate());
   }
 
   @Override

@@ -123,7 +123,7 @@ public class RobotContainer {
         return robotCentricSwerveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0);
       }
 
-      var maxAngularRate = drivetrain.getRotSpeedMultiplier() * theoreticalMaxAngularRate;
+      var maxAngularRate = drivetrain.getRotationalRateMultiplier() * theoreticalMaxAngularRate;
       var velocityX = -joystickPrimary.getLeftY() * getSpeed();
       var velocityY = -joystickPrimary.getLeftX() * getSpeed();
       var rotationalRate = -joystickPrimary.getRightX() * maxAngularRate;
@@ -173,7 +173,7 @@ public class RobotContainer {
     var theoreticalMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
     if (joystickPrimary.leftBumper().getAsBoolean()) {
-      return drivetrain.getAltSpeedMultiplier() * theoreticalMaxSpeed;
+      return drivetrain.getSecondarySpeedMultiplier() * theoreticalMaxSpeed;
     }
 
     return drivetrain.getSpeedMultiplier() * theoreticalMaxSpeed;

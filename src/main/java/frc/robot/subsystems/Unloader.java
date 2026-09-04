@@ -11,14 +11,10 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.util.Preset;
 
 public class Unloader extends SubsystemBase {
-  // TODO: Unloader is designed to support N unloaders, but having a fixed SmartDashboard
-  // key for shooter speed means that all shooters will run at the same speed.
-  // We should do this differently someday.
-  private static final String SPEED_SHOOTER_KEY = "Shooter Speed";
-  private static final double DEFAULT_SPEED_SHOOTER = 0.65;
-
   private static final int KICKER_CURRENT_LIMIT = 20;
   private static final int SHOOTER_CURRENT_LIMIT = 50;
 
@@ -59,12 +55,10 @@ public class Unloader extends SubsystemBase {
     }
 
     shooterEncoder = shooterMotor.getEncoder();
-
-    SmartDashboard.putNumber(SPEED_SHOOTER_KEY, DEFAULT_SPEED_SHOOTER);
   }
 
   private double getShooterSpeed() {
-    return SmartDashboard.getNumber(SPEED_SHOOTER_KEY, DEFAULT_SPEED_SHOOTER);
+    return SmartDashboard.getNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Preset.safeMode().shooterSpeed());
   }
 
   public boolean hasShooter() {

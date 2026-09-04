@@ -37,6 +37,11 @@ public final class Constants {
     public static final int backRightDriveId = 31;
     public static final int backRightSteerId = 32;
     public static final int backRightEncoderId = 33;
+
+    // Speed Settings
+    public static final String MAIN_SPEED_KEY = "Main Drive Speed";
+    public static final String SECONDARY_SPEED_KEY = "Secondary Drive Speed";
+    public static final String ROTATIONAL_RATE_KEY = "Drive Rotational Rate";
   }
 
   public final class Subsystems {
@@ -54,6 +59,13 @@ public final class Constants {
     public static final int shooterRightId = 59;
 
     public static final int agitateId = 60;
+  }
+
+  public final class Unloader {
+    // Unloader is designed to support N unloaders, but having a fixed SmartDashboard
+    // key for shooter speed means that all shooters will run at the same speed.
+    // TODO: We should do this differently someday.
+    public static final String SHOOTER_SPEED_KEY = "Shooter Speed";
   }
 
   public final class Vision {
