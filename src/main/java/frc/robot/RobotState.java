@@ -288,7 +288,7 @@ public class RobotState {
   private boolean visionValid = false;
 
   private void updateVisionPeriodic() {
-    if (!Constants.Vision.VISION_ENABLED || drivetrain == null) {
+    if (!Constants.Vision.VISION_ENABLED) {
       return;
     }
 
@@ -425,5 +425,7 @@ public class RobotState {
     presetChooser.addOption(Preset.safeMode().name(), Preset.safeMode());
 
     SmartDashboard.putData("Presets", presetChooser);
+
+    applyPreset(presetChooser.getSelected());
   }
 }
