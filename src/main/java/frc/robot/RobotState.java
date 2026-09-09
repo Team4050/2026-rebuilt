@@ -238,6 +238,9 @@ public class RobotState {
 
   public void addIntakeRollers(IntakeRollers intakeRollers) {
     this.intakeRollers = intakeRollers;
+
+    SmartDashboard.putNumber(Constants.Intake.SPEED_IN_KEY, Constants.Intake.DEFAULT_SPEED_IN);
+    SmartDashboard.putNumber(Constants.Intake.SPEED_OUT_KEY, Constants.Intake.DEFAULT_SPEED_OUT);
   }
 
   // ===================== Outtake =====================

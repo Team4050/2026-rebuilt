@@ -61,6 +61,14 @@ public final class Constants {
     public static final int agitateId = 60;
   }
 
+  public final class Intake {
+    public static final String SPEED_IN_KEY = "Intake Roller Speed In";
+    public static final double DEFAULT_SPEED_IN = 0.7;
+
+    public static final String SPEED_OUT_KEY = "Intake Roller Speed Out";
+    public static final double DEFAULT_SPEED_OUT = 0.7;
+  }
+
   public final class Unloader {
     // Unloader is designed to support N unloaders, but having a fixed SmartDashboard
     // key for shooter speed means that all shooters will run at the same speed.
