@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import frc.robot.Constants;
+
 public record Preset(String name, boolean drivetrainEnabled, boolean climberEnabled, boolean intakeEnabled,
     boolean outtakeEnabled, double mainSpeed, double secondarySpeed, double rotationalRate, double shooterSpeed) {
 
@@ -8,7 +10,10 @@ public record Preset(String name, boolean drivetrainEnabled, boolean climberEnab
   }
 
   public static Preset competitive() {
-    return new Preset("Competitive", true, true, true, true, 0.50, 0.15, 0.5, 0.65);
+    return new Preset("Competitive", Constants.Drivetrain.DEFAULT_ENABLED, Constants.Drivetrain.DEFAULT_ENABLED,
+        Constants.Intake.DEFAULT_ENABLED, true, Constants.Drivetrain.DEFAULT_MAIN_SPEED,
+        Constants.Drivetrain.DEFAULT_SECONDARY_SPEED, Constants.Drivetrain.DEFAULT_ROTATIONAL_RATE,
+        Constants.Unloader.DEFAULT_SHOOTER_SPEED);
   }
 
   public static Preset noDrivetrain() {

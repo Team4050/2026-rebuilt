@@ -39,9 +39,17 @@ public final class Constants {
     public static final int backRightEncoderId = 33;
 
     // Speed Settings
+    public static final String ENABLED_KEY = "Drivetrain Enabled";
+    public static boolean DEFAULT_ENABLED = true;
+
     public static final String MAIN_SPEED_KEY = "Main Drive Speed";
+    public static final double DEFAULT_MAIN_SPEED = 0.50;
+
     public static final String SECONDARY_SPEED_KEY = "Secondary Drive Speed";
+    public static final double DEFAULT_SECONDARY_SPEED = 0.15;
+
     public static final String ROTATIONAL_RATE_KEY = "Drive Rotational Rate";
+    public static final double DEFAULT_ROTATIONAL_RATE = 0.5;
   }
 
   public final class Subsystems {
@@ -62,6 +70,9 @@ public final class Constants {
   }
 
   public final class Intake {
+    public static final String ENABLED_KEY = "Intake Enabled";
+    public static final boolean DEFAULT_ENABLED = true;
+
     public static final String SPEED_IN_KEY = "Intake Roller Speed In";
     public static final double DEFAULT_SPEED_IN = 0.7;
 
@@ -74,6 +85,12 @@ public final class Constants {
     // key for shooter speed means that all shooters will run at the same speed.
     // TODO: We should do this differently someday.
     public static final String SHOOTER_SPEED_KEY = "Shooter Speed";
+    public static final double DEFAULT_SHOOTER_SPEED = 0.65;
+  }
+
+  public final class Climber {
+    public static final String ENABLED_KEY = "Climber Enabled";
+    public static final boolean DEFAULT_ENABLED = true;
   }
 
   public final class Vision {
