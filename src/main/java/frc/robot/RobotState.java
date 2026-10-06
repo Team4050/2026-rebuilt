@@ -254,6 +254,7 @@ public class RobotState {
     this.unloadCommand = command;
 
     SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
+    SmartDashboard.putNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Preset.safeMode().shooterSpeed());
   }
 
   public boolean getOuttakeEnable() {
