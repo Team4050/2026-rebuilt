@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.Preset;
 
 public class Unloader extends SubsystemBase {
   private static final int KICKER_CURRENT_LIMIT = 20;
@@ -58,7 +57,7 @@ public class Unloader extends SubsystemBase {
   }
 
   private double getShooterSpeed() {
-    return SmartDashboard.getNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Preset.safeMode().shooterSpeed());
+    return SmartDashboard.getNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Constants.fallbackPreset.shooterSpeed());
   }
 
   public boolean hasShooter() {

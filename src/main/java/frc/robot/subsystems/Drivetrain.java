@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.util.Preset;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily be used in
@@ -140,15 +139,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public double getSpeedMultiplier() {
-    return SmartDashboard.getNumber(Constants.Drivetrain.MAIN_SPEED_KEY, Preset.safeMode().mainSpeed());
+    return SmartDashboard.getNumber(Constants.Drivetrain.MAIN_SPEED_KEY, Constants.fallbackPreset.mainSpeed());
   }
 
   public double getSecondarySpeedMultiplier() {
-    return SmartDashboard.getNumber(Constants.Drivetrain.SECONDARY_SPEED_KEY, Preset.safeMode().secondarySpeed());
+    return SmartDashboard
+        .getNumber(Constants.Drivetrain.SECONDARY_SPEED_KEY, Constants.fallbackPreset.secondarySpeed());
   }
 
   public double getRotationalRateMultiplier() {
-    return SmartDashboard.getNumber(Constants.Drivetrain.ROTATIONAL_RATE_KEY, Preset.safeMode().rotationalRate());
+    return SmartDashboard
+        .getNumber(Constants.Drivetrain.ROTATIONAL_RATE_KEY, Constants.fallbackPreset.rotationalRate());
   }
 
   @Override

@@ -5,6 +5,7 @@ import frc.robot.util.Preset;
 
 public final class Constants {
   public static final Preset defaultPreset = Preset.competitive();
+  public static final Preset fallbackPreset = Preset.safeMode();
 
   public static final boolean DEV_MODE = !BuildConstants.GIT_BRANCH.equals("main")
       && !BuildConstants.GIT_BRANCH.startsWith("event/");
