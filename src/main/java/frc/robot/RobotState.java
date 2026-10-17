@@ -38,7 +38,6 @@ public class RobotState {
     if (instance == null) {
       instance = new RobotState();
       instance.configurePresetChooser();
-      instance.configurePresetChooser();
     }
     return instance;
   }
