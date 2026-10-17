@@ -71,9 +71,9 @@ public class RobotState {
     this.drivetrain = drivetrain;
 
     SmartDashboard.putBoolean(DRIVETRAIN_ENABLE_KEY, DEFAULT_DRIVETRAIN_ENABLE);
-    SmartDashboard.putNumber(Constants.Drivetrain.MAIN_SPEED_KEY, Preset.competitive().mainSpeed());
-    SmartDashboard.putNumber(Constants.Drivetrain.SECONDARY_SPEED_KEY, Preset.competitive().secondarySpeed());
-    SmartDashboard.putNumber(Constants.Drivetrain.ROTATIONAL_RATE_KEY, Preset.competitive().rotationalRate());
+    SmartDashboard.putNumber(Constants.Drivetrain.MAIN_SPEED_KEY, Constants.defaultPreset.mainSpeed());
+    SmartDashboard.putNumber(Constants.Drivetrain.SECONDARY_SPEED_KEY, Constants.defaultPreset.secondarySpeed());
+    SmartDashboard.putNumber(Constants.Drivetrain.ROTATIONAL_RATE_KEY, Constants.defaultPreset.rotationalRate());
 
     if (Constants.DEV_MODE) {
       // Epilogue doesn't support logging complex objects, so add it as a Sendable instead
@@ -253,7 +253,7 @@ public class RobotState {
     this.unloadCommand = command;
 
     SmartDashboard.putBoolean(OUTTAKE_ENABLE_KEY, DEFAULT_OUTTAKE_ENABLE);
-    SmartDashboard.putNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Preset.safeMode().shooterSpeed());
+    SmartDashboard.putNumber(Constants.Unloader.SHOOTER_SPEED_KEY, Constants.defaultPreset.shooterSpeed());
   }
 
   public boolean getOuttakeEnable() {

@@ -1,8 +1,10 @@
 package frc.robot;
 
 import frc.robot.generated.BuildConstants;
+import frc.robot.util.Preset;
 
 public final class Constants {
+  public static final Preset defaultPreset = Preset.competitive();
 
   public static final boolean DEV_MODE = !BuildConstants.GIT_BRANCH.equals("main")
       && !BuildConstants.GIT_BRANCH.startsWith("event/");
