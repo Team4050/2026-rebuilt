@@ -235,6 +235,11 @@ public class RobotContainer {
         .runOnce(() -> climber.setPosition(climber.ENCODER_POSITION_BOTTOM), climber)
         .withName("Climber: Move To Bottom");
 
-    return Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
+    var homeClimber = Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
+
+    // TODO: Finish driveForward command
+    var driveForward = drivetrain.applyRequest(() -> new SwerveRequest.RobotCentric().).withTimeout(2);
+
+    return Commands.parallel(homeClimber, driveForward);
   }
 }
