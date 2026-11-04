@@ -237,9 +237,9 @@ public class RobotContainer {
 
     var homeClimber = Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
 
-    double autoSpeed = 0.5;
+    double autoSpeed = 1.0;
 
-    var driveForward = drivetrain
+    var driveForward1 = drivetrain
         .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
         .withTimeout(1);
 
@@ -247,12 +247,21 @@ public class RobotContainer {
         .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(autoSpeed))
         .withTimeout(1);
 
+    var driveForward2 = drivetrain
+        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
+        .withTimeout(1);
+
     var driveRight = drivetrain
         .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(-autoSpeed))
         .withTimeout(1);
 
-    var zigZag = Commands.sequence(driveForward, driveLeft, driveForward, driveRight, driveForward);
+    var driveForward3 = drivetrain
+        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
+        .withTimeout(1);
 
-    return Commands.parallel(homeClimber, zigZag);
+    var zigZag = Commands.sequence(driveForward1, driveLeft, driveForward2, driveRight, driveForward3);
+
+    // return Commands.parallel(homeClimber, zigZag);
+    return zigZag;
   }
 }
