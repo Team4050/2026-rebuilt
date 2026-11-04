@@ -231,17 +231,16 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // var moveToBottom = Commands
-    //     .runOnce(() -> climber.setPosition(climber.ENCODER_POSITION_BOTTOM), climber)
-    //     .withName("Climber: Move To Bottom");
+    var moveToBottom = Commands
+        .runOnce(() -> climber.setPosition(climber.ENCODER_POSITION_BOTTOM), climber)
+        .withName("Climber: Move To Bottom");
 
-    // var homeClimber = Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
+    var homeClimber = Commands.sequence(climber.homeCommand(), moveToBottom).withName("Auto: Climber Home Then Bottom");
 
     var driveForward = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(0.1))
-        .withTimeout(2);
+        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.5).withVelocityY(0))
+        .withTimeout(1);
 
-    // return Commands.parallel(homeClimber, driveForward);
-    return driveForward;
+    return Commands.parallel(homeClimber, driveForward);
   }
 }
