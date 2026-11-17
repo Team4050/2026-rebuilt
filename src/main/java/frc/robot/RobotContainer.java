@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Climb;
+import frc.robot.commands.DriveStraight;
 import frc.robot.commands.Unload;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Agitate;
@@ -239,29 +240,23 @@ public class RobotContainer {
 
     double autoSpeed = 1.0;
 
-    var driveForward1 = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
-        .withTimeout(1);
+    /**
+     * Sequence:
+     *
+     * 1. Start driving forward AND deploy intake 2. Start rollers When robot has driven to 12ft: 3. Stop rollers 4.
+     * Drive backwards 12ft Stop
+     */
 
-    var driveLeft = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(autoSpeed))
-        .withTimeout(1);
+    // var driveLeft = drivetrain
+    //     .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(autoSpeed))
+    //     .withTimeout(1);
 
-    var driveForward2 = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
-        .withTimeout(1);
+    // var driveRight = drivetrain
+    //     .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(-autoSpeed))
+    //     .withTimeout(1);
 
-    var driveRight = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0.0).withVelocityY(-autoSpeed))
-        .withTimeout(1);
+    var autoCommand = Commands.sequence(new DriveStraight(drivetrain, 12.0), new DriveStraight(drivetrain, -12.0));
 
-    var driveForward3 = drivetrain
-        .applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(autoSpeed).withVelocityY(0.0))
-        .withTimeout(1);
-
-    var zigZag = Commands.sequence(driveForward1, driveLeft, driveForward2, driveRight, driveForward3);
-
-    // return Commands.parallel(homeClimber, zigZag);
-    return zigZag;
+    return autoCommand;
   }
 }
